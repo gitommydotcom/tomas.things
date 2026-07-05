@@ -1,13 +1,47 @@
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+import gsap from 'gsap'
 import { EASE } from './Reveal.jsx'
 
 /*
  * One hand-drawn stroke, many jobs: it underlines "ideas", becomes the
  * idea->thing arrow, and - with two eyes - a family of little creatures:
- * Elvis waves beside the About title, Ringo loops above the selected
+ * Elvis waves beside the About title, Ringo coils above the selected
  * work, Viky sways in the footer watching you leave.
  * The asterisk is the exact mark from Tomáš's EPS, not a lookalike.
  */
+
+/*
+ * The family's shared motion signature: every creature's body breathes
+ * between two poses of the same stroke - same duration, same ease, so
+ * all three move at one recognizable brand tempo. The tween only plays
+ * while the creature is actually on screen.
+ */
+const SWAY = { duration: 1.5, ease: 'sine.inOut', yoyo: true, repeat: -1 }
+
+function useSway(poseA, poseB) {
+  const ref = useRef(null)
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const body = ref.current
+    if (!body) return
+    const tween = gsap.fromTo(
+      body,
+      { attr: { d: poseA } },
+      { attr: { d: poseB }, ...SWAY, paused: true },
+    )
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) tween.play()
+      else tween.pause()
+    })
+    io.observe(body.closest('svg'))
+    return () => {
+      io.disconnect()
+      tween.kill()
+    }
+  }, [poseA, poseB])
+  return ref
+}
 
 const strokeProps = {
   fill: 'none',
@@ -77,12 +111,17 @@ export function SqArrow({ delay = 0, inView = true, draw = true, ...rest }) {
 
 
 /* Viky, the classic: a wavy line that grew a pair of eyes. */
+const VIKY_A = 'M8 58 C 18 22, 46 24, 54 48 C 61 68, 88 66, 97 42 C 100 34, 104 28, 112 26'
+const VIKY_B = 'M10 62 C 24 34, 42 10, 55 38 C 66 74, 84 56, 95 38 C 98 29, 106 27, 113 21'
+
 export function SqCreature({ eyeRef, ...props }) {
+  const bodyRef = useSway(VIKY_A, VIKY_B)
   return (
     <svg viewBox="0 0 130 74" aria-hidden="true" {...props}>
       <path
         className="creature-body"
-        d="M8 58 C 18 22, 46 24, 54 48 C 61 68, 88 66, 97 42 C 100 34, 104 28, 112 26"
+        ref={bodyRef}
+        d={VIKY_A}
         strokeWidth="7"
         {...strokeProps}
       />
@@ -95,15 +134,17 @@ export function SqCreature({ eyeRef, ...props }) {
 }
 
 /* Elvis: a tall squiggle with a little waving arm.
-   The viewBox has headroom above so the waving arm never gets clipped. */
+   The viewBox has headroom above so the waving arm never gets clipped.
+   His body sways from the hips - the top point stays fixed at (30 10)
+   so the arm's rotation anchor and the eyes never drift. */
+const ELVIS_A = 'M26 80 C 10 62, 36 50, 24 32 C 18 23, 22 14, 30 10'
+const ELVIS_B = 'M22 80 C 14 56, 32 46, 27 33 C 20 24, 25 15, 30 10'
+
 export function WaveCreature(props) {
+  const bodyRef = useSway(ELVIS_A, ELVIS_B)
   return (
     <svg viewBox="0 -18 64 102" aria-hidden="true" {...props}>
-      <path
-        d="M26 80 C 10 62, 36 50, 24 32 C 18 23, 22 14, 30 10"
-        strokeWidth="7"
-        {...strokeProps}
-      />
+      <path ref={bodyRef} d={ELVIS_A} strokeWidth="7" {...strokeProps} />
       <path
         className="creature-arm"
         d="M30 10 C 40 8, 46 12, 54 6"
@@ -118,21 +159,26 @@ export function WaveCreature(props) {
   )
 }
 
-/* Ringo: a round spiral - the stroke curls into a snail-shell coil
-   (semicircle arcs of growing radius, all one smooth turn) and the
-   tail flies out under the eyes. The viewBox has headroom above so
-   nothing clips while the hop (CSS, .work-creature) moves the svg. */
+/* Ringo: a round ring that spirals inwards - semicircle arcs of
+   shrinking radius meeting on a vertical diameter, so the coil stays
+   circular. The outer end of the stroke is the head, up top, with the
+   eyes above it. His sway is the coil breathing tighter and looser
+   (pose B keeps every arc's radius at exactly half its chord, so the
+   spiral stays true at every in-between frame). The viewBox has
+   headroom above so nothing clips while the hop moves the svg. */
+const RINGO_A =
+  'M50 10 A38 38 0 0 0 50 86 A31 31 0 0 0 50 24 A24 24 0 0 0 50 72 A19 19 0 0 0 50 34 A14 14 0 0 0 50 62'
+const RINGO_B =
+  'M50 12 A36 36 0 0 0 50 84 A29 29 0 0 0 50 26 A22 22 0 0 0 50 70 A17 17 0 0 0 50 36 A12 12 0 0 0 50 60'
+
 export function SpiralCreature(props) {
+  const bodyRef = useSway(RINGO_A, RINGO_B)
   return (
-    <svg viewBox="0 -8 126 80" aria-hidden="true" {...props}>
-      <path
-        d="M50 42 A7 7 0 0 0 36 42 A12 12 0 0 0 60 42 A18 18 0 0 0 24 42 A25 25 0 0 0 74 42 C 76 28, 88 16, 104 18"
-        strokeWidth="7"
-        {...strokeProps}
-      />
+    <svg viewBox="0 -14 96 104" aria-hidden="true" {...props}>
+      <path ref={bodyRef} d={RINGO_A} strokeWidth="7" {...strokeProps} />
       <g className="creature-eyes">
-        <circle cx="102" cy="6" r="5" fill="var(--ink)" />
-        <circle cx="116" cy="2" r="5" fill="var(--ink)" />
+        <circle cx="48" cy="-3" r="5.5" fill="var(--ink)" />
+        <circle cx="61" cy="-6" r="5.5" fill="var(--ink)" />
       </g>
     </svg>
   )

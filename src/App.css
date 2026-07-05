@@ -865,7 +865,8 @@
   gap: clamp(14px, 2vw, 26px);
 }
 .work-creature {
-  width: clamp(60px, 5.8vw, 92px);
+  /* equal visual mass with Elvis (68px wide but tall) and Viky */
+  width: clamp(58px, 5.7vw, 82px);
   flex: none;
   margin-bottom: 6px;
   overflow: visible;
@@ -1432,10 +1433,11 @@
 }
 .creature-arm {
   /* transform-box makes the 30px/10px origin resolve in viewBox units
-     on iOS Safari too - without it the wave silently breaks there */
+     on iOS Safari too - without it the wave silently breaks there.
+     1.5s matches the family body-sway tempo (SWAY in Doodles.jsx). */
   transform-box: view-box;
   transform-origin: 30px 10px;
-  animation: wave 1.8s ease-in-out infinite;
+  animation: wave 1.5s ease-in-out infinite;
 }
 @keyframes wave {
   0%, 100% { transform: rotate(0deg); }
@@ -1472,7 +1474,8 @@
   gap: 20px;
 }
 .footer-creature {
-  width: 92px;
+  /* equal visual mass with Elvis and Ringo (long-and-low aspect) */
+  width: 107px;
 }
 .creature-eyes {
   /* blink squashes around the eyes' own center on every browser */
