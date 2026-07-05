@@ -4,7 +4,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { EASE } from './Reveal.jsx'
 import { SqUnderline, SqArrow, BrandAsterisk } from './Doodles.jsx'
-import PenTool from './PenTool.jsx'
+import HeroStage from './HeroStage.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -238,11 +238,12 @@ export default function Hero() {
   return (
     <section className="hero" id="top" ref={sectionRef}>
       <div className="container hero-inner">
-        <h1
-          className="hero-slogan"
-          aria-label="I translate ideas into things."
-          ref={sloganRef}
-        >
+        <div className="hero-main">
+          <h1
+            className="hero-slogan"
+            aria-label="I translate ideas into things."
+            ref={sloganRef}
+          >
           {LINES.map((line, li) => (
             <span className="hero-line" key={li}>
               {line.map((word) => {
@@ -265,36 +266,36 @@ export default function Hero() {
               })}
             </span>
           ))}
-        </h1>
+          </h1>
 
-        <div className="hero-subs">
-          <motion.p
-            className="hero-sub"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: EASE, delay: 1.25 }}
-          >
-            Design, print, code - from the idea to the finished thing.
-          </motion.p>
-          <motion.p
-            className="hero-hint"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.9, ease: EASE, delay: 2.1 }}
-            aria-hidden="true"
-          >
-            <span className="hero-hint--hover">
-              psst: hover the slogan, it speaks three languages.
-            </span>
-            <span className="hero-hint--touch">
-              psst: the slogan speaks three languages, tap it.
-            </span>
-          </motion.p>
+          <div className="hero-subs">
+            <motion.p
+              className="hero-sub"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 1.25 }}
+            >
+              Design, print, code - from the idea to the finished thing.
+            </motion.p>
+            <motion.p
+              className="hero-hint"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 2.1 }}
+              aria-hidden="true"
+            >
+              <span className="hero-hint--hover">
+                psst: hover the slogan, it speaks three languages.
+              </span>
+              <span className="hero-hint--touch">
+                psst: the slogan speaks three languages, tap it.
+              </span>
+            </motion.p>
+          </div>
         </div>
 
-        {/* the designer's tell: a live bézier curve - it breathes, bends
-            on hover and redraws on click */}
-        <PenTool className="hero-pen" />
+        {/* the second protagonist: design / print / code, playable live */}
+        <HeroStage />
       </div>
 
       <motion.div

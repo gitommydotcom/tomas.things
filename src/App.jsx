@@ -16,10 +16,9 @@ export default function App() {
       <Nav />
       <main>
         <Hero />
-        <Marquee items={['ideas', 'into', 'things', 'design', 'print', 'code']} />
         <Work />
         <About />
-        <Marquee items={['ideas', 'idee', 'nápady', 'things', 'cose', 'věci']} flip />
+        <Marquee a={['ideas', 'idee', 'nápady']} b={['things', 'cose', 'věci']} />
         <Contact />
       </main>
       <Footer />

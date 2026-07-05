@@ -6,14 +6,13 @@ import { BrandAsterisk } from './Doodles.jsx'
 gsap.registerPlugin(ScrollTrigger)
 
 /*
- * Full-bleed marquee band that reacts to scrolling: it always drifts,
- * but scroll velocity throws it forward (or backwards, when you scroll
- * up) and it eases back to its cruise speed. One infinite transform
- * tween per band - nothing here touches layout.
+ * One marquee moment: two ink-black bands crossing each other at
+ * opposite angles, rolling opposite ways. Words in cream, pink and
+ * azure, brand asterisks in between. Each band is a single infinite
+ * transform tween; scroll velocity throws it forward or backward and
+ * it eases back to cruise speed.
  */
-export default function Marquee({ items, flip = false }) {
-  const trackRef = useRef(null)
-
+function useVelocityLoop(trackRef, dir) {
   useEffect(() => {
     const mm = gsap.matchMedia()
     mm.add('(prefers-reduced-motion: no-preference)', () => {
@@ -23,8 +22,7 @@ export default function Marquee({ items, flip = false }) {
         duration: 30,
         repeat: -1,
       })
-      const dir = flip ? -1 : 1
-      if (flip) tween.timeScale(-1)
+      tween.timeScale(dir)
       ScrollTrigger.create({
         onUpdate(self) {
           let v = gsap.utils.clamp(-5, 5, self.getVelocity() / 220)
@@ -34,28 +32,46 @@ export default function Marquee({ items, flip = false }) {
       })
     })
     return () => mm.revert()
-  }, [flip])
+  }, [trackRef, dir])
+}
 
+/* cream / pink / cream-outline / azure, then repeat */
+const INKS = ['cream', 'pink', 'outline', 'azure']
+
+function Band({ items, dir, variant }) {
+  const trackRef = useRef(null)
+  useVelocityLoop(trackRef, dir)
+
+  // repeat the words so one chunk comfortably exceeds the viewport
+  const words = Array.from({ length: 3 }, () => items).flat()
   const chunk = (key) => (
     <span className="marquee-chunk" key={key}>
-      {items.map((item, i) => (
-        <span
-          className={`marquee-item ${i % 2 ? 'marquee-item--outline' : ''}`}
-          key={i}
-        >
-          {item}
-          <BrandAsterisk className="marquee-ast" />
+      {words.map((word, i) => (
+        <span className={`marquee-item marquee-item--${INKS[i % INKS.length]}`} key={i}>
+          {word}
+          <BrandAsterisk
+            className={`marquee-ast ${i % 2 ? 'marquee-ast--azure' : ''}`}
+          />
         </span>
       ))}
     </span>
   )
 
   return (
-    <div className={`marquee ${flip ? 'marquee--tilt' : ''}`} aria-hidden="true">
+    <div className={`marquee-band marquee-band--${variant}`}>
       <div className="marquee-track" ref={trackRef}>
         {chunk(0)}
         {chunk(1)}
       </div>
     </div>
+  )
+}
+
+export default function Marquee({ a, b }) {
+  return (
+    <section className="marquee" aria-hidden="true">
+      <Band items={a} dir={1} variant="a" />
+      <Band items={b} dir={-1} variant="b" />
+    </section>
   )
 }

@@ -107,8 +107,16 @@
   position: relative;
   padding: 130px 0 90px;
 }
+/* slogan on the left, the playable stage on the right - the stage
+   column is fixed-width so flipping words never nudge it */
 .hero-inner {
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 33vw, 500px);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: center;
+}
+.hero-main {
   display: flex;
   flex-direction: column;
   gap: clamp(26px, 4.5vh, 42px);
@@ -134,21 +142,226 @@
     display: inline;
   }
 }
-/* the live pen-tool rig owns the hero's empty right half - it breathes,
-   bends on hover and redraws on click (see PenTool.jsx) */
-.hero-pen {
-  position: absolute;
-  right: clamp(0px, 4vw, 70px);
-  bottom: 6%;
-  width: clamp(210px, 25vw, 350px);
-  height: auto;
-  overflow: visible;
+/* ---- The stage: design / print / code, playable live ---- */
+.hero-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
-.has-cursor .hero-pen {
+.stage-canvas {
+  position: relative;
+  aspect-ratio: 10 / 8.5;
+  display: grid;
+  place-items: center;
+}
+.stage-canvas > * {
+  width: 100%;
+  height: 100%;
+}
+.has-cursor .stage-canvas {
   cursor: none;
 }
-@media (max-width: 760px) {
-  .hero-pen {
+.stage-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  text-align: center;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--ink-50);
+  pointer-events: none;
+}
+.stage-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+.stage-tab {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 100px;
+  color: var(--ink-50);
+  transition:
+    color 0.3s var(--ease-out),
+    background 0.3s var(--ease-out);
+}
+.stage-tab:hover {
+  color: var(--ink);
+}
+.stage-tab--active {
+  color: var(--ink);
+  background: var(--azure-soft);
+}
+
+/* design: the adjustable rig */
+.rig {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.rig svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  touch-action: none;
+}
+.rig-handle {
+  fill: none;
+  stroke: var(--ink-50);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.rig-knob {
+  fill: var(--pink);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.25s var(--ease-out);
+}
+.rig-anchor {
+  fill: var(--ink);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.25s var(--ease-out);
+}
+.rig-anchor--start {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 2.5;
+}
+.rig [data-drag]:hover {
+  transform: scale(1.45);
+}
+
+/* print: the type specimen */
+.print-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.print-letter {
+  font-family: var(--font-display);
+  font-size: clamp(150px, 15vw, 240px);
+  line-height: 1;
+  color: var(--ink);
+  will-change: transform;
+}
+.print-letter--outline {
+  color: transparent;
+  -webkit-text-stroke: 3px var(--ink);
+}
+.print-mark {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-color: var(--ink-50);
+}
+.print-mark--tl { top: 4px; left: 4px; border-top: 2px solid; border-left: 2px solid; }
+.print-mark--tr { top: 4px; right: 4px; border-top: 2px solid; border-right: 2px solid; }
+.print-mark--bl { bottom: 4px; left: 4px; border-bottom: 2px solid; border-left: 2px solid; }
+.print-mark--br { bottom: 4px; right: 4px; border-bottom: 2px solid; border-right: 2px solid; }
+.print-guide {
+  position: absolute;
+  left: 7%;
+  right: 7%;
+  border-top: 1.5px dashed var(--azure);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+}
+.print-guide i {
+  position: absolute;
+  left: 0;
+  top: -1.7em;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--azure-deep);
+}
+.print-guide--cap { top: 24%; }
+.print-guide--base { top: 62.5%; }
+.print-stage--hover .print-guide {
+  opacity: 0.75;
+}
+
+/* code: source that renders */
+.code-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+}
+.code-flip {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s var(--ease-out);
+}
+.code-flip--on {
+  transform: rotateX(180deg);
+}
+.code-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.code-face--src {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 24px 22px;
+  box-shadow: var(--shadow-card);
+}
+.code-chrome {
+  display: flex;
+  gap: 6px;
+}
+.code-chrome i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line);
+}
+.code-src {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+  font-size: clamp(15px, 1.35vw, 19px);
+  white-space: nowrap;
+  color: var(--ink);
+}
+.tok-p { color: var(--ink-50); }
+.tok-tag { color: var(--azure-deep); }
+.tok-attr { color: var(--pink-deep); }
+.tok-str { color: var(--pink); }
+.code-face--out {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: rotateX(180deg);
+}
+.code-demo-btn {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(20px, 1.9vw, 26px);
+  background: var(--pink);
+  color: #fff;
+  padding: 16px 40px;
+  border-radius: 100px;
+  box-shadow: var(--shadow-lift);
+}
+
+@media (max-width: 860px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+  .hero-stage {
     display: none;
   }
 }
@@ -318,16 +531,28 @@
   transform-origin: center;
 }
 
-/* ================= Marquee bands ================= */
-/* Full-bleed rolling type between sections. The track is one infinite
-   transform tween; scroll velocity throws it around (Marquee.jsx). */
+/* ================= Marquee ================= */
+/* Two ink-black bands crossing at opposite angles, rolling opposite
+   ways (Marquee.jsx). Words in cream / pink / azure, plus outlines. */
 .marquee {
-  overflow: hidden;
-  padding: clamp(30px, 6vh, 60px) 0;
+  position: relative;
+  padding: clamp(60px, 11vh, 120px) 0;
 }
-.marquee--tilt {
-  rotate: -2deg;
-  scale: 1.03;
+.marquee-band {
+  width: 110vw;
+  margin-left: -5vw;
+  background: var(--ink);
+  padding: 0.28em 0;
+  overflow: hidden;
+  font-size: clamp(38px, 5.4vw, 84px);
+  box-shadow: 0 10px 30px rgba(24, 22, 22, 0.12);
+}
+.marquee-band--a {
+  transform: rotate(-2.4deg);
+}
+.marquee-band--b {
+  transform: rotate(2deg);
+  margin-top: -1.05em;
 }
 .marquee-track {
   display: flex;
@@ -341,24 +566,36 @@
 .marquee-item {
   display: inline-flex;
   align-items: center;
-  gap: 0.32em;
-  padding-right: 0.32em;
+  gap: 0.34em;
+  padding-right: 0.34em;
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(44px, 6.6vw, 100px);
-  line-height: 1.1;
+  font-size: 1em;
+  line-height: 1.3;
   white-space: nowrap;
-  color: var(--ink);
+}
+/* inks on the black band - all lightened for contrast */
+.marquee-item--cream {
+  color: var(--bg);
+}
+.marquee-item--pink {
+  color: #f27fb2;
 }
 .marquee-item--outline {
   color: transparent;
-  -webkit-text-stroke: 2px var(--ink);
+  -webkit-text-stroke: 2px var(--bg);
+}
+.marquee-item--azure {
+  color: #4fc1f0;
 }
 .marquee-ast {
-  width: 0.4em;
-  height: 0.4em;
-  color: var(--pink);
+  width: 0.38em;
+  height: 0.38em;
+  color: #f27fb2;
   flex: none;
+}
+.marquee-ast--azure {
+  color: #4fc1f0;
 }
 
 /* ================= Sections ================= */
