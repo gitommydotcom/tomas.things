@@ -29,8 +29,8 @@ export default function Contact() {
 
         <motion.div
           className="contact-actions"
-          initial={{ opacity: 0, y: 22 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ y: 30 }}
+          whileInView={{ y: 0 }}
           viewport={{ once: true, margin: '-10% 0px' }}
           transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}
         >

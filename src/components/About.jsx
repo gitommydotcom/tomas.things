@@ -34,12 +34,14 @@ export default function About() {
   useEffect(() => {
     const mm = gsap.matchMedia(sectionRef)
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      // the lede inks itself in word by word, scrubbed to the scrollbar
+      // the lede inks itself in word by word, scrubbed to the scrollbar.
+      // Solid color to solid color - the words are printed light and
+      // the ink fills in; nothing is transparent, nothing fades.
       gsap.fromTo(
         '.lede-word',
-        { opacity: 0.14 },
+        { color: '#d3c8ba' },
         {
-          opacity: 1,
+          color: '#181616',
           stagger: 0.06,
           ease: 'none',
           scrollTrigger: {
@@ -78,8 +80,8 @@ export default function About() {
       <div className="about-grid">
         <div className="about-copy">
           <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 32 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: '-10% 0px' }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
           >
@@ -90,8 +92,8 @@ export default function About() {
             the website, the video.
           </motion.p>
           <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 32 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: '-10% 0px' }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.18 }}
           >
@@ -115,8 +117,8 @@ export default function About() {
 
           <motion.div
             className="idea-thing"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ y: 28 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: '-10% 0px' }}
             transition={{ duration: 0.8, ease: EASE }}
             aria-hidden="true"
@@ -138,8 +140,8 @@ export default function About() {
               <motion.li
                 key={name}
                 className="craft-row"
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ y: 22 }}
+                whileInView={{ y: 0 }}
                 viewport={{ once: true, margin: '-8% 0px' }}
                 transition={{ duration: 0.7, ease: EASE, delay: i * 0.06 }}
               >
@@ -151,8 +153,8 @@ export default function About() {
 
           <motion.div
             className="about-toolkit"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ y: 24 }}
+            whileInView={{ y: 0 }}
             viewport={{ once: true, margin: '-8% 0px' }}
             transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
           >

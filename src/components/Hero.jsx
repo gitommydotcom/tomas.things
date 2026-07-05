@@ -272,8 +272,8 @@ export default function Hero() {
           <div className="hero-subs">
             <motion.p
               className="hero-sub"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ y: 22 }}
+              animate={{ y: 0 }}
               transition={{ duration: 0.9, ease: EASE, delay: 1.25 }}
             >
               Design, print, code - from the idea to the finished thing.
@@ -287,8 +287,8 @@ export default function Hero() {
 
       <motion.div
         className="hero-scroll"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{ y: 16 }}
+        animate={{ y: 0 }}
         transition={{ duration: 0.9, ease: EASE, delay: 1.8 }}
         aria-hidden="true"
       >

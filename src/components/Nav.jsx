@@ -22,8 +22,8 @@ export default function Nav() {
   return (
     <motion.header
       className={`nav ${scrolled ? 'nav--scrolled' : ''}`}
-      initial={{ y: -12, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      initial={{ y: -14 }}
+      animate={{ y: 0 }}
       transition={{ duration: 0.9, ease: EASE, delay: 1.1 }}
     >
       <a className="skip-link" href="#work">

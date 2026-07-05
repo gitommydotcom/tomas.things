@@ -273,7 +273,7 @@
   font-size: clamp(140px, 14.5vw, 220px);
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 2.5px var(--ink);
+  -webkit-text-stroke: 3px var(--azure);
   transition: font-variation-settings 0.25s ease;
   will-change: transform;
 }
@@ -467,19 +467,24 @@
   width: 26px;
   height: 26px;
   color: var(--pink);
-  opacity: 0;
+  /* hidden by size, not by opacity - the burst pops and shrinks */
+  transform: scale(0);
   pointer-events: none;
 }
 .code-burst-ast--azure {
   color: var(--azure);
 }
 
+/* on small screens the stage stacks under the slogan - every mode is
+   touch-native (pointer drags, sliders, taps), so nothing is lost */
 @media (max-width: 860px) {
   .hero-inner {
     grid-template-columns: 1fr;
+    gap: clamp(40px, 7vh, 64px);
   }
   .hero-stage {
-    display: none;
+    width: min(440px, 100%);
+    margin-inline: auto;
   }
 }
 
@@ -831,11 +836,10 @@
 .work-row-arrow {
   width: 46px;
   justify-self: end;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition:
-    opacity 0.45s var(--ease-out),
-    transform 0.45s var(--ease-out);
+  /* hidden by scale, not opacity - it springs out on hover */
+  transform: translateX(-14px) scale(0);
+  transform-origin: left center;
+  transition: transform 0.45s var(--ease-out);
 }
 /* wayfinding arrows use the interaction color, not the brand pink */
 .work-row-arrow path {
@@ -843,8 +847,7 @@
 }
 .work-row:hover .work-row-arrow,
 .work-row:focus-visible .work-row-arrow {
-  opacity: 1;
-  transform: translateX(0);
+  transform: translateX(0) scale(1);
 }
 @media (max-width: 640px) {
   .work-row {

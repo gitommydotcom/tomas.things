@@ -2,6 +2,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { BrandAsterisk } from './Doodles.jsx'
 import '@fontsource-variable/fraunces/full.css'
+import '@fontsource-variable/fraunces/full-italic.css'
+
+/* touch devices get tap-worded captions; the interactions themselves
+   (pointer drag, sliders, taps) work the same everywhere */
+const TOUCH = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
 
 /*
  * The hero's second protagonist: an interactive workbench with three
@@ -96,7 +101,6 @@ function BezierRig() {
         { strokeDashoffset: 0, duration: 1.1, ease: 'power3.out', delay: 0.1 },
       )
       gsap.from([hStart, hEnd, kC1, kH1, kH2, aS, aE], {
-        autoAlpha: 0,
         scale: 0,
         transformOrigin: '50% 50%',
         stagger: 0.05,
@@ -224,19 +228,16 @@ function BezierRig() {
         <rect className="rig-anchor rig-anchor--start" width="14" height="14" data-drag="start" />
         <rect className="rig-anchor rig-anchor--end" width="16" height="16" data-drag="end" />
       </svg>
-      <p className="stage-caption">drag the points · click the space to shuffle</p>
+      <p className="stage-caption">
+        drag the points · {TOUCH ? 'tap' : 'click'} the space to shuffle
+      </p>
     </div>
   )
 }
 
 /* ---------------- Print: the variable serif specimen ---------------- */
 
-/* glyphs with strong serif personalities; Fraunces' WONK axis swaps in
-   its alternate letterforms - real alternates, not a font change */
-const GLYPHS = ['a', 'g', 'R', 'Q', '&']
-
 function PrintLetter() {
-  const [glyph, setGlyph] = useState(0)
   const [weight, setWeight] = useState(620)
   const [height, setHeight] = useState(1)
   const [alt, setAlt] = useState(false)
@@ -244,10 +245,9 @@ function PrintLetter() {
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    gsap.from(letterRef.current, { autoAlpha: 0, scale: 0.7, duration: 0.8, ease: 'back.out(1.8)' })
+    gsap.from(letterRef.current, { scale: 0.7, duration: 0.8, ease: 'back.out(1.8)' })
     gsap.from('.print-controls > *', {
-      autoAlpha: 0,
-      y: 10,
+      y: 12,
       stagger: 0.07,
       duration: 0.5,
       ease: 'power3.out',
@@ -256,7 +256,6 @@ function PrintLetter() {
   }, [])
 
   const stamp = () => {
-    setGlyph((g) => (g + 1) % GLYPHS.length)
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     gsap.fromTo(
       letterRef.current,
@@ -268,15 +267,18 @@ function PrintLetter() {
   return (
     <div className="print-stage" aria-hidden="true">
       <span className="print-letter-wrap" style={{ transform: `scaleY(${height})` }}>
+        {/* the capital A, azure outline; "alternates" swaps in the
+            italic cut - Fraunces' genuinely different letterform */}
         <span
           ref={letterRef}
           className="print-letter"
           style={{
             fontVariationSettings: `'opsz' 144, 'wght' ${weight}, 'SOFT' 0, 'WONK' ${alt ? 1 : 0}`,
+            fontStyle: alt ? 'italic' : 'normal',
           }}
           onClick={stamp}
         >
-          {GLYPHS[glyph]}
+          A
         </span>
       </span>
       <div className="print-controls">
@@ -311,7 +313,9 @@ function PrintLetter() {
           alternates
         </button>
       </div>
-      <p className="stage-caption">Fraunces · pull the sliders · click the glyph for the next one</p>
+      <p className="stage-caption">
+        Fraunces · pull the sliders · {TOUCH ? 'tap' : 'click'} the A to stamp it
+      </p>
     </div>
   )
 }
@@ -338,8 +342,7 @@ function CodeLine() {
     // 3D flip - a leftover inline transform from the tween would win
     // over the class and block the rotation
     gsap.from(rootRef.current.querySelector('.code-flip'), {
-      autoAlpha: 0,
-      y: 16,
+      y: 26,
       duration: 0.7,
       ease: 'power3.out',
       clearProps: 'all',
@@ -354,22 +357,23 @@ function CodeLine() {
     }
     wasShown.current = show
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    // no fade: the asterisks pop in at full ink and shrink away as
+    // they fly out
     const asts = rootRef.current.querySelectorAll('.code-burst-ast')
     asts.forEach((el, i) => {
       const { angle } = BURST[i]
       const dist = gsap.utils.random(70, 120)
       gsap.fromTo(
         el,
-        { x: 0, y: 0, scale: 0, rotation: 0, autoAlpha: 1 },
+        { x: 0, y: 0, scale: gsap.utils.random(0.8, 1.1), rotation: 0 },
         {
           x: Math.cos(angle) * dist,
           y: Math.sin(angle) * dist,
-          scale: gsap.utils.random(0.7, 1.2),
+          scale: 0,
           rotation: gsap.utils.random(-140, 140),
-          autoAlpha: 0,
           duration: gsap.utils.random(0.7, 1),
           delay: 0.25,
-          ease: 'power3.out',
+          ease: 'power2.out',
           overwrite: true,
         },
       )
@@ -420,7 +424,15 @@ function CodeLine() {
           </span>
         </div>
       </div>
-      <p className="stage-caption">{show ? 'click to keep it' : 'hover to render it'}</p>
+      <p className="stage-caption">
+        {show
+          ? TOUCH
+            ? 'tap to flip it back'
+            : 'click to keep it'
+          : TOUCH
+            ? 'tap to render it'
+            : 'hover to render it'}
+      </p>
     </div>
   )
 }
@@ -443,8 +455,7 @@ export default function HeroStage() {
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     gsap.from(rootRef.current, {
-      autoAlpha: 0,
-      y: 26,
+      y: 42,
       duration: 1,
       ease: 'power3.out',
       delay: 1.2,

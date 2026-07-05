@@ -13,7 +13,7 @@ gsap.registerPlugin(ScrollTrigger)
  * Selected work as an editorial index, animated by the scrollbar:
  * rows rise in as they enter, thumbnails drift in gentle parallax,
  * the whole list leans with your scroll velocity, and the CTA banner
- * scales up scrubbed to the scroll. Transforms and opacity only.
+ * scales up scrubbed to the scroll. Movement only - nothing fades.
  */
 function Row({ project, onOpen }) {
   const { index, category, title, blurb, cover, coverAlt } = project
@@ -50,14 +50,13 @@ export default function Work() {
   useEffect(() => {
     const mm = gsap.matchMedia(sectionRef)
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      // rows rise in once, staggered by their own position
+      // rows glide up into place as they enter - movement only, no fade
       gsap.utils.toArray('.work-list li').forEach((row) => {
         gsap.from(row, {
-          autoAlpha: 0,
-          y: 48,
+          y: 70,
           duration: 0.85,
           ease: 'power3.out',
-          scrollTrigger: { trigger: row, start: 'top 94%', once: true },
+          scrollTrigger: { trigger: row, start: 'top 96%', once: true },
         })
       })
       // thumbnails drift against the scroll while their row is on screen
@@ -98,14 +97,13 @@ export default function Work() {
           }
         },
       })
-      // CTA banner scales up, scrubbed to the scrollbar
+      // CTA banner rises and scales up, scrubbed to the scrollbar
       gsap.fromTo(
         '.cta-banner',
-        { y: 70, scale: 0.94, autoAlpha: 0 },
+        { y: 90, scale: 0.92 },
         {
           y: 0,
           scale: 1,
-          autoAlpha: 1,
           ease: 'none',
           scrollTrigger: {
             trigger: '.cta-banner',
