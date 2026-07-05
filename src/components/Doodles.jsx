@@ -79,6 +79,7 @@ export function SqCreature({ eyeRef, ...props }) {
   return (
     <svg viewBox="0 0 130 74" aria-hidden="true" {...props}>
       <path
+        className="creature-body"
         d="M8 58 C 18 22, 46 24, 54 48 C 61 68, 88 66, 97 42 C 100 34, 104 28, 112 26"
         strokeWidth="7"
         {...strokeProps}

@@ -35,15 +35,16 @@ function BezierRig() {
     const curve = q('.rig-curve')
     const hStart = q('.rig-handle--start')
     const hEnd = q('.rig-handle--end')
-    const kC1 = q('.rig-knob--c1')
-    const kH1 = q('.rig-knob--h1')
-    const kH2 = q('.rig-knob--h2')
-    const aS = q('.rig-anchor--start')
-    const aE = q('.rig-anchor--end')
+    const gC1 = q('.rig-grab--c1')
+    const gH1 = q('.rig-grab--h1')
+    const gH2 = q('.rig-grab--h2')
+    const gS = q('.rig-grab--start')
+    const gE = q('.rig-grab--end')
 
     // one state object drives every SVG attribute - no React re-renders
     const s = { sx: 34, sy: 192, ex: 252, ey: 78, c1x: 86, c1y: 60, hx: -64, hy: -58, wave: 0 }
 
+    const place = (g, x, y) => g.setAttribute('transform', `translate(${x} ${y})`)
     const render = () => {
       const c1y = s.c1y + s.wave * 12
       curve.setAttribute(
@@ -53,21 +54,16 @@ function BezierRig() {
       const k0x = s.sx + (s.c1x - s.sx) * F
       const k0y = s.sy + (c1y - s.sy) * F
       hStart.setAttribute('d', `M${s.sx} ${s.sy} L ${k0x} ${k0y}`)
-      kC1.setAttribute('cx', k0x)
-      kC1.setAttribute('cy', k0y)
+      place(gC1, k0x, k0y)
       const k1x = s.ex + s.hx * F
       const k1y = s.ey + s.hy * F
       const k2x = s.ex - s.hx * F
       const k2y = s.ey - s.hy * F
       hEnd.setAttribute('d', `M${k1x} ${k1y} L ${k2x} ${k2y}`)
-      kH1.setAttribute('cx', k1x)
-      kH1.setAttribute('cy', k1y)
-      kH2.setAttribute('cx', k2x)
-      kH2.setAttribute('cy', k2y)
-      aS.setAttribute('x', s.sx - 7)
-      aS.setAttribute('y', s.sy - 7)
-      aE.setAttribute('x', s.ex - 8)
-      aE.setAttribute('y', s.ey - 8)
+      place(gH1, k1x, k1y)
+      place(gH2, k2x, k2y)
+      place(gS, s.sx, s.sy)
+      place(gE, s.ex, s.ey)
     }
     render()
 
@@ -100,13 +96,17 @@ function BezierRig() {
         { strokeDashoffset: 1 },
         { strokeDashoffset: 0, duration: 1.1, ease: 'power3.out', delay: 0.1 },
       )
-      gsap.from([hStart, hEnd, kC1, kH1, kH2, aS, aE], {
+      // pop the visible knobs/anchors, not the grab groups - the groups'
+      // transforms belong to render(). clearProps hands the transform
+      // back to CSS afterwards so the hover scale keeps working.
+      gsap.from([hStart, hEnd, ...svg.querySelectorAll('.rig-knob, .rig-anchor')], {
         scale: 0,
         transformOrigin: '50% 50%',
         stagger: 0.05,
         duration: 0.5,
         ease: 'back.out(2.2)',
         delay: 0.6,
+        clearProps: 'transform',
       })
       startWave()
     }, svg)
@@ -222,11 +222,28 @@ function BezierRig() {
         />
         <path className="rig-handle rig-handle--start" d="" />
         <path className="rig-handle rig-handle--end" d="" />
-        <circle className="rig-knob rig-knob--c1" r="7" data-drag="c1" />
-        <circle className="rig-knob rig-knob--h1" r="7" data-drag="h1" />
-        <circle className="rig-knob rig-knob--h2" r="7" data-drag="h2" />
-        <rect className="rig-anchor rig-anchor--start" width="14" height="14" data-drag="start" />
-        <rect className="rig-anchor rig-anchor--end" width="16" height="16" data-drag="end" />
+        {/* each draggable is a group: an invisible halo (~50px on a
+            phone) makes the small knob easy to grab with a finger */}
+        <g className="rig-grab rig-grab--c1" data-drag="c1">
+          <circle className="rig-halo" r="20" />
+          <circle className="rig-knob" r="7" />
+        </g>
+        <g className="rig-grab rig-grab--h1" data-drag="h1">
+          <circle className="rig-halo" r="20" />
+          <circle className="rig-knob" r="7" />
+        </g>
+        <g className="rig-grab rig-grab--h2" data-drag="h2">
+          <circle className="rig-halo" r="20" />
+          <circle className="rig-knob" r="7" />
+        </g>
+        <g className="rig-grab rig-grab--start" data-drag="start">
+          <circle className="rig-halo" r="20" />
+          <rect className="rig-anchor rig-anchor--start" x="-7" y="-7" width="14" height="14" />
+        </g>
+        <g className="rig-grab rig-grab--end" data-drag="end">
+          <circle className="rig-halo" r="20" />
+          <rect className="rig-anchor" x="-8" y="-8" width="16" height="16" />
+        </g>
       </svg>
       <p className="stage-caption">
         drag the points · {TOUCH ? 'tap' : 'click'} the space to shuffle
@@ -235,9 +252,19 @@ function BezierRig() {
   )
 }
 
-/* ---------------- Print: the variable serif specimen ---------------- */
+/* ---------------- Print: the type specimen ---------------- */
+
+/* tapping the A cycles through the site's typefaces; the sliders keep
+   working on all of them (Fraunces via its variable axes, the others
+   via font-weight) */
+const FONTS = [
+  { label: 'Fraunces', family: "'Fraunces Variable', Georgia, 'Times New Roman', serif", variable: true },
+  { label: 'Pepi', family: "'Pepi', 'Inter Variable', sans-serif" },
+  { label: 'Inter', family: "'Inter Variable', system-ui, sans-serif" },
+]
 
 function PrintLetter() {
+  const [font, setFont] = useState(0)
   const [weight, setWeight] = useState(620)
   const [height, setHeight] = useState(1)
   const [alt, setAlt] = useState(false)
@@ -256,6 +283,7 @@ function PrintLetter() {
   }, [])
 
   const stamp = () => {
+    setFont((f) => (f + 1) % FONTS.length)
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     gsap.fromTo(
       letterRef.current,
@@ -264,17 +292,23 @@ function PrintLetter() {
     )
   }
 
+  const f = FONTS[font]
   return (
     <div className="print-stage" aria-hidden="true">
       <span className="print-letter-wrap" style={{ transform: `scaleY(${height})` }}>
         {/* the capital A, azure outline; "alternates" swaps in the
-            italic cut - Fraunces' genuinely different letterform */}
+            italic cut */}
         <span
           ref={letterRef}
           className="print-letter"
           style={{
-            fontVariationSettings: `'opsz' 144, 'wght' ${weight}, 'SOFT' 0, 'WONK' ${alt ? 1 : 0}`,
+            fontFamily: f.family,
             fontStyle: alt ? 'italic' : 'normal',
+            ...(f.variable
+              ? {
+                  fontVariationSettings: `'opsz' 144, 'wght' ${weight}, 'SOFT' 0, 'WONK' ${alt ? 1 : 0}`,
+                }
+              : { fontWeight: weight }),
           }}
           onClick={stamp}
         >
@@ -314,7 +348,7 @@ function PrintLetter() {
         </button>
       </div>
       <p className="stage-caption">
-        Fraunces · pull the sliders · {TOUCH ? 'tap' : 'click'} the A to stamp it
+        {f.label} · pull the sliders · {TOUCH ? 'tap' : 'click'} the A for the next font
       </p>
     </div>
   )
@@ -330,11 +364,11 @@ const BURST = Array.from({ length: 6 }, (_, i) => ({
 }))
 
 function CodeLine() {
-  const [pinned, setPinned] = useState(false)
-  const [hover, setHover] = useState(false)
+  // one clean toggle: click/tap renders the button, click/tap again
+  // flips it back to source
+  const [show, setShow] = useState(false)
   const rootRef = useRef(null)
   const wasShown = useRef(false)
-  const show = pinned || hover
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -384,9 +418,7 @@ function CodeLine() {
     <div
       className="code-stage"
       ref={rootRef}
-      onClick={() => setPinned((p) => !p)}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
+      onClick={() => setShow((v) => !v)}
       aria-hidden="true"
     >
       <div className={`code-flip ${show ? 'code-flip--on' : ''}`}>
@@ -425,13 +457,13 @@ function CodeLine() {
         </div>
       </div>
       <p className="stage-caption">
-        {show
-          ? TOUCH
+        {TOUCH
+          ? show
             ? 'tap to flip it back'
-            : 'click to keep it'
-          : TOUCH
-            ? 'tap to render it'
-            : 'hover to render it'}
+            : 'tap to render it'
+          : show
+            ? 'click to flip it back'
+            : 'click to render it'}
       </p>
     </div>
   )
