@@ -118,20 +118,21 @@ export function WaveCreature(props) {
   )
 }
 
-/* Ringo: a stroke that ties itself into a little ring mid-flight.
-   The viewBox has headroom above so the eyes never get clipped
-   while the hop (CSS, .work-creature) moves the whole svg. */
-export function LoopCreature(props) {
+/* Ringo: a round spiral - the stroke curls into a snail-shell coil
+   (semicircle arcs of growing radius, all one smooth turn) and the
+   tail flies out under the eyes. The viewBox has headroom above so
+   nothing clips while the hop (CSS, .work-creature) moves the svg. */
+export function SpiralCreature(props) {
   return (
-    <svg viewBox="0 -8 120 76" aria-hidden="true" {...props}>
+    <svg viewBox="0 -8 126 80" aria-hidden="true" {...props}>
       <path
-        d="M6 54 C 22 60, 38 58, 50 48 C 64 36, 70 14, 58 11 C 48 9, 44 26, 57 31 C 72 37, 88 32, 98 20"
+        d="M50 42 A7 7 0 0 0 36 42 A12 12 0 0 0 60 42 A18 18 0 0 0 24 42 A25 25 0 0 0 74 42 C 76 28, 88 16, 104 18"
         strokeWidth="7"
         {...strokeProps}
       />
       <g className="creature-eyes">
-        <circle cx="96" cy="6" r="5" fill="var(--ink)" />
-        <circle cx="110" cy="2" r="5" fill="var(--ink)" />
+        <circle cx="102" cy="6" r="5" fill="var(--ink)" />
+        <circle cx="116" cy="2" r="5" fill="var(--ink)" />
       </g>
     </svg>
   )

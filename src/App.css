@@ -865,7 +865,7 @@
   gap: clamp(14px, 2vw, 26px);
 }
 .work-creature {
-  width: clamp(54px, 5.2vw, 82px);
+  width: clamp(60px, 5.8vw, 92px);
   flex: none;
   margin-bottom: 6px;
   overflow: visible;
