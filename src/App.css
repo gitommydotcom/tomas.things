@@ -278,8 +278,13 @@
   font-family: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
   font-size: clamp(140px, 14.5vw, 220px);
   line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 2px var(--azure);
+  /* paper fill + stroke painted underneath: at heavy weights a
+     centered text-stroke shows the crossbar and stems crossing each
+     other inside the glyph; painting the stroke first and filling on
+     top keeps one clean outline */
+  color: var(--bg);
+  -webkit-text-stroke: 2.5px var(--azure);
+  paint-order: stroke fill;
   transition: font-variation-settings 0.25s ease;
   will-change: transform;
 }
@@ -288,13 +293,14 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 10px 20px;
+  gap: 6px 16px;
   margin-top: 6px;
+  max-width: 100%;
 }
 .print-ctl {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 .print-ctl span {
   font-size: 10.5px;
@@ -309,7 +315,7 @@
 .print-ctl input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
-  width: clamp(110px, 12vw, 150px);
+  width: clamp(96px, 11vw, 150px);
   height: 36px;
   background: transparent;
   touch-action: none;
@@ -393,10 +399,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  max-width: 100%;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 18px 24px 22px;
+  padding: 18px clamp(14px, 1.7vw, 24px) 22px;
   box-shadow: var(--shadow-card);
 }
 .code-chrome {
@@ -411,9 +418,16 @@
 }
 .code-src {
   font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
-  font-size: clamp(15px, 1.35vw, 19px);
+  /* sized so the nowrap line always fits the stage: full-width on
+     phones, a ~33vw side column on desktop */
+  font-size: clamp(12.5px, 3.4vw, 17px);
   white-space: nowrap;
   color: var(--ink);
+}
+@media (min-width: 861px) {
+  .code-src {
+    font-size: clamp(13px, 1.32vw, 19px);
+  }
 }
 .tok-p { color: var(--ink-50); }
 .tok-tag { color: var(--azure-deep); }
@@ -496,14 +510,19 @@
 }
 
 /* on small screens the stage stacks under the slogan - every mode is
-   touch-native (pointer drags, sliders, taps), so nothing is lost */
+   touch-native (pointer drags, sliders, taps), so nothing is lost.
+   minmax(0,1fr): a plain 1fr track honors the content's min-width, so
+   wide stage content (slider row, nowrap code line) blew the track
+   past the viewport and the stage sat clipped off-center on phones. */
 @media (max-width: 860px) {
   .hero-inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: clamp(40px, 7vh, 64px);
   }
   .hero-stage {
     width: min(440px, 100%);
+    max-width: 100%;
+    min-width: 0;
     margin-inline: auto;
   }
 }
