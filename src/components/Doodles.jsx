@@ -3,7 +3,9 @@ import { EASE } from './Reveal.jsx'
 
 /*
  * One hand-drawn stroke, many jobs: it underlines "ideas", becomes the
- * idea->thing arrow, and - with two eyes - a family of little creatures.
+ * idea->thing arrow, and - with two eyes - a family of little creatures:
+ * Elvis waves beside the About title, Ringo loops above the selected
+ * work, Viky sways in the footer watching you leave.
  * The asterisk is the exact mark from Tomáš's EPS, not a lookalike.
  */
 
@@ -74,7 +76,7 @@ export function SqArrow({ delay = 0, inView = true, draw = true, ...rest }) {
 }
 
 
-/* The classic: a wavy line that grew a pair of eyes. */
+/* Viky, the classic: a wavy line that grew a pair of eyes. */
 export function SqCreature({ eyeRef, ...props }) {
   return (
     <svg viewBox="0 0 130 74" aria-hidden="true" {...props}>
@@ -92,7 +94,7 @@ export function SqCreature({ eyeRef, ...props }) {
   )
 }
 
-/* A tall squiggle with a little waving arm.
+/* Elvis: a tall squiggle with a little waving arm.
    The viewBox has headroom above so the waving arm never gets clipped. */
 export function WaveCreature(props) {
   return (
@@ -111,6 +113,25 @@ export function WaveCreature(props) {
       <g className="creature-eyes">
         <circle cx="30" cy="22" r="4.5" fill="var(--ink)" />
         <circle cx="41" cy="20" r="4.5" fill="var(--ink)" />
+      </g>
+    </svg>
+  )
+}
+
+/* Ringo: a stroke that ties itself into a little ring mid-flight.
+   The viewBox has headroom above so the eyes never get clipped
+   while the hop (CSS, .work-creature) moves the whole svg. */
+export function LoopCreature(props) {
+  return (
+    <svg viewBox="0 -8 120 76" aria-hidden="true" {...props}>
+      <path
+        d="M6 54 C 22 60, 38 58, 50 48 C 64 36, 70 14, 58 11 C 48 9, 44 26, 57 31 C 72 37, 88 32, 98 20"
+        strokeWidth="7"
+        {...strokeProps}
+      />
+      <g className="creature-eyes">
+        <circle cx="96" cy="6" r="5" fill="var(--ink)" />
+        <circle cx="110" cy="2" r="5" fill="var(--ink)" />
       </g>
     </svg>
   )

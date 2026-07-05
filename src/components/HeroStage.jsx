@@ -40,6 +40,8 @@ function BezierRig() {
     const gH2 = q('.rig-grab--h2')
     const gS = q('.rig-grab--start')
     const gE = q('.rig-grab--end')
+    const hint = q('.rig-hint')
+    const hintPop = q('.rig-hint-pop')
 
     // one state object drives every SVG attribute - no React re-renders
     const s = { sx: 34, sy: 192, ex: 252, ey: 78, c1x: 86, c1y: 60, hx: -64, hy: -58, wave: 0 }
@@ -64,10 +66,40 @@ function BezierRig() {
       place(gH2, k2x, k2y)
       place(gS, s.sx, s.sy)
       place(gE, s.ex, s.ey)
+      place(hint, s.ex, s.ey) // the nudge tag rides along with its anchor
     }
     render()
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // the rig has to LOOK touchable before anyone reads the caption:
+    // until the first touch the knobs breathe and a hand-written tag
+    // points at the end anchor. First pointer-down (or hovering any
+    // grab point) dismisses both, for good.
+    let found = false
+    const discover = () => {
+      if (found) return
+      found = true
+      rootRef.current?.classList.remove('rig--fresh')
+      gsap.killTweensOf(hintPop) // a still-delayed intro pop must not revive it
+      if (reduced) {
+        hint.style.display = 'none'
+        return
+      }
+      gsap.to(hintPop, {
+        scale: 0,
+        transformOrigin: '50% 50%',
+        duration: 0.3,
+        ease: 'back.in(1.6)',
+        onComplete: () => {
+          hint.style.display = 'none'
+        },
+      })
+    }
+    const spot = (e) => {
+      if (e.target.closest('[data-drag]')) discover()
+    }
+
     let waveTween = null
     const stopWave = () => {
       if (!waveTween) return
@@ -107,6 +139,14 @@ function BezierRig() {
         ease: 'back.out(2.2)',
         delay: 0.6,
         clearProps: 'transform',
+      })
+      // the nudge tag pops in once the curve has drawn itself
+      gsap.from(hintPop, {
+        scale: 0,
+        transformOrigin: '50% 50%',
+        duration: 0.55,
+        ease: 'back.out(2)',
+        delay: 1.4,
       })
       startWave()
     }, svg)
@@ -193,6 +233,8 @@ function BezierRig() {
     svg.addEventListener('click', shuffle)
     svg.addEventListener('pointerenter', enter)
     svg.addEventListener('pointerleave', leave)
+    svg.addEventListener('pointerdown', discover)
+    svg.addEventListener('pointerover', spot)
     return () => {
       svg.removeEventListener('pointerdown', down)
       svg.removeEventListener('pointermove', move)
@@ -201,13 +243,15 @@ function BezierRig() {
       svg.removeEventListener('click', shuffle)
       svg.removeEventListener('pointerenter', enter)
       svg.removeEventListener('pointerleave', leave)
+      svg.removeEventListener('pointerdown', discover)
+      svg.removeEventListener('pointerover', spot)
       waveTween?.kill()
       ctx.revert()
     }
   }, [])
 
   return (
-    <div className="rig" ref={rootRef}>
+    <div className="rig rig--fresh" ref={rootRef}>
       <svg viewBox={`0 0 ${VB.w} ${VB.h}`} aria-hidden="true">
         <rect width={VB.w} height={VB.h} fill="transparent" />
         <path
@@ -224,25 +268,38 @@ function BezierRig() {
         <path className="rig-handle rig-handle--end" d="" />
         {/* each draggable is a group: an invisible halo (~50px on a
             phone) makes the small knob easy to grab with a finger */}
-        <g className="rig-grab rig-grab--c1" data-drag="c1">
+        <g className="rig-grab rig-grab--c1" data-drag="c1" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <circle className="rig-knob" r="7" />
         </g>
-        <g className="rig-grab rig-grab--h1" data-drag="h1">
+        <g className="rig-grab rig-grab--h1" data-drag="h1" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <circle className="rig-knob" r="7" />
         </g>
-        <g className="rig-grab rig-grab--h2" data-drag="h2">
+        <g className="rig-grab rig-grab--h2" data-drag="h2" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <circle className="rig-knob" r="7" />
         </g>
-        <g className="rig-grab rig-grab--start" data-drag="start">
+        <g className="rig-grab rig-grab--start" data-drag="start" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <rect className="rig-anchor rig-anchor--start" x="-7" y="-7" width="14" height="14" />
         </g>
-        <g className="rig-grab rig-grab--end" data-drag="end">
+        <g className="rig-grab rig-grab--end" data-drag="end" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <rect className="rig-anchor" x="-8" y="-8" width="16" height="16" />
+        </g>
+        {/* the first-visit nudge: a hand-written tag hanging off the end
+            anchor. It bobs until the visitor touches the rig anywhere,
+            then it's gone for good. */}
+        <g className="rig-hint">
+          <g className="rig-hint-pop">
+            <g className="rig-hint-bob">
+              <path className="rig-hint-arrow" d="M0 26 C 4 21, -3 16, 1 11 M1 11 L -5 16 M1 11 L 6 17" />
+              <text className="rig-hint-text" x="0" y="44">
+                drag me!
+              </text>
+            </g>
+          </g>
         </g>
       </svg>
       <p className="stage-caption">

@@ -33,7 +33,8 @@ npm run preview  # preview the production build locally
   taps a word themselves.
 - `src/components/Doodles.jsx` — the exact EPS asterisk
   (`BrandAsterisk`) and the stroke family: underline, arrow, divider,
-  and the creatures (footer, peek, wave).
+  and the three brand creatures — Elvis waves in About, Ringo loops
+  above Selected work, Viky sways in the footer.
 - `src/components/Cursor.jsx` — the pink dot pointer (fine-pointer
   devices only; grows over interactive elements).
 - `src/assets/logo.svg` — the exact logotype from `EPS/logo.eps`.

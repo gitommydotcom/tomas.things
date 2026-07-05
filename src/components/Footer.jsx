@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { SqCreature } from './Doodles.jsx'
 
-/* the body line sways between two squiggles - same stroke, clearly
+/* Viky's body sways between two squiggles - same stroke, clearly
    different bends, so the little one never sits still */
 const BODY_A = 'M8 58 C 18 22, 46 24, 54 48 C 61 68, 88 66, 97 42 C 100 34, 104 28, 112 26'
 const BODY_B = 'M10 62 C 24 34, 42 10, 55 38 C 66 74, 84 56, 95 38 C 98 29, 106 27, 113 21'
@@ -10,7 +10,7 @@ const BODY_B = 'M10 62 C 24 34, 42 10, 55 38 C 66 74, 84 56, 95 38 C 98 29, 106 
 export default function Footer() {
   const eyesRef = useRef(null)
 
-  // the footer creature's eyes follow the pink dot around the page -
+  // Viky's eyes follow the pink dot around the page -
   // only while the footer is actually on screen, so scrolling elsewhere
   // never pays for the layout reads. The body sway is gated the same
   // way: the tween only plays while the footer is visible.
@@ -25,7 +25,8 @@ export default function Footer() {
       { attr: { d: BODY_A } },
       {
         attr: { d: BODY_B },
-        duration: 2.2,
+        // quick enough to read as alive, matching Elvis's wave up in About
+        duration: 1.5,
         ease: 'sine.inOut',
         yoyo: true,
         repeat: -1,
