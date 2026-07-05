@@ -212,23 +212,24 @@ export default function Hero() {
     }
   }, [])
 
-  // scrolling away pulls the hero up and fades it, scrubbed to the
-  // scrollbar - the first hint that this page moves with you
+  // scrolling away shears the slogan apart: each line slides out at
+  // its own speed and tilt, the stage drifts off the other way - the
+  // sentence literally comes apart into layers as you leave. No fade.
   const sectionRef = useRef(null)
   useEffect(() => {
     const mm = gsap.matchMedia()
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.to('.hero-inner', {
-        yPercent: -12,
-        autoAlpha: 0.2,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom 30%',
-          scrub: true,
-        },
+      const scrub = () => ({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: 'bottom 30%',
+        scrub: true,
       })
+      gsap.to('.hero-line--0', { xPercent: -18, rotate: -2, ease: 'none', scrollTrigger: scrub() })
+      gsap.to('.hero-line--1', { xPercent: 14, rotate: 1.2, ease: 'none', scrollTrigger: scrub() })
+      gsap.to('.hero-line--2', { xPercent: -9, rotate: -0.8, ease: 'none', scrollTrigger: scrub() })
+      gsap.to('.hero-subs', { xPercent: 8, ease: 'none', scrollTrigger: scrub() })
+      gsap.to('.hero-stage', { y: -90, rotate: 2.5, ease: 'none', scrollTrigger: scrub() })
     })
     return () => mm.revert()
   }, [])
@@ -245,7 +246,7 @@ export default function Hero() {
             ref={sloganRef}
           >
           {LINES.map((line, li) => (
-            <span className="hero-line" key={li}>
+            <span className={`hero-line hero-line--${li}`} key={li}>
               {line.map((word) => {
                 wordIndex += 1
                 const id = word.en
@@ -276,20 +277,6 @@ export default function Hero() {
               transition={{ duration: 0.9, ease: EASE, delay: 1.25 }}
             >
               Design, print, code - from the idea to the finished thing.
-            </motion.p>
-            <motion.p
-              className="hero-hint"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.9, ease: EASE, delay: 2.1 }}
-              aria-hidden="true"
-            >
-              <span className="hero-hint--hover">
-                psst: hover the slogan, it speaks three languages.
-              </span>
-              <span className="hero-hint--touch">
-                psst: the slogan speaks three languages, tap it.
-              </span>
             </motion.p>
           </div>
         </div>

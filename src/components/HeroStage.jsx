@@ -1,17 +1,19 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import { BrandAsterisk } from './Doodles.jsx'
+import '@fontsource-variable/fraunces/full.css'
 
 /*
- * The hero's second protagonist: an interactive stage with three live
- * modes, one per craft. The visitor switches them with the tabs below.
+ * The hero's second protagonist: an interactive workbench with three
+ * live modes, one per craft. The visitor switches them with the tabs
+ * below; every mode is a real little tool, not a looping gif.
  *
- *  Design - a working pen-tool rig: every anchor and handle is
- *           draggable with pixel precision, clicking the empty space
- *           shuffles the curve.
- *  Print  - a type specimen "A": click stamps the next cut, hovering
- *           lays the typographic grid over it.
- *  Code   - one line of source that renders into the real element on
- *           hover; click keeps it rendered.
+ *  Design - a working pen-tool rig: every anchor and handle drags
+ *           with pixel precision, clicking the space shuffles it.
+ *  Print  - a variable serif specimen (Fraunces): outline glyph with
+ *           real height, weight and alternates controls.
+ *  Code   - one line of source that flips into the real, fully
+ *           dressed element on hover; click keeps it.
  */
 
 /* ---------------- Design: the adjustable bezier ---------------- */
@@ -227,30 +229,34 @@ function BezierRig() {
   )
 }
 
-/* ---------------- Print: the type specimen ---------------- */
+/* ---------------- Print: the variable serif specimen ---------------- */
 
-const CUTS = [
-  { label: 'Pepi Black', style: { fontWeight: 900 } },
-  { label: 'Outline', style: { fontWeight: 900 }, cls: 'print-letter--outline' },
-  { label: 'Pink ink', style: { fontWeight: 900, color: 'var(--pink)' } },
-  { label: 'Azure ink', style: { fontWeight: 900, color: 'var(--azure)' } },
-  { label: 'Pepi Light', style: { fontWeight: 300 } },
-  { label: 'Light Italic', style: { fontWeight: 300, fontStyle: 'italic' } },
-  { label: 'Pepi Medium', style: { fontWeight: 500 } },
-]
+/* glyphs with strong serif personalities; Fraunces' WONK axis swaps in
+   its alternate letterforms - real alternates, not a font change */
+const GLYPHS = ['a', 'g', 'R', 'Q', '&']
 
 function PrintLetter() {
-  const [cut, setCut] = useState(0)
-  const [hover, setHover] = useState(false)
+  const [glyph, setGlyph] = useState(0)
+  const [weight, setWeight] = useState(620)
+  const [height, setHeight] = useState(1)
+  const [alt, setAlt] = useState(false)
   const letterRef = useRef(null)
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    gsap.from(letterRef.current, { autoAlpha: 0, scale: 0.6, duration: 0.8, ease: 'back.out(1.8)' })
+    gsap.from(letterRef.current, { autoAlpha: 0, scale: 0.7, duration: 0.8, ease: 'back.out(1.8)' })
+    gsap.from('.print-controls > *', {
+      autoAlpha: 0,
+      y: 10,
+      stagger: 0.07,
+      duration: 0.5,
+      ease: 'power3.out',
+      delay: 0.3,
+    })
   }, [])
 
   const stamp = () => {
-    setCut((c) => (c + 1) % CUTS.length)
+    setGlyph((g) => (g + 1) % GLYPHS.length)
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     gsap.fromTo(
       letterRef.current,
@@ -259,41 +265,71 @@ function PrintLetter() {
     )
   }
 
-  const c = CUTS[cut]
   return (
-    <div
-      className={`print-stage ${hover ? 'print-stage--hover' : ''}`}
-      onClick={stamp}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      aria-hidden="true"
-    >
-      <span className="print-mark print-mark--tl" />
-      <span className="print-mark print-mark--tr" />
-      <span className="print-mark print-mark--bl" />
-      <span className="print-mark print-mark--br" />
-      <span className="print-guide print-guide--cap">
-        <i>cap</i>
+    <div className="print-stage" aria-hidden="true">
+      <span className="print-letter-wrap" style={{ transform: `scaleY(${height})` }}>
+        <span
+          ref={letterRef}
+          className="print-letter"
+          style={{
+            fontVariationSettings: `'opsz' 144, 'wght' ${weight}, 'SOFT' 0, 'WONK' ${alt ? 1 : 0}`,
+          }}
+          onClick={stamp}
+        >
+          {GLYPHS[glyph]}
+        </span>
       </span>
-      <span className="print-guide print-guide--base">
-        <i>baseline</i>
-      </span>
-      <span ref={letterRef} className={`print-letter ${c.cls || ''}`} style={c.style}>
-        A
-      </span>
-      <p className="stage-caption">
-        {c.label} · {cut + 1}/{CUTS.length} · click for the next cut
-      </p>
+      <div className="print-controls">
+        <label className="print-ctl">
+          <span>height</span>
+          <input
+            type="range"
+            min="0.7"
+            max="1.5"
+            step="0.01"
+            value={height}
+            onChange={(e) => setHeight(+e.target.value)}
+          />
+        </label>
+        <label className="print-ctl">
+          <span>weight</span>
+          <input
+            type="range"
+            min="100"
+            max="900"
+            step="1"
+            value={weight}
+            onChange={(e) => setWeight(+e.target.value)}
+          />
+        </label>
+        <button
+          type="button"
+          className={`print-alt ${alt ? 'print-alt--on' : ''}`}
+          onClick={() => setAlt((a) => !a)}
+          aria-pressed={alt}
+        >
+          alternates
+        </button>
+      </div>
+      <p className="stage-caption">Fraunces · pull the sliders · click the glyph for the next one</p>
     </div>
   )
 }
 
 /* ---------------- Code: source that renders ---------------- */
 
+/* asterisk burst when the element compiles: fixed polar directions,
+   alternating brand colors */
+const BURST = Array.from({ length: 6 }, (_, i) => ({
+  angle: (i / 6) * Math.PI * 2 - Math.PI / 2,
+  azure: i % 2 === 1,
+}))
+
 function CodeLine() {
   const [pinned, setPinned] = useState(false)
   const [hover, setHover] = useState(false)
   const rootRef = useRef(null)
+  const wasShown = useRef(false)
   const show = pinned || hover
 
   useEffect(() => {
@@ -309,6 +345,36 @@ function CodeLine() {
       clearProps: 'all',
     })
   }, [])
+
+  // the moment the element renders, asterisks burst out from behind it
+  useEffect(() => {
+    if (!show || wasShown.current === show) {
+      wasShown.current = show
+      return
+    }
+    wasShown.current = show
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const asts = rootRef.current.querySelectorAll('.code-burst-ast')
+    asts.forEach((el, i) => {
+      const { angle } = BURST[i]
+      const dist = gsap.utils.random(70, 120)
+      gsap.fromTo(
+        el,
+        { x: 0, y: 0, scale: 0, rotation: 0, autoAlpha: 1 },
+        {
+          x: Math.cos(angle) * dist,
+          y: Math.sin(angle) * dist,
+          scale: gsap.utils.random(0.7, 1.2),
+          rotation: gsap.utils.random(-140, 140),
+          autoAlpha: 0,
+          duration: gsap.utils.random(0.7, 1),
+          delay: 0.25,
+          ease: 'power3.out',
+          overwrite: true,
+        },
+      )
+    })
+  }, [show])
 
   return (
     <div
@@ -340,7 +406,18 @@ function CodeLine() {
           </code>
         </div>
         <div className="code-face code-face--out">
-          <span className="code-demo-btn">ahoj!</span>
+          <span className="code-burst">
+            {BURST.map((b, i) => (
+              <BrandAsterisk
+                key={i}
+                className={`code-burst-ast ${b.azure ? 'code-burst-ast--azure' : ''}`}
+              />
+            ))}
+          </span>
+          <span className="code-demo-btn">
+            ahoj!
+            <BrandAsterisk className="code-demo-ast" />
+          </span>
         </div>
       </div>
       <p className="stage-caption">{show ? 'click to keep it' : 'hover to render it'}</p>
@@ -359,6 +436,9 @@ const MODES = [
 export default function HeroStage() {
   const [mode, setMode] = useState('design')
   const rootRef = useRef(null)
+  const tabsRef = useRef(null)
+  const indRef = useRef(null)
+  const indReady = useRef(false)
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -368,17 +448,42 @@ export default function HeroStage() {
       duration: 1,
       ease: 'power3.out',
       delay: 1.2,
+      clearProps: 'all',
     })
   }, [])
+
+  // the active-tab pill slides between tabs instead of jumping
+  useLayoutEffect(() => {
+    const place = () => {
+      const btn = tabsRef.current?.querySelector('[aria-selected="true"]')
+      if (!btn || !indRef.current) return
+      const target = { x: btn.offsetLeft, width: btn.offsetWidth }
+      if (!indReady.current) {
+        gsap.set(indRef.current, target)
+        indReady.current = true
+      } else {
+        gsap.to(indRef.current, { ...target, duration: 0.45, ease: 'power3.out' })
+      }
+    }
+    place()
+    document.fonts?.ready?.then(place)
+    window.addEventListener('resize', place)
+    return () => window.removeEventListener('resize', place)
+  }, [mode])
 
   return (
     <div className="hero-stage" ref={rootRef}>
       <div className="stage-canvas">
+        <span className="stage-mark stage-mark--tl" aria-hidden="true" />
+        <span className="stage-mark stage-mark--tr" aria-hidden="true" />
+        <span className="stage-mark stage-mark--bl" aria-hidden="true" />
+        <span className="stage-mark stage-mark--br" aria-hidden="true" />
         {mode === 'design' && <BezierRig />}
         {mode === 'print' && <PrintLetter />}
         {mode === 'code' && <CodeLine />}
       </div>
-      <div className="stage-tabs" role="tablist" aria-label="Pick a craft to play with">
+      <div className="stage-tabs" role="tablist" aria-label="Pick a craft to play with" ref={tabsRef}>
+        <span className="stage-tab-ind" ref={indRef} aria-hidden="true" />
         {MODES.map((m) => (
           <button
             key={m.id}
