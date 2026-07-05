@@ -40,11 +40,12 @@
   --pink: #db4082; /* exact asterisk pink — brand marks, expressive accents */
   --pink-deep: #b13366; /* darker pink for small text accents (AA) */
   --pink-soft: rgba(219, 64, 130, 0.1);
-  /* azure — the functional counterpart to the pink, for UI elements:
-     arrows, hovers, focus, numbering. Same two-tier structure. */
-  --azure: #2e86ab; /* large text & graphics (3.7:1 on cream, like the pink) */
-  --azure-deep: #1d6e94; /* small text & interactive accents (AA, 5:1) */
-  --azure-soft: rgba(46, 134, 171, 0.1);
+  /* azure — the "translating" color: the pink marks the things, the
+     azure marks the act of making them. Hero translations, the pen
+     tool, wayfinding arrows, hovers, focus. Same two-tier structure. */
+  --azure: #0f96d9; /* bright — large text & graphics (~3:1 on cream) */
+  --azure-deep: #0a6da3; /* small text & interactive accents (AA, 5:1) */
+  --azure-soft: rgba(15, 150, 217, 0.09);
 
   --font-display: 'Pepi', 'Inter Variable', system-ui, sans-serif;
   --font-body: 'Inter Variable', system-ui, -apple-system, sans-serif;

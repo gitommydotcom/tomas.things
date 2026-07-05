@@ -2,19 +2,19 @@ import { motion } from 'framer-motion'
 import { Reveal, EASE } from './Reveal.jsx'
 import { SqArrow, BrandAsterisk } from './Doodles.jsx'
 
-/* What "full-stack designer" actually means — the pipeline, one pair of hands. */
-const STACK = [
-  ['01', 'Identity & artwork', 'Logos, covers, posters — designed to survive real use'],
-  ['02', 'Print production', 'Press-ready files; inks, formats and finishes chosen up front'],
-  ['03', 'Web & code', 'Sites and tools, written by the same person who designed them'],
-  ['04', 'Motion & content', 'Video direction, edits, animation — timed and ready to post'],
-  ['05', 'The finish', 'Printed, online or working: you get the thing, not a file'],
+/* What I take care of — quiet list, no numbering, the words do the work. */
+const CRAFT = [
+  ['Identity & artwork', 'Logos, covers, posters — designed to survive real use'],
+  ['Print production', 'Press-ready files; inks, formats and finishes chosen up front'],
+  ['Web & code', 'Sites and tools, written by the same person who designed them'],
+  ['Motion & content', 'Video direction, edits, animation — timed and ready to post'],
+  ['The finish', 'Printed, online or working: you get the thing, not a file'],
 ]
 
-const SKILLS = [
-  'Photoshop', 'InDesign', 'Illustrator', 'Premiere Pro',
-  'HTML', 'JavaScript', 'Python', 'AI workflows', 'Offset print',
-  'EN · IT · CS',
+const TOOLKIT = [
+  ['Design', ['Photoshop', 'Illustrator', 'InDesign', 'Premiere Pro']],
+  ['Code', ['HTML & CSS', 'JavaScript', 'React', 'Python']],
+  ['Plus', ['AI workflows', 'Offset print', 'EN · IT · CZ']],
 ]
 
 export default function About() {
@@ -30,41 +30,44 @@ export default function About() {
         </Reveal>
       </header>
 
+      <motion.p
+        className="about-lede"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-10% 0px' }}
+        transition={{ duration: 0.9, ease: EASE }}
+      >
+        Hi, I'm Tomáš. I design things — and then I stay
+        to&nbsp;<em>build</em>&nbsp;them.
+      </motion.p>
+
       <div className="about-grid">
         <div className="about-copy">
-          <motion.p
-            className="about-lede"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-10% 0px' }}
-            transition={{ duration: 0.9, ease: EASE }}
-          >
-            Design and code are usually two people. Print and pixels usually
-            two more. Here, they're one — I design the thing, build the
-            thing, and hand it over finished.
-          </motion.p>
           <motion.p
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-10% 0px' }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
           >
-            Most projects die in the handoffs — designer to developer, file
-            to printer, idea to reality. I remove the handoffs. The person
-            who draws your logo is the same one who preps the offset plates,
-            writes the code and presses publish. Nothing gets lost in
-            between, because there is no in-between.
+            I grew up between Czech and Italian, forever translating one
+            half of my life to the other. Somewhere along the way that
+            became the job: I take an idea and carry it all the way into
+            the world — the sketch, the artwork, the press-ready file,
+            the website, the video.
           </motion.p>
           <motion.p
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-10% 0px' }}
-            transition={{ duration: 0.9, ease: EASE, delay: 0.2 }}
+            transition={{ duration: 0.9, ease: EASE, delay: 0.18 }}
           >
-            I grew up between languages — Czech, Italian, English — and I
-            work between disciplines the same way. Translation is the whole
-            job: idea to object, sketch to system, file to finished thing.
-            <em> AI multiplies my hands; it never replaces the eye.</em>
+            Most projects lose their spark in the handoffs — designer to
+            developer, file to printer, idea to reality. So I removed the
+            handoffs. The same pair of hands draws your logo, preps the
+            plates, writes the code and presses publish. You talk to one
+            person, and nothing gets lost in between, because there is no
+            in-between. <em>AI multiplies my hands; the eye — and the
+            care — stay mine.</em>
           </motion.p>
 
           <div className="about-quote">
@@ -85,44 +88,54 @@ export default function About() {
             aria-hidden="true"
           >
             <span className="idea-thing-word">idea</span>
-            <SqArrow className="idea-thing-arrow" delay={0.3} />
+            {/* static stroke: the draw-on animation never fired on iOS
+                and left the arrow as two dots */}
+            <SqArrow className="idea-thing-arrow" draw={false} />
             <span className="idea-thing-word idea-thing-word--bold">thing</span>
           </motion.div>
         </div>
 
         <div className="about-services">
           <Reveal as="p" className="eyebrow about-stack-label">
-            What full-stack means here
+            What I take care of
           </Reveal>
-          <ul className="service-list">
-            {STACK.map(([num, name, detail], i) => (
+          <ul className="craft-list">
+            {CRAFT.map(([name, detail], i) => (
               <motion.li
-                key={num}
-                className="service-row"
+                key={name}
+                className="craft-row"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-8% 0px' }}
-                transition={{ duration: 0.8, ease: EASE, delay: i * 0.08 }}
+                transition={{ duration: 0.8, ease: EASE, delay: i * 0.07 }}
               >
-                <span className="service-num">{num}</span>
-                <span className="service-name">{name}</span>
-                <span className="service-detail">{detail}</span>
+                <span className="craft-name">{name}</span>
+                <span className="craft-detail">{detail}</span>
               </motion.li>
             ))}
           </ul>
-          <motion.ul
-            className="skill-pills"
+
+          <motion.div
+            className="about-toolkit"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-8% 0px' }}
-            transition={{ duration: 0.8, ease: EASE, delay: 0.35 }}
+            transition={{ duration: 0.8, ease: EASE, delay: 0.3 }}
           >
-            {SKILLS.map((skill) => (
-              <li key={skill} className="pill">
-                {skill}
-              </li>
+            <p className="eyebrow about-stack-label">The toolbox</p>
+            {TOOLKIT.map(([group, skills]) => (
+              <div className="kit-group" key={group}>
+                <span className="kit-label">{group}</span>
+                <ul className="skill-pills">
+                  {skills.map((skill) => (
+                    <li key={skill} className="pill">
+                      {skill}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </motion.ul>
+          </motion.div>
         </div>
       </div>
     </section>

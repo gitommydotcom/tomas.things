@@ -1,56 +1,101 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { EASE } from './Reveal.jsx'
-import { SqUnderline, SqArrow, BrandAsterisk } from './Doodles.jsx'
+import { SqUnderline, SqArrow, BrandAsterisk, PenTool } from './Doodles.jsx'
 
 /*
- * The jewel piece. Each slogan word flips on hover (tap on touch) to its
- * Italian or Czech translation, alternating IT / CZ.
+ * The jewel piece. Each slogan word flips on hover (tap on touch) to a
+ * translation — Italian or Czech. Every word alternates between the two
+ * languages, starting from a random one, so both always show up and no
+ * two visits read the same.
  *
  * Layout rules:
  * - The slogan is composed of FIXED lines — words never jump between
  *   lines, on any screen. A flipping word only slides its own line's
  *   neighbours aside.
- * - Each word's width is measured continuously (hidden sizers +
+ * - Each face's width is measured continuously (hidden sizers +
  *   ResizeObserver), so the width transition is always px -> px and
  *   stays correct through font loading and window resizes.
+ * - Hover lives on a dedicated hit area that never shrinks below the
+ *   word's resting footprint, so the width animation can't push the
+ *   pointer off the word and make it rattle at the borders.
  */
+const LANGS = {
+  it: { label: 'IT', html: 'it' },
+  cz: { label: 'CZ', html: 'cs' }, // displayed as CZ; BCP-47 tag stays "cs"
+}
+
 const LINES = [
   [
-    { en: 'I', t: 'Io', lang: 'it' },
-    { en: 'translate', t: 'překládám', lang: 'cs' },
+    { en: 'I', it: 'Io', cz: 'Já' },
+    { en: 'translate', it: 'traduco', cz: 'překládám' },
   ],
   [
-    { en: 'ideas', t: 'idee', lang: 'it', contrast: true },
-    { en: 'into', t: 'do', lang: 'cs' },
+    { en: 'ideas', it: 'idee', cz: 'nápady', contrast: true },
+    { en: 'into', it: 'in', cz: 'do' },
   ],
-  [{ en: 'things', t: 'cose', lang: 'it', last: true }],
+  [{ en: 'things', it: 'cose', cz: 'věci', last: true }],
 ]
+
+const WORDS = LINES.flat().map((w) => w.en)
+
+const shuffle = (arr) => {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 
 function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
   const [hovered, setHovered] = useState(false)
+  // the language this word will flip to next — random start, then
+  // strict alternation so a visitor always gets to see both
+  const [lang, setLang] = useState(() => (Math.random() < 0.5 ? 'it' : 'cz'))
   const [widths, setWidths] = useState(null)
-  const frontSizer = useRef(null)
-  const backSizer = useRef(null)
+  const sizerEn = useRef(null)
+  const sizerIt = useRef(null)
+  const sizerCz = useRef(null)
 
   const active = hovered || tapped
 
+  // advance the language on each activation, while the back face is
+  // still hidden (rotation 0), so the swap is never visible
+  const wasActive = useRef(false)
+  useEffect(() => {
+    if (active && !wasActive.current) {
+      setLang((l) => (l === 'it' ? 'cz' : 'it'))
+    }
+    wasActive.current = active
+  }, [active])
+
   useLayoutEffect(() => {
     const measure = () => {
-      const fw = frontSizer.current?.offsetWidth
-      const bw = backSizer.current?.offsetWidth
-      if (fw && bw) setWidths({ fw, bw })
+      const en = sizerEn.current?.offsetWidth
+      const it = sizerIt.current?.offsetWidth
+      const cz = sizerCz.current?.offsetWidth
+      if (en && it && cz) setWidths({ en, it, cz })
     }
     measure()
     const ro = new ResizeObserver(measure)
-    if (frontSizer.current) ro.observe(frontSizer.current)
-    if (backSizer.current) ro.observe(backSizer.current)
+    if (sizerEn.current) ro.observe(sizerEn.current)
+    if (sizerIt.current) ro.observe(sizerIt.current)
+    if (sizerCz.current) ro.observe(sizerCz.current)
     document.fonts?.ready?.then(measure)
     return () => ro.disconnect()
   }, [])
 
+  const back = word[lang]
+  const width = widths ? (active ? widths[lang] : widths.en) : null
+  // the hit area covers the resting word AND the flipped word, so the
+  // pointer can never fall off mid-transition
+  const hitWidth = widths ? (active ? Math.max(widths.en, widths[lang]) : widths.en) : null
+
   return (
-    <span className={`hero-mask ${revealed ? 'hero-mask--open' : ''}`}>
+    <span
+      className={`hero-mask ${revealed ? 'hero-mask--open' : ''} ${active ? 'hero-mask--front' : ''}`}
+    >
       <motion.span
         className="hero-mask-inner"
         initial={{ y: '115%' }}
@@ -60,28 +105,36 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
       >
         <span
           className={`flip ${word.contrast ? 'flip--ideas' : ''} ${active ? 'flip--active' : ''}`}
-          style={widths ? { width: (active ? widths.bw : widths.fw) + 'px' } : undefined}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          onClick={() => {
-            if (window.matchMedia('(hover: none)').matches) onTap()
-          }}
+          style={width ? { width: width + 'px' } : undefined}
         >
-          {/* hidden sizers: keep both face widths measured at all times */}
-          <span ref={frontSizer} className="flip-face flip-sizer" aria-hidden="true">
+          {/* hidden sizers: keep every face's width measured at all times */}
+          <span ref={sizerEn} className="flip-face flip-sizer" aria-hidden="true">
             {word.en}
           </span>
-          <span ref={backSizer} className="flip-face flip-sizer" aria-hidden="true">
-            {word.t}
+          <span ref={sizerIt} className="flip-face flip-sizer" aria-hidden="true">
+            {word.it}
+          </span>
+          <span ref={sizerCz} className="flip-face flip-sizer" aria-hidden="true">
+            {word.cz}
           </span>
           <span className="flip-pivot">
             <span className="flip-face flip-front">{word.en}</span>
-            <span className="flip-face flip-back" lang={word.lang}>
-              {word.t}
-              <span className="flip-lang">{word.lang}</span>
+            <span className="flip-face flip-back" lang={LANGS[lang].html}>
+              {back}
+              <span className="flip-lang">{LANGS[lang].label}</span>
             </span>
           </span>
           {word.contrast && <SqUnderline className="ideas-underline" delay={1.6} />}
+          {/* stable hover/tap surface — its size never animates */}
+          <span
+            className="flip-hit"
+            style={hitWidth ? { width: hitWidth + 'px' } : undefined}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            onClick={() => {
+              if (window.matchMedia('(hover: none)').matches) onTap()
+            }}
+          />
         </span>
         {word.last && (
           <motion.span
@@ -97,8 +150,6 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
     </span>
   )
 }
-
-const WORD_ORDER = ['I', 'translate', 'ideas', 'into', 'things']
 
 export default function Hero() {
   const [revealed, setRevealed] = useState(false)
@@ -118,7 +169,8 @@ export default function Hero() {
   }, [tappedId])
 
   // touch devices can't hover, so the slogan performs by itself:
-  // words take turns flipping to their translation and back.
+  // words take turns (in a shuffled order every round) flipping to a
+  // translation and back — quickly, so it's seen before scrolling on.
   // Stops as soon as the visitor starts tapping words themselves.
   useEffect(() => {
     if (!window.matchMedia('(hover: none)').matches) return
@@ -130,21 +182,27 @@ export default function Hero() {
     })
     if (sloganRef.current) io.observe(sloganRef.current)
 
-    let i = 0
+    let order = []
     let flipBack = null
-    const interval = setInterval(() => {
-      if (userTouched.current || !inView || document.hidden) return
-      const word = WORD_ORDER[i % WORD_ORDER.length]
-      i += 1
-      setTappedId(word)
-      flipBack = setTimeout(() => {
-        setTappedId((current) => (current === word ? null : current))
-      }, 1900)
-    }, 3400)
+    let next = null
+    const tick = () => {
+      if (userTouched.current) return
+      if (inView && !document.hidden) {
+        if (order.length === 0) order = shuffle(WORDS)
+        const word = order.shift()
+        setTappedId(word)
+        flipBack = setTimeout(() => {
+          setTappedId((current) => (current === word ? null : current))
+        }, 1300)
+      }
+      next = setTimeout(tick, 2000)
+    }
+    // first flip lands right after the entrance reveal settles
+    next = setTimeout(tick, 2200)
 
     return () => {
       io.disconnect()
-      clearInterval(interval)
+      clearTimeout(next)
       if (flipBack) clearTimeout(flipBack)
     }
   }, [])
@@ -154,6 +212,16 @@ export default function Hero() {
   return (
     <section className="hero" id="top">
       <div className="container hero-inner">
+        <motion.p
+          className="eyebrow hero-eyebrow"
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
+        >
+          <BrandAsterisk className="eyebrow-asterisk eyebrow-asterisk--lead" />
+          Tomáš Matějček — graphic designer
+        </motion.p>
+
         <h1
           className="hero-slogan"
           aria-label="I translate ideas into things."
@@ -183,14 +251,33 @@ export default function Hero() {
           ))}
         </h1>
 
-        <motion.p
-          className="hero-sub"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: EASE, delay: 1.25 }}
-        >
-          Design, print, code — from the idea to the finished object.
-        </motion.p>
+        <div className="hero-subs">
+          <motion.p
+            className="hero-sub"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease: EASE, delay: 1.25 }}
+          >
+            Design, print, code — from the idea to the finished thing.
+          </motion.p>
+          <motion.p
+            className="hero-hint"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, ease: EASE, delay: 2.1 }}
+            aria-hidden="true"
+          >
+            <span className="hero-hint--hover">
+              psst — hover the slogan. It speaks three languages.
+            </span>
+            <span className="hero-hint--touch">
+              psst — the slogan speaks three languages. Tap it.
+            </span>
+          </motion.p>
+        </div>
+
+        {/* the designer's tell: a bézier curve mid-draw, pen-tool handles out */}
+        <PenTool className="hero-pen" delay={1.7} />
       </div>
 
       <motion.div

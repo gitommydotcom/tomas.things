@@ -34,24 +34,16 @@ export default function Contact() {
           viewport={{ once: true, margin: '-10% 0px' }}
           transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}
         >
-          <div className="contact-button-row">
-            <a className="contact-button" href="mailto:tomas.mtj@gmail.com">
-              tomas.mtj@gmail.com
-            </a>
-            <WaveCreature className="contact-creature" />
-          </div>
+          <a className="contact-button" href="mailto:tomas.mtj@gmail.com">
+            tomas.mtj@gmail.com
+          </a>
           <a className="contact-alt" href="tel:+393493569260">
             +39 349 356 9260
           </a>
-          <a
-            className="contact-alt"
-            href="https://www.instagram.com/truetommy_"
-            target="_blank"
-            rel="noreferrer"
-          >
-            @truetommy_ <span aria-hidden="true">↗</span>
-          </a>
-          <span className="contact-langs">EN&ensp;·&ensp;IT&ensp;·&ensp;CS</span>
+          <span className="contact-langs">EN&ensp;·&ensp;IT&ensp;·&ensp;CZ</span>
+          {/* the little one waves goodbye from down here — out of the
+              button row, so it can't nudge the layout or upstage the CTA */}
+          <WaveCreature className="contact-creature" />
         </motion.div>
       </section>
   )

@@ -41,7 +41,21 @@ export function SqUnderline({ delay = 0, ...rest }) {
   )
 }
 
-export function SqArrow({ delay = 0, inView = true, ...rest }) {
+export function SqArrow({ delay = 0, inView = true, draw = true, ...rest }) {
+  // draw={false} renders the full stroke statically. iOS Safari can leave
+  // the pathLength-animated version stuck at 0 (three round caps — reads
+  // as two dots), so anything that must render everywhere uses this.
+  if (!draw) {
+    return (
+      <svg viewBox="0 0 130 56" aria-hidden="true" {...rest}>
+        <path
+          d="M6 40 C 34 12, 68 46, 104 26 M104 26 L 84 18 M104 26 L 90 43"
+          strokeWidth="6.5"
+          {...strokeProps}
+        />
+      </svg>
+    )
+  }
   const anim = inView
     ? { whileInView: { pathLength: 1 }, viewport: { once: true, margin: '-10% 0px' } }
     : { animate: { pathLength: 1 } }
@@ -54,6 +68,58 @@ export function SqArrow({ delay = 0, inView = true, ...rest }) {
         initial={{ pathLength: 0 }}
         transition={{ duration: 1.1, ease: EASE, delay }}
         {...anim}
+      />
+    </svg>
+  )
+}
+
+/* A bézier curve mid-draw, pen-tool handles out — the designer's tell.
+   Curve in azure (the "making" color), anchors and handles like the
+   vector tools everyone who's opened Illustrator will recognize. */
+export function PenTool({ delay = 0, ...rest }) {
+  const pop = (d) => ({
+    initial: { opacity: 0, scale: 0 },
+    animate: { opacity: 1, scale: 1 },
+    transition: { duration: 0.5, ease: EASE, delay: d },
+    style: { transformBox: 'fill-box', transformOrigin: '50% 50%' },
+  })
+  return (
+    <svg viewBox="0 0 240 132" aria-hidden="true" {...rest}>
+      {/* the curve being drawn */}
+      <motion.path
+        d="M14 100 C 56 24, 134 18, 196 66"
+        strokeWidth="6"
+        {...strokeProps}
+        stroke="var(--azure)"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1.2, ease: EASE, delay }}
+      />
+      {/* tangent handle through the live anchor */}
+      <motion.path
+        d="M166 42 L 226 90"
+        strokeWidth="2.5"
+        {...strokeProps}
+        stroke="var(--ink-50)"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, ease: EASE, delay: delay + 0.85 }}
+      />
+      {/* handle knobs */}
+      <motion.circle cx="166" cy="42" r="6" fill="var(--pink)" {...pop(delay + 0.95)} />
+      <motion.circle cx="226" cy="90" r="6" fill="var(--pink)" {...pop(delay + 1.05)} />
+      {/* anchor points */}
+      <motion.rect
+        x="189" y="59" width="14" height="14"
+        fill="var(--ink)"
+        {...pop(delay + 0.85)}
+      />
+      <motion.rect
+        x="8" y="94" width="12" height="12"
+        fill="none"
+        stroke="var(--ink)"
+        strokeWidth="2.5"
+        {...pop(delay + 0.3)}
       />
     </svg>
   )

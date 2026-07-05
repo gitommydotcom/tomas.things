@@ -36,7 +36,7 @@
   left: 12%;
   bottom: -24%;
   /* azure field — the cool counterpart, opposite the pink ones */
-  background: radial-gradient(circle closest-side, rgba(46, 134, 171, 0.06), transparent 72%);
+  background: radial-gradient(circle closest-side, rgba(15, 150, 217, 0.06), transparent 72%);
   animation: bg-drift-3 62s ease-in-out infinite alternate;
 }
 .bg-asterisk {
@@ -97,25 +97,21 @@
   margin: -8px 0 0 -8px;
   border-radius: 50%;
   background: var(--pink);
-  transition:
-    transform 0.28s var(--ease-out),
-    background 0.28s var(--ease-out),
-    opacity 0.25s var(--ease-out);
+  transition: transform 0.28s var(--ease-out);
 }
 .cursor--visible {
   opacity: 1;
 }
-/* over something clickable the dot swaps to the interaction color */
+/* the dot stays solid brand pink everywhere — over something
+   interactive it only grows */
 .cursor--grow::after {
-  transform: scale(1.8);
-  opacity: 0.9;
-  background: var(--azure);
+  transform: scale(2.1);
 }
 .cursor--down::after {
   transform: scale(0.75);
 }
 .cursor--grow.cursor--down::after {
-  transform: scale(1.5);
+  transform: scale(1.7);
 }
 
 /* ================= Nav ================= */
@@ -193,9 +189,51 @@
   padding: 130px 0 90px;
 }
 .hero-inner {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: clamp(30px, 5vh, 48px);
+  gap: clamp(26px, 4.5vh, 42px);
+}
+.hero-eyebrow {
+  color: var(--ink);
+  font-size: 13px;
+}
+.hero-subs {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.hero-hint {
+  font-size: 13.5px;
+  font-style: italic;
+  color: var(--ink-50);
+}
+.hero-hint--touch {
+  display: none;
+}
+@media (hover: none) {
+  .hero-hint--hover {
+    display: none;
+  }
+  .hero-hint--touch {
+    display: inline;
+  }
+}
+/* the pen-tool doodle floats in the hero's empty right half,
+   roughly where the short last line leaves room */
+.hero-pen {
+  position: absolute;
+  right: clamp(0px, 4vw, 80px);
+  bottom: 4%;
+  width: clamp(160px, 18vw, 250px);
+  height: auto;
+  transform: rotate(-4deg);
+  pointer-events: none;
+}
+@media (max-width: 760px) {
+  .hero-pen {
+    display: none;
+  }
 }
 
 .hero-slogan {
@@ -220,6 +258,8 @@
 /* Mask for the entrance reveal — opens after load so the
    3D flip isn't clipped by overflow:hidden. */
 .hero-mask {
+  position: relative;
+  z-index: 1;
   display: inline-block;
   overflow: hidden;
   padding: 0.12em 0 0.18em;
@@ -227,6 +267,11 @@
 }
 .hero-mask--open {
   overflow: visible;
+}
+/* the active word's hit area sits above its neighbours', so a
+   resizing line can never steal the hover mid-flip */
+.hero-mask--front {
+  z-index: 3;
 }
 .hero-mask-inner {
   display: inline-flex;
@@ -241,6 +286,20 @@
   white-space: nowrap;
   perspective: 900px;
   transition: width 0.6s var(--ease-out);
+  /* all pointer work happens on .flip-hit */
+  pointer-events: none;
+}
+/* Stable hover/tap surface: left-anchored, never narrower than the
+   resting word, grows to cover the translation while flipped — and its
+   size never animates. The pointer can't fall off a shrinking word,
+   which is what made the flip rattle at the borders. */
+.flip-hit {
+  position: absolute;
+  left: 0;
+  top: -0.04em;
+  bottom: -0.04em;
+  z-index: 4;
+  pointer-events: auto;
 }
 /* hidden sizers keep both face widths measurable at all times */
 .flip-sizer {
@@ -270,6 +329,8 @@
   left: 50%;
   top: 0;
   transform: translateX(-50%) rotateX(180deg);
+  /* translations wear azure — the "translating" color */
+  color: var(--azure);
 }
 .flip-lang {
   position: absolute;
@@ -291,7 +352,7 @@
   padding-right: 0.08em;
 }
 .flip--ideas .flip-lang {
-  color: var(--ink-70);
+  color: var(--azure-deep);
 }
 .ideas-underline {
   position: absolute;
@@ -517,14 +578,14 @@
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #74bcdc; /* azure lightened for AA on ink */
+  color: #4fc1f0; /* azure lightened for AA on ink */
 }
 .cta-banner-arrow {
   width: 38px;
   transition: transform 0.5s var(--ease-out);
 }
 .cta-banner-arrow path {
-  stroke: #74bcdc;
+  stroke: #4fc1f0;
 }
 .cta-banner:hover .cta-banner-arrow {
   transform: translateX(6px);
@@ -692,6 +753,22 @@
 }
 
 /* ================= About ================= */
+/* the human part leads: a big, warm lede across the full width,
+   then the story on the left and the quiet facts tucked to the right */
+.about-lede {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(28px, 3.4vw, 52px);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  max-width: 24ch;
+  margin-bottom: clamp(40px, 6vh, 72px);
+}
+.about-lede em {
+  font-style: italic;
+  color: var(--pink);
+}
 .about-grid {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
@@ -710,13 +787,6 @@
   font-size: clamp(16px, 1.35vw, 18px);
   color: var(--ink-70);
   max-width: 56ch;
-}
-.about-lede {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(22px, 2.2vw, 30px);
-  line-height: 1.3;
-  color: var(--ink);
 }
 .about-copy em {
   color: var(--ink);
@@ -753,54 +823,67 @@
 .idea-thing-arrow {
   width: clamp(64px, 6vw, 92px);
 }
+/* the transformation arrow wears azure — pink is for the things,
+   azure for the act of getting there */
+.idea-thing-arrow path {
+  stroke: var(--azure);
+}
 
 .about-stack-label {
   margin-bottom: 16px;
 }
-.service-list {
+/* what I take care of — no numbering, just names and hairlines */
+.craft-list {
   border-top: 1px solid var(--line);
 }
-.service-row {
-  display: grid;
-  grid-template-columns: 46px 1fr;
-  grid-template-areas:
-    'num name'
-    'num detail';
-  padding: 18px 6px;
+.craft-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 6px;
   border-bottom: 1px solid var(--line);
   transition: background 0.4s var(--ease-out);
 }
-.service-row:hover {
+.craft-row:hover {
   background: var(--azure-soft);
 }
-.service-num {
-  grid-area: num;
-  font-size: 12px;
-  font-weight: 650;
-  color: var(--azure-deep);
-  padding-top: 6px;
-}
-.service-name {
-  grid-area: name;
+.craft-name {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 20px;
+  font-size: 18px;
 }
-.service-detail {
-  grid-area: detail;
-  font-size: 14.5px;
+.craft-detail {
+  font-size: 14px;
   color: var(--ink-70);
+}
+.about-toolkit {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 36px;
+}
+.kit-group {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 12px;
+  align-items: baseline;
+}
+.kit-label {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--azure-deep);
 }
 .skill-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 28px;
+  gap: 8px;
 }
 .pill {
-  font-size: 13.5px;
+  font-size: 13px;
   font-weight: 500;
-  padding: 8px 16px;
+  padding: 6px 14px;
   border: 1px solid var(--line);
   border-radius: 100px;
   color: var(--ink-70);
@@ -861,11 +944,6 @@
   gap: 18px;
   margin-top: 8px;
 }
-.contact-button-row {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-}
 .contact-button {
   font-family: var(--font-display);
   font-weight: 500;
@@ -885,10 +963,11 @@
   transform: translateY(-3px);
   box-shadow: var(--shadow-lift);
 }
+/* the waving squiggle closes the section from below — in the flow,
+   centered, where it can't nudge the email button off-axis */
 .contact-creature {
-  width: 66px;
-  margin-left: 16px;
-  margin-bottom: -8px;
+  width: 56px;
+  margin-top: 10px;
   overflow: visible;
 }
 .creature-arm {
@@ -962,6 +1041,10 @@
   .nav-link {
     font-size: 11px;
     letter-spacing: 0.08em;
+  }
+  .hero-eyebrow {
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
   }
   .hero-slogan {
     font-size: clamp(46px, 14vw, 60px);
