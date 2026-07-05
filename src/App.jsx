@@ -1,8 +1,8 @@
 import { MotionConfig } from 'framer-motion'
-import Background from './components/Background.jsx'
 import Cursor from './components/Cursor.jsx'
 import Nav from './components/Nav.jsx'
 import Hero from './components/Hero.jsx'
+import Marquee from './components/Marquee.jsx'
 import Work from './components/Work.jsx'
 import About from './components/About.jsx'
 import Contact from './components/Contact.jsx'
@@ -12,13 +12,14 @@ import './App.css'
 export default function App() {
   return (
     <MotionConfig reducedMotion="user">
-      <Background />
       <Cursor />
       <Nav />
       <main>
         <Hero />
+        <Marquee items={['ideas', 'into', 'things', 'design', 'print', 'code']} />
         <Work />
         <About />
+        <Marquee items={['ideas', 'idee', 'nápady', 'things', 'cose', 'věci']} flip />
         <Contact />
       </main>
       <Footer />

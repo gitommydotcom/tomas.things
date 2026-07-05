@@ -4,7 +4,7 @@ import { SqCreature } from './Doodles.jsx'
 export default function Footer() {
   const eyesRef = useRef(null)
 
-  // the footer creature's eyes follow the pink dot around the page —
+  // the footer creature's eyes follow the pink dot around the page -
   // only while the footer is actually on screen, so scrolling elsewhere
   // never pays for the layout reads
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function Footer() {
       <div className="container footer-inner">
         <SqCreature className="footer-creature" eyeRef={eyesRef} />
         <p className="footer-note">
-          © {new Date().getFullYear()} Tomáš Matějček — I translate ideas into things.
+          © {new Date().getFullYear()} Tomáš Matějček - I translate ideas into things.
         </p>
       </div>
     </footer>

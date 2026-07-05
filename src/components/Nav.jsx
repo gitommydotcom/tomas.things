@@ -30,7 +30,7 @@ export default function Nav() {
         Skip to content
       </a>
       <nav className="nav-inner container" aria-label="Main">
-        <a href="#top" className="logo" aria-label="tomáš — back to top">
+        <a href="#top" className="logo" aria-label="tomáš - back to top">
           <img src={logo} alt="" className="logo-img" />
         </a>
         <ul className="nav-links">

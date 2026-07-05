@@ -1,14 +1,19 @@
+import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Reveal, EASE } from './Reveal.jsx'
-import { SqArrow, BrandAsterisk } from './Doodles.jsx'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { Reveal, SplitTitle, EASE } from './Reveal.jsx'
+import { SqArrow, BrandAsterisk, WaveCreature } from './Doodles.jsx'
 
-/* What I take care of — quiet list, no numbering, the words do the work. */
+gsap.registerPlugin(ScrollTrigger)
+
+/* What I take care of - compact rows, the words do the work. */
 const CRAFT = [
-  ['Identity & artwork', 'Logos, covers, posters — designed to survive real use'],
-  ['Print production', 'Press-ready files; inks, formats and finishes chosen up front'],
-  ['Web & code', 'Sites and tools, written by the same person who designed them'],
-  ['Motion & content', 'Video direction, edits, animation — timed and ready to post'],
-  ['The finish', 'Printed, online or working: you get the thing, not a file'],
+  ['Identity & artwork', 'logos, covers, posters that survive real use'],
+  ['Print production', 'press-ready files; inks and finishes chosen up front'],
+  ['Web & code', 'sites and tools, built by the person who designed them'],
+  ['Motion & content', 'direction, edits, animation, ready to post'],
+  ['The finish', 'printed, online or working: a thing, not a file'],
 ]
 
 const TOOLKIT = [
@@ -17,29 +22,58 @@ const TOOLKIT = [
   ['Plus', ['AI workflows', 'Offset print', 'EN · IT · CZ']],
 ]
 
+/* the lede is authored word by word so GSAP can fill it in on scroll */
+const LEDE = [
+  'Hi,', "I'm", 'Tomáš.', 'I', 'design', 'things', '-', 'and', 'then',
+  'I', 'stay', 'to', <em key="build">build</em>, 'them.',
+]
+
 export default function About() {
+  const sectionRef = useRef(null)
+
+  useEffect(() => {
+    const mm = gsap.matchMedia(sectionRef)
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // the lede inks itself in word by word, scrubbed to the scrollbar
+      gsap.fromTo(
+        '.lede-word',
+        { opacity: 0.14 },
+        {
+          opacity: 1,
+          stagger: 0.06,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.about-lede',
+            start: 'top 82%',
+            end: 'top 30%',
+            scrub: true,
+          },
+        },
+      )
+    })
+    return () => mm.revert()
+  }, [])
+
   return (
-    <section className="about container" id="about">
+    <section className="about container" id="about" ref={sectionRef}>
       <header className="section-head">
         <Reveal as="p" className="eyebrow">
           <BrandAsterisk className="eyebrow-asterisk eyebrow-asterisk--lead" />
           About
         </Reveal>
-        <Reveal as="h2" className="section-title" delay={0.08}>
-          A full-stack designer.
-        </Reveal>
+        <div className="about-title-row">
+          <SplitTitle className="section-title" text="A full-stack designer." />
+          <WaveCreature className="about-creature" />
+        </div>
       </header>
 
-      <motion.p
-        className="about-lede"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-10% 0px' }}
-        transition={{ duration: 0.9, ease: EASE }}
-      >
-        Hi, I'm Tomáš. I design things — and then I stay
-        to&nbsp;<em>build</em>&nbsp;them.
-      </motion.p>
+      <p className="about-lede">
+        {LEDE.map((word, i) => (
+          <span className="lede-word" key={i}>
+            {word}{' '}
+          </span>
+        ))}
+      </p>
 
       <div className="about-grid">
         <div className="about-copy">
@@ -52,7 +86,7 @@ export default function About() {
             I grew up between Czech and Italian, forever translating one
             half of my life to the other. Somewhere along the way that
             became the job: I take an idea and carry it all the way into
-            the world — the sketch, the artwork, the press-ready file,
+            the world - the sketch, the artwork, the press-ready file,
             the website, the video.
           </motion.p>
           <motion.p
@@ -61,13 +95,13 @@ export default function About() {
             viewport={{ once: true, margin: '-10% 0px' }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.18 }}
           >
-            Most projects lose their spark in the handoffs — designer to
+            Most projects lose their spark in the handoffs - designer to
             developer, file to printer, idea to reality. So I removed the
             handoffs. The same pair of hands draws your logo, preps the
             plates, writes the code and presses publish. You talk to one
             person, and nothing gets lost in between, because there is no
-            in-between. <em>AI multiplies my hands; the eye — and the
-            care — stay mine.</em>
+            in-between. <em>AI multiplies my hands; the eye - and the
+            care - stay mine.</em>
           </motion.p>
 
           <div className="about-quote">
@@ -104,10 +138,10 @@ export default function About() {
               <motion.li
                 key={name}
                 className="craft-row"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-8% 0px' }}
-                transition={{ duration: 0.8, ease: EASE, delay: i * 0.07 }}
+                transition={{ duration: 0.7, ease: EASE, delay: i * 0.06 }}
               >
                 <span className="craft-name">{name}</span>
                 <span className="craft-detail">{detail}</span>

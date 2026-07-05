@@ -1,16 +1,21 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { EASE } from './Reveal.jsx'
-import { SqUnderline, SqArrow, BrandAsterisk, PenTool } from './Doodles.jsx'
+import { SqUnderline, SqArrow, BrandAsterisk } from './Doodles.jsx'
+import PenTool from './PenTool.jsx'
+
+gsap.registerPlugin(ScrollTrigger)
 
 /*
  * The jewel piece. Each slogan word flips on hover (tap on touch) to a
- * translation — Italian or Czech. Every word alternates between the two
+ * translation - Italian or Czech. Every word alternates between the two
  * languages, starting from a random one, so both always show up and no
  * two visits read the same.
  *
  * Layout rules:
- * - The slogan is composed of FIXED lines — words never jump between
+ * - The slogan is composed of FIXED lines - words never jump between
  *   lines, on any screen. A flipping word only slides its own line's
  *   neighbours aside.
  * - Each face's width is measured continuously (hidden sizers +
@@ -50,7 +55,7 @@ const shuffle = (arr) => {
 
 function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
   const [hovered, setHovered] = useState(false)
-  // the language this word will flip to next — random start, then
+  // the language this word will flip to next - random start, then
   // strict alternation so a visitor always gets to see both
   const [lang, setLang] = useState(() => (Math.random() < 0.5 ? 'it' : 'cz'))
   const [widths, setWidths] = useState(null)
@@ -125,7 +130,7 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
             </span>
           </span>
           {word.contrast && <SqUnderline className="ideas-underline" delay={1.6} />}
-          {/* stable hover/tap surface — its size never animates */}
+          {/* stable hover/tap surface - its size never animates */}
           <span
             className="flip-hit"
             style={hitWidth ? { width: hitWidth + 'px' } : undefined}
@@ -153,7 +158,7 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
 
 export default function Hero() {
   const [revealed, setRevealed] = useState(false)
-  // one tapped word at a time — tapping another flips the first back
+  // one tapped word at a time - tapping another flips the first back
   const [tappedId, setTappedId] = useState(null)
   const userTouched = useRef(false)
   const sloganRef = useRef(null)
@@ -170,7 +175,7 @@ export default function Hero() {
 
   // touch devices can't hover, so the slogan performs by itself:
   // words take turns (in a shuffled order every round) flipping to a
-  // translation and back — quickly, so it's seen before scrolling on.
+  // translation and back - quickly, so it's seen before scrolling on.
   // Stops as soon as the visitor starts tapping words themselves.
   useEffect(() => {
     if (!window.matchMedia('(hover: none)').matches) return
@@ -207,21 +212,32 @@ export default function Hero() {
     }
   }, [])
 
+  // scrolling away pulls the hero up and fades it, scrubbed to the
+  // scrollbar - the first hint that this page moves with you
+  const sectionRef = useRef(null)
+  useEffect(() => {
+    const mm = gsap.matchMedia()
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.to('.hero-inner', {
+        yPercent: -12,
+        autoAlpha: 0.2,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: 'bottom 30%',
+          scrub: true,
+        },
+      })
+    })
+    return () => mm.revert()
+  }, [])
+
   let wordIndex = -1
 
   return (
-    <section className="hero" id="top">
+    <section className="hero" id="top" ref={sectionRef}>
       <div className="container hero-inner">
-        <motion.p
-          className="eyebrow hero-eyebrow"
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: EASE, delay: 0.15 }}
-        >
-          <BrandAsterisk className="eyebrow-asterisk eyebrow-asterisk--lead" />
-          Tomáš Matějček — graphic designer
-        </motion.p>
-
         <h1
           className="hero-slogan"
           aria-label="I translate ideas into things."
@@ -258,7 +274,7 @@ export default function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: EASE, delay: 1.25 }}
           >
-            Design, print, code — from the idea to the finished thing.
+            Design, print, code - from the idea to the finished thing.
           </motion.p>
           <motion.p
             className="hero-hint"
@@ -268,16 +284,17 @@ export default function Hero() {
             aria-hidden="true"
           >
             <span className="hero-hint--hover">
-              psst — hover the slogan. It speaks three languages.
+              psst: hover the slogan, it speaks three languages.
             </span>
             <span className="hero-hint--touch">
-              psst — the slogan speaks three languages. Tap it.
+              psst: the slogan speaks three languages, tap it.
             </span>
           </motion.p>
         </div>
 
-        {/* the designer's tell: a bézier curve mid-draw, pen-tool handles out */}
-        <PenTool className="hero-pen" delay={1.7} />
+        {/* the designer's tell: a live bézier curve - it breathes, bends
+            on hover and redraws on click */}
+        <PenTool className="hero-pen" />
       </div>
 
       <motion.div

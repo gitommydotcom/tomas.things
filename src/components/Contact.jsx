@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import { Reveal, EASE } from './Reveal.jsx'
-import { BrandAsterisk, WaveCreature } from './Doodles.jsx'
+import { BrandAsterisk } from './Doodles.jsx'
 
 export default function Contact() {
   return (
@@ -41,9 +41,6 @@ export default function Contact() {
             +39 349 356 9260
           </a>
           <span className="contact-langs">EN&ensp;·&ensp;IT&ensp;·&ensp;CZ</span>
-          {/* the little one waves goodbye from down here — out of the
-              button row, so it can't nudge the layout or upstage the CTA */}
-          <WaveCreature className="contact-creature" />
         </motion.div>
       </section>
   )

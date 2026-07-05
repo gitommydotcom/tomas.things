@@ -37,13 +37,13 @@
   --ink-70: rgba(24, 22, 22, 0.72);
   --ink-50: rgba(24, 22, 22, 0.52);
   --line: rgba(24, 22, 22, 0.12);
-  --pink: #db4082; /* exact asterisk pink — brand marks, expressive accents */
+  --pink: #db4082; /* exact asterisk pink - brand marks, expressive accents */
   --pink-deep: #b13366; /* darker pink for small text accents (AA) */
   --pink-soft: rgba(219, 64, 130, 0.1);
-  /* azure — the "translating" color: the pink marks the things, the
+  /* azure - the "translating" color: the pink marks the things, the
      azure marks the act of making them. Hero translations, the pen
      tool, wayfinding arrows, hovers, focus. Same two-tier structure. */
-  --azure: #0f96d9; /* bright — large text & graphics (~3:1 on cream) */
+  --azure: #0f96d9; /* bright - large text & graphics (~3:1 on cream) */
   --azure-deep: #0a6da3; /* small text & interactive accents (AA, 5:1) */
   --azure-soft: rgba(15, 150, 217, 0.09);
 
@@ -111,7 +111,7 @@ ul {
   list-style: none;
 }
 
-/* visible focus for keyboard users — never removed, only styled.
+/* visible focus for keyboard users - never removed, only styled.
    Azure = the interaction color, so focus rings read as "actionable". */
 :focus-visible {
   outline: 3px solid var(--azure-deep);
@@ -145,7 +145,7 @@ section {
   scroll-margin-top: 96px;
 }
 
-/* Masked line reveal — text slides up from behind an invisible boundary.
+/* Masked line reveal - text slides up from behind an invisible boundary.
    The padding + negative margin give glyph ascenders, descenders and
    italic overhangs headroom so nothing gets shaved by overflow:hidden. */
 .mask {
