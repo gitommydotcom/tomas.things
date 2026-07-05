@@ -2,10 +2,10 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { SqCreature } from './Doodles.jsx'
 
-/* the body line sways between two squiggles - same stroke, slightly
-   different bends, so the little one never sits perfectly still */
+/* the body line sways between two squiggles - same stroke, clearly
+   different bends, so the little one never sits still */
 const BODY_A = 'M8 58 C 18 22, 46 24, 54 48 C 61 68, 88 66, 97 42 C 100 34, 104 28, 112 26'
-const BODY_B = 'M8 60 C 20 30, 44 16, 54 42 C 63 70, 86 60, 96 40 C 99 31, 105 27, 112 23'
+const BODY_B = 'M10 62 C 24 34, 42 10, 55 38 C 66 74, 84 56, 95 38 C 98 29, 106 27, 113 21'
 
 export default function Footer() {
   const eyesRef = useRef(null)

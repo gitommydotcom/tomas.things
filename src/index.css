@@ -69,6 +69,10 @@
 
 html {
   scroll-behavior: smooth;
+  /* the rotated marquee bands and the sheared hero lines intentionally
+     overflow the viewport; without this iOS widens the document and
+     lets the page pan sideways, which reads as "nothing is centered" */
+  overflow-x: clip;
 }
 
 body {

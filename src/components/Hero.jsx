@@ -218,16 +218,21 @@ export default function Hero() {
   const sectionRef = useRef(null)
   useEffect(() => {
     const mm = gsap.matchMedia()
+    const scrub = () => ({
+      trigger: sectionRef.current,
+      start: 'top top',
+      end: 'bottom 30%',
+      scrub: true,
+    })
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      const scrub = () => ({
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: 'bottom 30%',
-        scrub: true,
-      })
       gsap.to('.hero-line--0', { xPercent: -18, rotate: -2, ease: 'none', scrollTrigger: scrub() })
       gsap.to('.hero-line--1', { xPercent: 14, rotate: 1.2, ease: 'none', scrollTrigger: scrub() })
       gsap.to('.hero-line--2', { xPercent: -9, rotate: -0.8, ease: 'none', scrollTrigger: scrub() })
+    })
+    // on small screens the hero is taller than the viewport, so the
+    // subline and the stage would sit visibly shifted/tilted while the
+    // visitor is still using them - they only join the shear on desktop
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 861px)', () => {
       gsap.to('.hero-subs', { xPercent: 8, ease: 'none', scrollTrigger: scrub() })
       gsap.to('.hero-stage', { y: -90, rotate: 2.5, ease: 'none', scrollTrigger: scrub() })
     })
