@@ -111,6 +111,41 @@ function BezierRig() {
       startWave()
     }, svg)
 
+    // --- discoverability: until the visitor touches the rig, it asks
+    // to be played with - a pulse ring on the main handle plus a
+    // periodic tug where the handle pulls the curve and springs back
+    let touched = false
+    const touch = () => {
+      if (touched) return
+      touched = true
+      svg.classList.add('rig--touched')
+      clearInterval(nudgeTimer)
+    }
+    const nudge = () => {
+      if (touched || reduced || document.hidden) return
+      const { hx, hy } = s
+      const cos = Math.cos(-0.32)
+      const sin = Math.sin(-0.32)
+      gsap
+        .timeline()
+        .to(s, {
+          hx: (hx * cos - hy * sin) * 1.12,
+          hy: (hx * sin + hy * cos) * 1.12,
+          duration: 0.45,
+          ease: 'sine.inOut',
+          onUpdate: render,
+        })
+        .to(s, {
+          hx,
+          hy,
+          duration: 0.85,
+          ease: 'elastic.out(1, 0.45)',
+          onUpdate: render,
+        })
+    }
+    const nudgeTimer = setInterval(nudge, 4600)
+    const firstNudge = setTimeout(nudge, 2600)
+
     // --- precise pointer work: map client coords to viewBox coords ---
     const toVB = (e) => {
       const r = svg.getBoundingClientRect()
@@ -122,6 +157,7 @@ function BezierRig() {
     let dragKind = null
     let dragged = false
     const down = (e) => {
+      touch() // the rig stops asking once the visitor engages
       const t = e.target.closest('[data-drag]')
       if (!t) return
       e.preventDefault()
@@ -201,6 +237,8 @@ function BezierRig() {
       svg.removeEventListener('click', shuffle)
       svg.removeEventListener('pointerenter', enter)
       svg.removeEventListener('pointerleave', leave)
+      clearInterval(nudgeTimer)
+      clearTimeout(firstNudge)
       waveTween?.kill()
       ctx.revert()
     }
@@ -224,23 +262,25 @@ function BezierRig() {
         <path className="rig-handle rig-handle--end" d="" />
         {/* each draggable is a group: an invisible halo (~50px on a
             phone) makes the small knob easy to grab with a finger */}
-        <g className="rig-grab rig-grab--c1" data-drag="c1">
+        <g className="rig-grab rig-grab--c1" data-drag="c1" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <circle className="rig-knob" r="7" />
         </g>
-        <g className="rig-grab rig-grab--h1" data-drag="h1">
+        <g className="rig-grab rig-grab--h1" data-drag="h1" data-cursor="grow">
+          <circle className="rig-halo" r="20" />
+          {/* "grab me": expanding ring, hidden after the first touch */}
+          <circle className="rig-pulse" r="10" />
+          <circle className="rig-knob" r="7" />
+        </g>
+        <g className="rig-grab rig-grab--h2" data-drag="h2" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <circle className="rig-knob" r="7" />
         </g>
-        <g className="rig-grab rig-grab--h2" data-drag="h2">
-          <circle className="rig-halo" r="20" />
-          <circle className="rig-knob" r="7" />
-        </g>
-        <g className="rig-grab rig-grab--start" data-drag="start">
+        <g className="rig-grab rig-grab--start" data-drag="start" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <rect className="rig-anchor rig-anchor--start" x="-7" y="-7" width="14" height="14" />
         </g>
-        <g className="rig-grab rig-grab--end" data-drag="end">
+        <g className="rig-grab rig-grab--end" data-drag="end" data-cursor="grow">
           <circle className="rig-halo" r="20" />
           <rect className="rig-anchor" x="-8" y="-8" width="16" height="16" />
         </g>
@@ -311,6 +351,7 @@ function PrintLetter() {
               : { fontWeight: weight }),
           }}
           onClick={stamp}
+          data-cursor="grow"
         >
           A
         </span>
@@ -420,6 +461,7 @@ function CodeLine() {
       ref={rootRef}
       onClick={() => setShow((v) => !v)}
       aria-hidden="true"
+      data-cursor="grow"
     >
       <div className={`code-flip ${show ? 'code-flip--on' : ''}`}>
         <div className="code-face code-face--src">

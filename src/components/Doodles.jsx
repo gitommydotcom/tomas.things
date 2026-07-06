@@ -92,6 +92,27 @@ export function SqCreature({ eyeRef, ...props }) {
   )
 }
 
+/* The third sibling: a little head peeking up over the section title,
+   curious about the work below. Same one-stroke construction as its
+   two relatives, different silhouette and posture on purpose - a
+   squat symmetric hump instead of a tall figure or a long line. */
+export function PeekCreature(props) {
+  return (
+    <svg viewBox="0 0 92 60" aria-hidden="true" {...props}>
+      <path
+        className="peek-body"
+        d="M6 54 C 6 20, 26 4, 46 4 C 66 4, 86 20, 86 54"
+        strokeWidth="7"
+        {...strokeProps}
+      />
+      <g className="creature-eyes">
+        <circle cx="38" cy="21" r="5" fill="var(--ink)" />
+        <circle cx="55" cy="19" r="5" fill="var(--ink)" />
+      </g>
+    </svg>
+  )
+}
+
 /* A tall squiggle with a little waving arm.
    The viewBox has headroom above so the waving arm never gets clipped. */
 export function WaveCreature(props) {

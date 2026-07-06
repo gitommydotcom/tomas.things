@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Reveal, SplitTitle } from './Reveal.jsx'
-import { SqArrow, BrandAsterisk } from './Doodles.jsx'
+import { SqArrow, BrandAsterisk, PeekCreature } from './Doodles.jsx'
 import { PROJECTS } from '../data/projects.js'
 import ProjectModal from './ProjectModal.jsx'
 
@@ -120,6 +120,7 @@ export default function Work() {
   return (
     <section className="work container" id="work" ref={sectionRef}>
       <header className="section-head">
+        <PeekCreature className="work-peek" />
         <Reveal as="p" className="eyebrow">
           <BrandAsterisk className="eyebrow-asterisk eyebrow-asterisk--lead" />
           Selected work

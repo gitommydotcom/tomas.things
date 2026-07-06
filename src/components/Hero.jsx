@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { EASE } from './Reveal.jsx'
-import { SqUnderline, SqArrow, BrandAsterisk } from './Doodles.jsx'
+import { SqUnderline, BrandAsterisk } from './Doodles.jsx'
 import HeroStage from './HeroStage.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -289,17 +289,6 @@ export default function Hero() {
         {/* the second protagonist: design / print / code, playable live */}
         <HeroStage />
       </div>
-
-      <motion.div
-        className="hero-scroll"
-        initial={{ y: 16 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.9, ease: EASE, delay: 1.8 }}
-        aria-hidden="true"
-      >
-        <span>scroll</span>
-        <SqArrow className="hero-scroll-arrow" inView={false} delay={2} />
-      </motion.div>
     </section>
   )
 }

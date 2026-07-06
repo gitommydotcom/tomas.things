@@ -179,40 +179,48 @@
   color: var(--ink-50);
   pointer-events: none;
 }
+/* a real segmented control, not three quiet labels - card body, so it
+   reads as UI at a glance instead of getting missed while scrolling */
 .stage-tabs {
   position: relative;
   display: flex;
   justify-content: center;
-  gap: 6px;
-  margin-top: 14px;
+  gap: 4px;
+  margin-top: 18px;
   align-self: center;
+  padding: 5px;
+  border-radius: 100px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
 }
 /* the active pill slides between tabs (HeroStage places it with GSAP) */
 .stage-tab-ind {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
   border-radius: 100px;
-  background: var(--azure-soft);
-  border: 1px solid rgba(15, 150, 217, 0.25);
+  background: var(--azure);
+  box-shadow: 0 6px 16px rgba(15, 150, 217, 0.4);
 }
 .stage-tab {
   position: relative;
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 0.16em;
+  z-index: 1;
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  padding: 8px 16px;
+  padding: 11px 22px;
   border-radius: 100px;
-  color: var(--ink-50);
+  color: var(--ink-70);
   transition: color 0.3s var(--ease-out);
 }
 .stage-tab:hover {
   color: var(--ink);
 }
 .stage-tab--active {
-  color: var(--ink);
+  color: #fff;
 }
 
 /* design: the adjustable rig */
@@ -255,9 +263,34 @@
   stroke: var(--ink);
   stroke-width: 2.5;
 }
+.rig-grab {
+  cursor: grab;
+}
+.rig-grab:active {
+  cursor: grabbing;
+}
 .rig-grab:hover .rig-knob,
 .rig-grab:hover .rig-anchor {
   transform: scale(1.45);
+}
+/* "grab me": a ring breathes out from the handle until the visitor's
+   first touch, then it's gone for good (HeroStage.jsx sets
+   .rig--touched on the svg) */
+.rig-pulse {
+  fill: none;
+  stroke: var(--pink);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rig-pulse 1.8s ease-out infinite;
+}
+.rig--touched .rig-pulse {
+  animation: none;
+  opacity: 0;
+}
+@keyframes rig-pulse {
+  0% { transform: scale(0.7); opacity: 0.6; }
+  75%, 100% { transform: scale(2.4); opacity: 0; }
 }
 
 /* print: the variable serif specimen (Fraunces) */
@@ -677,25 +710,6 @@
   color: var(--ink-70);
 }
 
-.hero-scroll {
-  position: absolute;
-  left: var(--gutter);
-  bottom: 36px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 12px;
-  font-weight: 550;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--ink-50);
-}
-.hero-scroll-arrow {
-  width: 44px;
-  transform: rotate(58deg);
-  transform-origin: center;
-}
-
 /* ================= Marquee ================= */
 /* Two ink-black bands crossing at opposite angles, rolling opposite
    ways (Marquee.jsx). Words in cream / pink / azure, plus outlines. */
@@ -787,10 +801,32 @@
 }
 
 .section-head {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-bottom: clamp(44px, 6vh, 76px);
+}
+/* the third doodle: pops up above the title, peeking down at the
+   work below - bobs gently, blinks via the shared .creature-eyes rule */
+.work-peek {
+  position: absolute;
+  top: -46px;
+  left: 50%;
+  width: 60px;
+  height: auto;
+  transform: translateX(-50%);
+  animation: peek-bob 3.2s ease-in-out infinite;
+}
+@keyframes peek-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-7px); }
+}
+@media (max-width: 640px) {
+  .work-peek {
+    top: -38px;
+    width: 46px;
+  }
 }
 .section-title {
   font-family: var(--font-display);
@@ -1406,6 +1442,19 @@
 }
 .footer-creature {
   width: 92px;
+}
+/* the body sways on a pure transform - compositor-only, so it's cheap
+   enough to just run (no visibility gating needed), same as the About
+   creature's arm-wave. Rooted near its tail (the path's start point)
+   so the head with the eyes is what visibly swings. */
+.creature-body {
+  transform-box: fill-box;
+  transform-origin: 6% 82%;
+  animation: sway 1.4s ease-in-out infinite;
+}
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(6deg); }
 }
 .creature-eyes {
   /* blink squashes around the eyes' own center on every browser */

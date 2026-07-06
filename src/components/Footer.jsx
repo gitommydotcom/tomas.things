@@ -1,45 +1,24 @@
 import { useEffect, useRef } from 'react'
-import gsap from 'gsap'
 import { SqCreature } from './Doodles.jsx'
-
-/* the body line sways between two squiggles - same stroke, clearly
-   different bends, so the little one never sits still */
-const BODY_A = 'M8 58 C 18 22, 46 24, 54 48 C 61 68, 88 66, 97 42 C 100 34, 104 28, 112 26'
-const BODY_B = 'M10 62 C 24 34, 42 10, 55 38 C 66 74, 84 56, 95 38 C 98 29, 106 27, 113 21'
 
 export default function Footer() {
   const eyesRef = useRef(null)
 
   // the footer creature's eyes follow the pink dot around the page -
   // only while the footer is actually on screen, so scrolling elsewhere
-  // never pays for the layout reads. The body sway is gated the same
-  // way: the tween only plays while the footer is visible.
+  // never pays for the layout reads. The body sway itself is a plain
+  // CSS transform animation (see .creature-body in App.css) - cheap
+  // enough to just run, same as the About creature's arm-wave.
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const eyes = eyesRef.current
     if (!eyes) return
-    const svg = eyes.closest('svg')
-    const body = svg.querySelector('.creature-body')
-    const sway = gsap.fromTo(
-      body,
-      { attr: { d: BODY_A } },
-      {
-        attr: { d: BODY_B },
-        duration: 2.2,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        paused: true,
-      },
-    )
     let visible = false
     let raf = null
     const io = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
-      if (visible) sway.play()
-      else sway.pause()
     })
-    io.observe(svg)
+    io.observe(eyes.closest('svg'))
     const onMove = (e) => {
       if (!visible || raf) return
       raf = requestAnimationFrame(() => {
@@ -58,7 +37,6 @@ export default function Footer() {
       io.disconnect()
       window.removeEventListener('mousemove', onMove)
       if (raf) cancelAnimationFrame(raf)
-      sway.kill()
     }
   }, [])
 
