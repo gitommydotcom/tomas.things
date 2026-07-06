@@ -571,6 +571,40 @@
     min-width: 0;
     margin-inline: auto;
   }
+  /* no floating "scroll" cue on phones - the stage tabs are the cue now.
+     the .hero prefix outranks the base .hero-scroll rule, which is
+     defined later in the file (media queries don't add specificity) */
+  .hero .hero-scroll {
+    display: none;
+  }
+  /* make the mode switch unmissable while scrolling: a real segmented
+     control instead of three quiet labels. Desktop keeps the quiet
+     version, which reads fine beside the slogan. */
+  .stage-tabs {
+    margin-top: 18px;
+    padding: 5px;
+    border-radius: 100px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-card);
+  }
+  .stage-tab-ind {
+    top: 5px;
+    bottom: 5px;
+    background: var(--azure);
+    border: none;
+    box-shadow: 0 6px 16px rgba(15, 150, 217, 0.4);
+  }
+  .stage-tab {
+    z-index: 1;
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 11px 22px;
+    color: var(--ink-70);
+  }
+  .stage-tab--active {
+    color: #fff;
+  }
 }
 
 .hero-slogan {
