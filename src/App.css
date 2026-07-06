@@ -16,6 +16,9 @@
   margin: -8px 0 0 -8px;
   border-radius: 50%;
   background: var(--pink);
+  /* paper-colored ring: invisible on the cream page, it keeps the dot
+     visible when it travels over pink (or any same-colored) areas */
+  box-shadow: 0 0 0 2.5px var(--bg);
   transition: transform 0.28s var(--ease-out);
 }
 .cursor--visible {
@@ -221,7 +224,7 @@
   display: grid;
   place-items: center;
 }
-.rig svg {
+.rig .pen-svg {
   width: 100%;
   height: auto;
   overflow: visible;
@@ -260,23 +263,58 @@
   transform: scale(1.45);
 }
 /* native fallback affordance; hidden when the custom pink dot is on */
-.rig [data-drag] {
+.rig [data-pt],
+.rig [data-h] {
   cursor: grab;
 }
-.has-cursor .rig [data-drag] {
+.has-cursor .rig [data-pt],
+.has-cursor .rig [data-h] {
   cursor: none;
 }
-/* before the first touch the pink knobs breathe - the rig announces
-   itself as touchable instead of waiting to be read about */
-.rig--fresh .rig-knob {
-  animation: knob-breathe 1.5s ease-in-out infinite;
+/* the pen tool's mini toolbar: undo, shuffle, ink swatch */
+.pen-toolbar {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  z-index: 2;
+  display: flex;
+  gap: 6px;
 }
-.rig--fresh .rig-grab--h1 .rig-knob {
-  animation-delay: 0.25s;
+.pen-tool-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.25s var(--ease-out),
+    border-color 0.25s var(--ease-out);
 }
-@keyframes knob-breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.35); }
+.pen-tool-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--azure);
+}
+.pen-tool-btn:disabled {
+  opacity: 0.35;
+}
+.pen-tool-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--ink-70);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pen-ink-dot {
+  display: block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
 }
 /* the "drag me!" tag hanging off the end anchor (HeroStage places and
    dismisses it); the bob lives on its own group so GSAP's pop-in/out
@@ -331,8 +369,26 @@
   color: var(--bg);
   -webkit-text-stroke: 2.5px var(--azure);
   paint-order: stroke fill;
-  transition: font-variation-settings 0.25s ease;
   will-change: transform;
+  /* the glyph is a scrub surface: dragging it bends the axes, so its
+     own drags must never scroll the page */
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.has-cursor .print-letter {
+  cursor: none;
+}
+/* the proof sheet: discarded cuts stamped faintly behind the live one */
+.print-ghost {
+  position: absolute;
+  font-size: clamp(64px, 6.5vw, 100px);
+  line-height: 1;
+  color: var(--bg);
+  -webkit-text-stroke: 1.6px #ddd0be;
+  paint-order: stroke fill;
+  pointer-events: none;
 }
 .print-controls {
   display: flex;
@@ -510,6 +566,34 @@
 }
 .code-demo-btn:hover {
   transform: rotate(0deg) scale(1.07);
+}
+/* the class token in the source picks the theme */
+.code-demo-btn--cool {
+  background: linear-gradient(125deg, #45b7e8 10%, var(--azure) 45%, #0a6da3 115%);
+  box-shadow:
+    0 18px 44px rgba(15, 150, 217, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.code-demo-btn--ink {
+  background: linear-gradient(125deg, #3b3636 10%, var(--ink) 55%, #000 115%);
+  box-shadow:
+    0 18px 44px rgba(24, 22, 22, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.code-demo-btn--ink .code-demo-ast {
+  color: var(--pink);
+}
+/* live values in the source: tap to cycle them */
+.tok-btn {
+  font: inherit;
+  color: inherit;
+  padding: 0 1px;
+  border-radius: 4px;
+  border-bottom: 2px dotted currentColor;
+  transition: background 0.25s var(--ease-out);
+}
+.tok-btn:hover {
+  background: var(--pink-soft);
 }
 .code-demo-btn::after {
   content: '';
@@ -899,11 +983,14 @@
   gap: clamp(14px, 2vw, 26px);
 }
 .work-creature {
-  /* equal visual mass with Elvis (68px wide but tall) and Viky */
-  width: clamp(58px, 5.7vw, 82px);
+  /* Elvis: tall and narrow beside the first title */
+  width: clamp(44px, 4.6vw, 68px);
   flex: none;
   margin-bottom: 6px;
   overflow: visible;
+}
+/* Ringo's idle hop travels with him wherever he's placed */
+.creature--ringo {
   animation: ringo-hop 2.6s ease-in-out infinite;
 }
 @keyframes ringo-hop {
@@ -912,6 +999,31 @@
   78% { transform: translateY(0) rotate(0deg); }
   86% { transform: translateY(-6%) rotate(3deg); }
   93% { transform: translateY(0) rotate(0deg); }
+}
+/* every creature performs on hover/tap: greeting + party trick */
+.creature {
+  overflow: visible;
+}
+.creature-greet {
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 700;
+  fill: var(--pink-deep);
+  text-anchor: middle;
+  /* hidden by visibility, never by a stylesheet transform: a CSS
+     scale(0) computes to an all-zero matrix that GSAP mis-decomposes
+     on its first read, baking a wrong translation into the pop. GSAP
+     flips visibility on and owns the transform from a clean slate. */
+  visibility: hidden;
+  pointer-events: none;
+}
+/* Elvis waves double-time while he greets */
+.creature--excited .creature-arm {
+  animation: wave-big 0.4s ease-in-out infinite;
+}
+@keyframes wave-big {
+  0%, 100% { transform: rotate(4deg); }
+  50% { transform: rotate(-34deg); }
 }
 .work-list {
   border-top: 1px solid var(--line);
@@ -1247,7 +1359,8 @@
   gap: clamp(14px, 2vw, 26px);
 }
 .about-creature {
-  width: clamp(44px, 4.6vw, 68px);
+  /* Ringo: round, equal visual mass with tall Elvis */
+  width: clamp(58px, 5.7vw, 82px);
   flex: none;
   margin-bottom: 4px;
   overflow: visible;
@@ -1508,8 +1621,10 @@
   gap: 20px;
 }
 .footer-creature {
-  /* equal visual mass with Elvis and Ringo (long-and-low aspect) */
+  /* equal visual mass with Elvis and Ringo (long-and-low aspect);
+     overflow visible so her greeting can float above the viewBox */
   width: 107px;
+  overflow: visible;
 }
 .creature-eyes {
   /* blink squashes around the eyes' own center on every browser */

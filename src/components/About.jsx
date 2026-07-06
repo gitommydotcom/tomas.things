@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Reveal, SplitTitle, EASE } from './Reveal.jsx'
-import { SqArrow, BrandAsterisk, WaveCreature } from './Doodles.jsx'
+import { SqArrow, BrandAsterisk, SpiralCreature } from './Doodles.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -24,8 +24,8 @@ const TOOLKIT = [
 
 /* the lede is authored word by word so GSAP can fill it in on scroll */
 const LEDE = [
-  'Hi,', "I'm", 'Tomáš.', 'I', 'design', 'things', '-', 'and', 'then',
-  'I', 'stay', 'to', <em key="build">build</em>, 'them.',
+  'Hi,', "I'm", 'Tomáš.', 'I', 'design', 'things,', 'then', 'I',
+  'stay', 'to', <em key="build">build</em>, 'them.',
 ]
 
 export default function About() {
@@ -63,9 +63,10 @@ export default function About() {
           <BrandAsterisk className="eyebrow-asterisk eyebrow-asterisk--lead" />
           About
         </Reveal>
+        {/* Ringo coils beside the About title now that Elvis opens the show */}
         <div className="about-title-row">
           <SplitTitle className="section-title" text="A full-stack designer." />
-          <WaveCreature className="about-creature" />
+          <SpiralCreature className="about-creature" />
         </div>
       </header>
 
@@ -85,11 +86,11 @@ export default function About() {
             viewport={{ once: true, margin: '-10% 0px' }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.1 }}
           >
-            I grew up between Czech and Italian, forever translating one
-            half of my life to the other. Somewhere along the way that
-            became the job: I take an idea and carry it all the way into
-            the world - the sketch, the artwork, the press-ready file,
-            the website, the video.
+            I grew up speaking English, Czech and Italian, always
+            translating one world into another. That habit became a
+            profession: I take an idea and walk it all the way into
+            reality, from the first sketch to the artwork, the website,
+            the video, the print run.
           </motion.p>
           <motion.p
             initial={{ y: 32 }}
@@ -97,13 +98,12 @@ export default function About() {
             viewport={{ once: true, margin: '-10% 0px' }}
             transition={{ duration: 0.9, ease: EASE, delay: 0.18 }}
           >
-            Most projects lose their spark in the handoffs - designer to
-            developer, file to printer, idea to reality. So I removed the
-            handoffs. The same pair of hands draws your logo, preps the
-            plates, writes the code and presses publish. You talk to one
-            person, and nothing gets lost in between, because there is no
-            in-between. <em>AI multiplies my hands; the eye - and the
-            care - stay mine.</em>
+            Most projects fade a little every time they get passed along.
+            Mine never leave my desk: the person who draws your logo
+            also preps the plates, writes the code and puts it all live.
+            You talk to one human and receive something that simply works.
+            <em> AI multiplies my speed. The eye and the care stay
+            mine.</em>
           </motion.p>
 
           <div className="about-quote">
@@ -111,7 +111,7 @@ export default function About() {
               "A designer hands you a file.
             </Reveal>
             <Reveal as="blockquote" className="pull-quote" delay={0.22}>
-              I hand you the finished&nbsp;thing."
+              I deliver finished&nbsp;products."
             </Reveal>
           </div>
 

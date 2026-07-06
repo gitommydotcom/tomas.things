@@ -50,6 +50,70 @@ const strokeProps = {
   strokeLinejoin: 'round',
 }
 
+/*
+ * Every creature performs on hover and on tap: a greeting pops up in
+ * its own language and the body does its party trick. One performance
+ * at a time per creature; hover triggers only for real mice so touch
+ * devices get exactly one show per tap.
+ */
+function useCreaturePlay(action) {
+  const innerRef = useRef(null)
+  const greetRef = useRef(null)
+  const busy = useRef(false)
+  const play = () => {
+    if (busy.current) return
+    busy.current = true
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const tl = gsap.timeline({
+      onComplete: () => {
+        busy.current = false
+      },
+    })
+    tl.fromTo(
+      greetRef.current,
+      { scale: 0, visibility: 'visible' },
+      {
+        scale: 1,
+        transformOrigin: '50% 100%',
+        duration: reduced ? 0.01 : 0.45,
+        ease: 'back.out(2.4)',
+      },
+      0,
+    )
+    if (!reduced) action?.(tl, innerRef.current)
+    tl.to(
+      greetRef.current,
+      { scale: 0, duration: reduced ? 0.01 : 0.35, ease: 'back.in(1.6)' },
+      reduced ? 0.9 : '>+=0.7',
+    )
+  }
+  return {
+    innerRef,
+    greetRef,
+    handlers: {
+      onClick: play,
+      onPointerEnter: (e) => {
+        if (e.pointerType === 'mouse') play()
+      },
+    },
+  }
+}
+
+/* the greeting tag: hand-written, riding above the head */
+function Greet({ greetRef, x, y, size = 15, children }) {
+  return (
+    <text
+      ref={greetRef}
+      className="creature-greet"
+      x={x}
+      y={y}
+      style={{ fontSize: size }}
+    >
+      {children}
+    </text>
+  )
+}
+
 /* The exact brand asterisk (vector path from EPS/asterisk.eps). */
 export function BrandAsterisk({ className = '', ...rest }) {
   return (
@@ -110,25 +174,48 @@ export function SqArrow({ delay = 0, inView = true, draw = true, ...rest }) {
 }
 
 
-/* Viky, the classic: a wavy line that grew a pair of eyes. */
+/* Viky, the classic: a wavy line that grew a pair of eyes. Pose B's
+   tail keeps exactly pose A's relative control offsets, so the right
+   end stays a round little curl at every frame of the sway instead of
+   flattening into a straight line. On play she wags and says ahoj. */
 const VIKY_A = 'M8 58 C 18 22, 46 24, 54 48 C 61 68, 88 66, 97 42 C 100 34, 104 28, 112 26'
-const VIKY_B = 'M10 62 C 24 34, 42 10, 55 38 C 66 74, 84 56, 95 38 C 98 29, 106 27, 113 21'
+const VIKY_B = 'M10 62 C 24 34, 42 10, 55 38 C 66 74, 84 58, 95 38 C 98 30, 102 24, 110 22'
 
-export function SqCreature({ eyeRef, ...props }) {
+export function SqCreature({ eyeRef, className = '', ...props }) {
   const bodyRef = useSway(VIKY_A, VIKY_B)
+  const { innerRef, greetRef, handlers } = useCreaturePlay((tl, inner) => {
+    tl.to(
+      inner,
+      {
+        rotation: 4,
+        transformOrigin: '15% 85%',
+        duration: 0.11,
+        yoyo: true,
+        repeat: 5,
+        ease: 'sine.inOut',
+      },
+      0,
+    ).set(inner, { rotation: 0 }, '>')
+  })
   return (
-    <svg viewBox="0 0 130 74" aria-hidden="true" {...props}>
-      <path
-        className="creature-body"
-        ref={bodyRef}
-        d={VIKY_A}
-        strokeWidth="7"
-        {...strokeProps}
-      />
-      <g className="creature-eyes" ref={eyeRef}>
-        <circle cx="100" cy="16" r="5.5" fill="var(--ink)" />
-        <circle cx="115" cy="12" r="5.5" fill="var(--ink)" />
+    <svg
+      viewBox="0 0 130 74"
+      aria-hidden="true"
+      className={`creature ${className}`}
+      data-cursor="grow"
+      {...handlers}
+      {...props}
+    >
+      <g ref={innerRef}>
+        <path className="creature-body" ref={bodyRef} d={VIKY_A} strokeWidth="7" {...strokeProps} />
+        <g className="creature-eyes" ref={eyeRef}>
+          <circle cx="100" cy="16" r="5.5" fill="var(--ink)" />
+          <circle cx="115" cy="12" r="5.5" fill="var(--ink)" />
+        </g>
       </g>
+      <Greet greetRef={greetRef} x={102} y={-4} size={17}>
+        ahoj!
+      </Greet>
     </svg>
   )
 }
@@ -136,25 +223,45 @@ export function SqCreature({ eyeRef, ...props }) {
 /* Elvis: a tall squiggle with a little waving arm.
    The viewBox has headroom above so the waving arm never gets clipped.
    His body sways from the hips - the top point stays fixed at (30 10)
-   so the arm's rotation anchor and the eyes never drift. */
+   so the arm's rotation anchor and the eyes never drift. On play he
+   hops twice, waves double-time and says hi. */
 const ELVIS_A = 'M26 80 C 10 62, 36 50, 24 32 C 18 23, 22 14, 30 10'
 const ELVIS_B = 'M22 80 C 14 56, 32 46, 27 33 C 20 24, 25 15, 30 10'
 
-export function WaveCreature(props) {
+export function WaveCreature({ className = '', ...props }) {
   const bodyRef = useSway(ELVIS_A, ELVIS_B)
+  const { innerRef, greetRef, handlers } = useCreaturePlay((tl, inner) => {
+    const svg = inner.closest('svg')
+    tl.call(() => svg.classList.add('creature--excited'), null, 0)
+      .to(inner, { y: -9, duration: 0.18, ease: 'power2.out', yoyo: true, repeat: 3 }, 0)
+      .set(inner, { y: 0 }, '>')
+      .call(() => svg.classList.remove('creature--excited'), null, 1.3)
+  })
   return (
-    <svg viewBox="0 -18 64 102" aria-hidden="true" {...props}>
-      <path ref={bodyRef} d={ELVIS_A} strokeWidth="7" {...strokeProps} />
-      <path
-        className="creature-arm"
-        d="M30 10 C 40 8, 46 12, 54 6"
-        strokeWidth="7"
-        {...strokeProps}
-      />
-      <g className="creature-eyes">
-        <circle cx="30" cy="22" r="4.5" fill="var(--ink)" />
-        <circle cx="41" cy="20" r="4.5" fill="var(--ink)" />
+    <svg
+      viewBox="0 -18 64 102"
+      aria-hidden="true"
+      className={`creature ${className}`}
+      data-cursor="grow"
+      {...handlers}
+      {...props}
+    >
+      <g ref={innerRef}>
+        <path ref={bodyRef} d={ELVIS_A} strokeWidth="7" {...strokeProps} />
+        <path
+          className="creature-arm"
+          d="M30 10 C 40 8, 46 12, 54 6"
+          strokeWidth="7"
+          {...strokeProps}
+        />
+        <g className="creature-eyes">
+          <circle cx="30" cy="22" r="4.5" fill="var(--ink)" />
+          <circle cx="41" cy="20" r="4.5" fill="var(--ink)" />
+        </g>
       </g>
+      <Greet greetRef={greetRef} x={16} y={-8} size={13}>
+        hi!
+      </Greet>
     </svg>
   )
 }
@@ -165,21 +272,41 @@ export function WaveCreature(props) {
    eyes above it. His sway is the coil breathing tighter and looser
    (pose B keeps every arc's radius at exactly half its chord, so the
    spiral stays true at every in-between frame). The viewBox has
-   headroom above so nothing clips while the hop moves the svg. */
+   headroom above so nothing clips while the hop moves the svg. On
+   play he does a full flip and says ciao. */
 const RINGO_A =
   'M50 10 A38 38 0 0 0 50 86 A31 31 0 0 0 50 24 A24 24 0 0 0 50 72 A19 19 0 0 0 50 34 A14 14 0 0 0 50 62'
 const RINGO_B =
   'M50 12 A36 36 0 0 0 50 84 A29 29 0 0 0 50 26 A22 22 0 0 0 50 70 A17 17 0 0 0 50 36 A12 12 0 0 0 50 60'
 
-export function SpiralCreature(props) {
+export function SpiralCreature({ className = '', ...props }) {
   const bodyRef = useSway(RINGO_A, RINGO_B)
+  const { innerRef, greetRef, handlers } = useCreaturePlay((tl, inner) => {
+    tl.to(
+      inner,
+      { rotation: 360, transformOrigin: '52% 56%', duration: 0.9, ease: 'power2.inOut' },
+      0,
+    ).set(inner, { rotation: 0 }, '>')
+  })
   return (
-    <svg viewBox="0 -14 96 104" aria-hidden="true" {...props}>
-      <path ref={bodyRef} d={RINGO_A} strokeWidth="7" {...strokeProps} />
-      <g className="creature-eyes">
-        <circle cx="48" cy="-3" r="5.5" fill="var(--ink)" />
-        <circle cx="61" cy="-6" r="5.5" fill="var(--ink)" />
+    <svg
+      viewBox="0 -14 96 104"
+      aria-hidden="true"
+      className={`creature creature--ringo ${className}`}
+      data-cursor="grow"
+      {...handlers}
+      {...props}
+    >
+      <g ref={innerRef}>
+        <path ref={bodyRef} d={RINGO_A} strokeWidth="7" {...strokeProps} />
+        <g className="creature-eyes">
+          <circle cx="48" cy="-3" r="5.5" fill="var(--ink)" />
+          <circle cx="61" cy="-6" r="5.5" fill="var(--ink)" />
+        </g>
       </g>
+      <Greet greetRef={greetRef} x={80} y={-4} size={15}>
+        ciao!
+      </Greet>
     </svg>
   )
 }

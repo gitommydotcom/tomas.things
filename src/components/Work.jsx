@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Reveal, SplitTitle } from './Reveal.jsx'
-import { SqArrow, BrandAsterisk, SpiralCreature } from './Doodles.jsx'
+import { SqArrow, BrandAsterisk, WaveCreature } from './Doodles.jsx'
 import { PROJECTS } from '../data/projects.js'
 import ProjectModal from './ProjectModal.jsx'
 
@@ -124,10 +124,10 @@ export default function Work() {
           <BrandAsterisk className="eyebrow-asterisk eyebrow-asterisk--lead" />
           Selected work
         </Reveal>
-        {/* Ringo hops beside the title, like Elvis waves in About */}
+        {/* Elvis greets first, waving beside the first title */}
         <div className="work-title-row">
           <SplitTitle className="section-title" text="Things, not just files." />
-          <SpiralCreature className="work-creature" />
+          <WaveCreature className="work-creature" />
         </div>
         <Reveal as="p" className="section-lead" delay={0.16}>
           Open a project for the full story.

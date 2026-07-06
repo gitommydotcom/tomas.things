@@ -7,151 +7,86 @@ import '@fontsource-variable/fraunces/full-italic.css'
 /* touch devices get tap-worded captions; the interactions themselves
    (pointer drag, sliders, taps) work the same everywhere */
 const TOUCH = typeof window !== 'undefined' && window.matchMedia('(hover: none)').matches
+const REDUCED = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /*
  * The hero's second protagonist: an interactive workbench with three
- * live modes, one per craft. The visitor switches them with the tabs
- * below; every mode is a real little tool, not a looping gif.
+ * live modes, one per craft. Each one is a real little tool:
  *
- *  Design - a working pen-tool rig: every anchor and handle drags
- *           with pixel precision, clicking the space shuffles it.
- *  Print  - a variable serif specimen (Fraunces): outline glyph with
- *           real height, weight and alternates controls.
- *  Code   - one line of source that flips into the real, fully
- *           dressed element on hover; click keeps it.
+ *  Design - a working pen tool: tap the space to add anchor points and
+ *           draw your own path, drag anchors and handles like in a
+ *           vector editor, undo, shuffle, change the ink.
+ *  Print  - a live type specimen: drag the glyph itself to bend the
+ *           variable axes (x = weight, y = height), tap it for the
+ *           next typeface; every cut leaves a proof stamp behind.
+ *  Code   - source with tappable values: cycle the label and the
+ *           theme in the markup, then render the real element.
  */
 
-/* ---------------- Design: the adjustable bezier ---------------- */
+/* ---------------- Design: the pen tool ---------------- */
 
 const VB = { w: 290, h: 230 }
-const F = 0.55 // visible handle length as a fraction of the control vector
+const MAX_PTS = 8
+/* anchors carry symmetric handles: the outgoing control point is
+   (x+hx, y+hy), the incoming one mirrors it at (x-hx, y-hy) */
+const START_PTS = [
+  { x: 34, y: 192, hx: 42, hy: -72 },
+  { x: 252, y: 78, hx: 42, hy: 38 },
+]
+const INKS = ['var(--azure)', 'var(--pink)', 'var(--ink)']
 
-function BezierRig() {
-  const rootRef = useRef(null)
+const r1 = (n) => Math.round(n * 10) / 10
+const pathFrom = (pts) =>
+  pts
+    .map((p, i) => {
+      if (i === 0) return `M${r1(p.x)} ${r1(p.y)}`
+      const a = pts[i - 1]
+      return ` C ${r1(a.x + a.hx)} ${r1(a.y + a.hy)}, ${r1(p.x - p.hx)} ${r1(p.y - p.hy)}, ${r1(p.x)} ${r1(p.y)}`
+    })
+    .join('')
 
+function PenTool() {
+  const svgRef = useRef(null)
+  const [pts, setPts] = useState(START_PTS)
+  const [sel, setSel] = useState(1)
+  const [ink, setInk] = useState(0)
+  const [fresh, setFresh] = useState(true)
+  const ptsRef = useRef(pts)
+  ptsRef.current = pts
+
+  // entrance: the starting curve draws itself, the anchors pop in
   useEffect(() => {
-    const svg = rootRef.current.querySelector('svg')
-    const q = (sel) => svg.querySelector(sel)
-    const curve = q('.rig-curve')
-    const hStart = q('.rig-handle--start')
-    const hEnd = q('.rig-handle--end')
-    const gC1 = q('.rig-grab--c1')
-    const gH1 = q('.rig-grab--h1')
-    const gH2 = q('.rig-grab--h2')
-    const gS = q('.rig-grab--start')
-    const gE = q('.rig-grab--end')
-    const hint = q('.rig-hint')
-    const hintPop = q('.rig-hint-pop')
-
-    // one state object drives every SVG attribute - no React re-renders
-    const s = { sx: 34, sy: 192, ex: 252, ey: 78, c1x: 86, c1y: 60, hx: -64, hy: -58, wave: 0 }
-
-    const place = (g, x, y) => g.setAttribute('transform', `translate(${x} ${y})`)
-    const render = () => {
-      const c1y = s.c1y + s.wave * 12
-      curve.setAttribute(
-        'd',
-        `M${s.sx} ${s.sy} C ${s.c1x} ${c1y}, ${s.ex + s.hx} ${s.ey + s.hy}, ${s.ex} ${s.ey}`,
-      )
-      const k0x = s.sx + (s.c1x - s.sx) * F
-      const k0y = s.sy + (c1y - s.sy) * F
-      hStart.setAttribute('d', `M${s.sx} ${s.sy} L ${k0x} ${k0y}`)
-      place(gC1, k0x, k0y)
-      const k1x = s.ex + s.hx * F
-      const k1y = s.ey + s.hy * F
-      const k2x = s.ex - s.hx * F
-      const k2y = s.ey - s.hy * F
-      hEnd.setAttribute('d', `M${k1x} ${k1y} L ${k2x} ${k2y}`)
-      place(gH1, k1x, k1y)
-      place(gH2, k2x, k2y)
-      place(gS, s.sx, s.sy)
-      place(gE, s.ex, s.ey)
-      place(hint, s.ex, s.ey) // the nudge tag rides along with its anchor
-    }
-    render()
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    // the rig has to LOOK touchable before anyone reads the caption:
-    // until the first touch the knobs breathe and a hand-written tag
-    // points at the end anchor. First pointer-down (or hovering any
-    // grab point) dismisses both, for good.
-    let found = false
-    const discover = () => {
-      if (found) return
-      found = true
-      rootRef.current?.classList.remove('rig--fresh')
-      gsap.killTweensOf(hintPop) // a still-delayed intro pop must not revive it
-      if (reduced) {
-        hint.style.display = 'none'
-        return
-      }
-      gsap.to(hintPop, {
-        scale: 0,
-        transformOrigin: '50% 50%',
-        duration: 0.3,
-        ease: 'back.in(1.6)',
-        onComplete: () => {
-          hint.style.display = 'none'
-        },
-      })
-    }
-    const spot = (e) => {
-      if (e.target.closest('[data-drag]')) discover()
-    }
-
-    let waveTween = null
-    const stopWave = () => {
-      if (!waveTween) return
-      waveTween.kill()
-      waveTween = null
-      s.c1y += s.wave * 12 // bake the breath in so nothing jumps
-      s.wave = 0
-      render()
-    }
-    const startWave = () => {
-      if (reduced || waveTween) return
-      waveTween = gsap.to(s, {
-        wave: 1,
-        duration: 2.4,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        onUpdate: render,
-      })
-    }
-
+    if (REDUCED()) return
+    const svg = svgRef.current
     const ctx = gsap.context(() => {
-      if (reduced) return
       gsap.fromTo(
-        curve,
+        '.pen-curve',
         { strokeDashoffset: 1 },
         { strokeDashoffset: 0, duration: 1.1, ease: 'power3.out', delay: 0.1 },
       )
-      // pop the visible knobs/anchors, not the grab groups - the groups'
-      // transforms belong to render(). clearProps hands the transform
-      // back to CSS afterwards so the hover scale keeps working.
-      gsap.from([hStart, hEnd, ...svg.querySelectorAll('.rig-knob, .rig-anchor')], {
+      gsap.from('.pen-node', {
         scale: 0,
         transformOrigin: '50% 50%',
-        stagger: 0.05,
+        stagger: 0.07,
         duration: 0.5,
         ease: 'back.out(2.2)',
-        delay: 0.6,
+        delay: 0.7,
         clearProps: 'transform',
       })
-      // the nudge tag pops in once the curve has drawn itself
-      gsap.from(hintPop, {
+      gsap.from('.rig-hint-pop', {
         scale: 0,
         transformOrigin: '50% 50%',
         duration: 0.55,
         ease: 'back.out(2)',
-        delay: 1.4,
+        delay: 1.5,
       })
-      startWave()
     }, svg)
+    return () => ctx.revert()
+  }, [])
 
-    // --- precise pointer work: map client coords to viewBox coords ---
+  // --- pointer work: precise viewBox coords, capture-based drags ---
+  useEffect(() => {
+    const svg = svgRef.current
     const toVB = (e) => {
       const r = svg.getBoundingClientRect()
       return [
@@ -159,176 +94,258 @@ function BezierRig() {
         gsap.utils.clamp(8, VB.h - 8, ((e.clientY - r.top) / r.height) * VB.h),
       ]
     }
-    let dragKind = null
-    let dragged = false
+    let drag = null // { kind: 'pt' | 'front' | 'back', idx }
+    let moved = false
+
     const down = (e) => {
-      const t = e.target.closest('[data-drag]')
+      setFresh(false)
+      const t = e.target.closest('[data-pt],[data-h]')
       if (!t) return
       e.preventDefault()
       svg.setPointerCapture(e.pointerId)
-      stopWave() // the visitor takes control; nothing may drift under the pointer
-      dragKind = t.dataset.drag
-      dragged = false
+      moved = false
+      if (t.dataset.pt != null) {
+        const idx = +t.dataset.pt
+        drag = { kind: 'pt', idx }
+        setSel(idx)
+      } else {
+        drag = { kind: t.dataset.h, idx: +t.dataset.hIdx }
+      }
     }
     const move = (e) => {
-      if (!dragKind) return
+      if (!drag) return
       const [x, y] = toVB(e)
-      dragged = true
-      if (dragKind === 'start') {
-        // the anchor carries its handle along, like a real pen tool
-        s.c1x += x - s.sx
-        s.c1y += y - s.sy
-        s.sx = x
-        s.sy = y
-      } else if (dragKind === 'end') {
-        s.ex = x
-        s.ey = y
-      } else if (dragKind === 'c1') {
-        s.c1x = s.sx + (x - s.sx) / F
-        s.c1y = s.sy + (y - s.sy) / F
-      } else if (dragKind === 'h1') {
-        s.hx = (x - s.ex) / F
-        s.hy = (y - s.ey) / F
-      } else if (dragKind === 'h2') {
-        s.hx = (s.ex - x) / F
-        s.hy = (s.ey - y) / F
-      }
-      render()
+      moved = true
+      const { kind, idx } = drag
+      setPts((prev) => {
+        const next = prev.slice()
+        const p = { ...next[idx] }
+        if (kind === 'pt') {
+          p.x = x
+          p.y = y
+        } else if (kind === 'front') {
+          p.hx = x - p.x
+          p.hy = y - p.y
+        } else {
+          p.hx = p.x - x
+          p.hy = p.y - y
+        }
+        next[idx] = p
+        return next
+      })
     }
     const up = () => {
-      dragKind = null
+      drag = null
     }
-    // clicking the empty space (never a drag) shuffles the curve
-    const shuffle = (e) => {
-      if (e.target.closest('[data-drag]') || dragged) return
-      const to = {
-        c1x: gsap.utils.random(30, 150),
-        c1y: gsap.utils.random(16, 120),
-        hx: gsap.utils.random(-110, -30),
-        hy: gsap.utils.random(-95, 40),
-        ey: gsap.utils.random(45, 130),
+    // clicking the empty space (never a drag) adds the next anchor
+    const add = (e) => {
+      if (e.target.closest('[data-pt],[data-h],.pen-toolbar') || moved) return
+      const [x, y] = toVB(e)
+      const cur = ptsRef.current
+      if (cur.length >= MAX_PTS) {
+        if (!REDUCED())
+          gsap.fromTo(svg, { x: -4 }, { x: 0, duration: 0.4, ease: 'elastic.out(1.2, 0.3)' })
+        return
       }
-      if (reduced) {
-        Object.assign(s, to)
-        render()
-      } else {
-        gsap.to(s, {
-          ...to,
-          duration: 0.9,
-          ease: 'elastic.out(1, 0.45)',
-          onUpdate: render,
-          overwrite: 'auto',
-        })
-      }
-    }
-    const enter = () => stopWave()
-    const leave = () => {
-      if (!dragKind) startWave()
+      const prev = cur[cur.length - 1]
+      const dx = x - prev.x
+      const dy = y - prev.y
+      const len = Math.max(Math.hypot(dx, dy), 1)
+      const h = Math.min(46, len / 3)
+      setPts([...cur, { x, y, hx: (dx / len) * h, hy: (dy / len) * h }])
+      setSel(cur.length)
     }
 
     svg.addEventListener('pointerdown', down)
     svg.addEventListener('pointermove', move)
     svg.addEventListener('pointerup', up)
     svg.addEventListener('pointercancel', up)
-    svg.addEventListener('click', shuffle)
-    svg.addEventListener('pointerenter', enter)
-    svg.addEventListener('pointerleave', leave)
-    svg.addEventListener('pointerdown', discover)
-    svg.addEventListener('pointerover', spot)
+    svg.addEventListener('click', add)
     return () => {
       svg.removeEventListener('pointerdown', down)
       svg.removeEventListener('pointermove', move)
       svg.removeEventListener('pointerup', up)
       svg.removeEventListener('pointercancel', up)
-      svg.removeEventListener('click', shuffle)
-      svg.removeEventListener('pointerenter', enter)
-      svg.removeEventListener('pointerleave', leave)
-      svg.removeEventListener('pointerdown', discover)
-      svg.removeEventListener('pointerover', spot)
-      waveTween?.kill()
-      ctx.revert()
+      svg.removeEventListener('click', add)
     }
   }, [])
 
+  // a freshly added anchor pops in
+  useEffect(() => {
+    if (REDUCED()) return
+    const node = svgRef.current?.querySelector(`[data-pt="${pts.length - 1}"] .pen-node`)
+    if (!node || pts.length <= START_PTS.length) return
+    gsap.from(node, {
+      scale: 0,
+      transformOrigin: '50% 50%',
+      duration: 0.5,
+      ease: 'back.out(2.6)',
+      clearProps: 'transform',
+    })
+  }, [pts.length])
+
+  const undo = () => {
+    setFresh(false)
+    setPts((prev) => (prev.length > 2 ? prev.slice(0, -1) : prev))
+    setSel((s) => Math.min(s, Math.max(pts.length - 2, 1)))
+  }
+  // shuffle: every anchor jitters, every handle spins to a new pose,
+  // eased elastically by lerping the whole set through one progress
+  const shuffle = () => {
+    setFresh(false)
+    const from = ptsRef.current
+    const to = from.map((p) => ({
+      x: gsap.utils.clamp(20, VB.w - 20, p.x + gsap.utils.random(-36, 36)),
+      y: gsap.utils.clamp(20, VB.h - 20, p.y + gsap.utils.random(-36, 36)),
+      hx: gsap.utils.random(-70, 70),
+      hy: gsap.utils.random(-70, 70),
+    }))
+    if (REDUCED()) {
+      setPts(to)
+      return
+    }
+    const prog = { t: 0 }
+    gsap.to(prog, {
+      t: 1,
+      duration: 0.9,
+      ease: 'elastic.out(1, 0.5)',
+      overwrite: 'auto',
+      onUpdate: () =>
+        setPts(
+          from.map((f, i) => ({
+            x: f.x + (to[i].x - f.x) * prog.t,
+            y: f.y + (to[i].y - f.y) * prog.t,
+            hx: f.hx + (to[i].hx - f.hx) * prog.t,
+            hy: f.hy + (to[i].hy - f.hy) * prog.t,
+          })),
+        ),
+    })
+  }
+
+  const s = pts[Math.min(sel, pts.length - 1)]
+  const last = pts[pts.length - 1]
   return (
-    <div className="rig rig--fresh" ref={rootRef}>
-      <svg viewBox={`0 0 ${VB.w} ${VB.h}`} aria-hidden="true">
+    <div className="rig">
+      {/* mini toolbar: undo, shuffle, ink */}
+      <div className="pen-toolbar" aria-hidden="true">
+        <button type="button" className="pen-tool-btn" onClick={undo} disabled={pts.length <= 2} title="undo">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 6 L4 11 L9 16 M4 11 H15 C18 11 20 13 20 16" />
+          </svg>
+        </button>
+        <button type="button" className="pen-tool-btn" onClick={shuffle} title="shuffle">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 7 C 9 7, 14 17, 20 17 M4 17 C 9 17, 14 7, 20 7 M20 7 L 16.5 5 M20 7 L 17 10.5 M20 17 L 16.5 19 M20 17 L 17 13.5" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          className="pen-tool-btn pen-tool-btn--ink"
+          onClick={() => setInk((i) => (i + 1) % INKS.length)}
+          title="ink"
+        >
+          <span className="pen-ink-dot" style={{ background: INKS[(ink + 1) % INKS.length] }} />
+        </button>
+      </div>
+
+      <svg ref={svgRef} className="pen-svg" viewBox={`0 0 ${VB.w} ${VB.h}`} aria-hidden="true">
         <rect width={VB.w} height={VB.h} fill="transparent" />
         <path
-          className="rig-curve"
-          d=""
+          className="pen-curve"
+          d={pathFrom(pts)}
           pathLength="1"
           strokeDasharray="1"
           fill="none"
-          stroke="var(--azure)"
+          stroke={INKS[ink]}
           strokeWidth="7"
           strokeLinecap="round"
+          strokeLinejoin="round"
         />
-        <path className="rig-handle rig-handle--start" d="" />
-        <path className="rig-handle rig-handle--end" d="" />
-        {/* each draggable is a group: an invisible halo (~50px on a
-            phone) makes the small knob easy to grab with a finger */}
-        <g className="rig-grab rig-grab--c1" data-drag="c1" data-cursor="grow">
-          <circle className="rig-halo" r="20" />
-          <circle className="rig-knob" r="7" />
-        </g>
-        <g className="rig-grab rig-grab--h1" data-drag="h1" data-cursor="grow">
-          <circle className="rig-halo" r="20" />
-          <circle className="rig-knob" r="7" />
-        </g>
-        <g className="rig-grab rig-grab--h2" data-drag="h2" data-cursor="grow">
-          <circle className="rig-halo" r="20" />
-          <circle className="rig-knob" r="7" />
-        </g>
-        <g className="rig-grab rig-grab--start" data-drag="start" data-cursor="grow">
-          <circle className="rig-halo" r="20" />
-          <rect className="rig-anchor rig-anchor--start" x="-7" y="-7" width="14" height="14" />
-        </g>
-        <g className="rig-grab rig-grab--end" data-drag="end" data-cursor="grow">
-          <circle className="rig-halo" r="20" />
-          <rect className="rig-anchor" x="-8" y="-8" width="16" height="16" />
-        </g>
-        {/* the first-visit nudge: a hand-written tag hanging off the end
-            anchor. It bobs until the visitor touches the rig anywhere,
-            then it's gone for good. */}
-        <g className="rig-hint">
-          <g className="rig-hint-pop">
-            <g className="rig-hint-bob">
-              <path className="rig-hint-arrow" d="M0 26 C 4 21, -3 16, 1 11 M1 11 L -5 16 M1 11 L 6 17" />
-              <text className="rig-hint-text" x="0" y="44">
-                drag me!
-              </text>
+        {/* the selected anchor exposes its two handles, vector-editor style */}
+        {pts.length > 0 && sel < pts.length && (
+          <g className="pen-handles">
+            <path
+              className="rig-handle"
+              d={`M${r1(s.x - s.hx)} ${r1(s.y - s.hy)} L ${r1(s.x + s.hx)} ${r1(s.y + s.hy)}`}
+            />
+            <g className="rig-grab" data-h="front" data-h-idx={sel} data-cursor="grow" transform={`translate(${r1(s.x + s.hx)} ${r1(s.y + s.hy)})`}>
+              <circle className="rig-halo" r="17" />
+              <circle className="rig-knob pen-node" r="7" />
+            </g>
+            <g className="rig-grab" data-h="back" data-h-idx={sel} data-cursor="grow" transform={`translate(${r1(s.x - s.hx)} ${r1(s.y - s.hy)})`}>
+              <circle className="rig-halo" r="17" />
+              <circle className="rig-knob pen-node" r="7" />
             </g>
           </g>
-        </g>
+        )}
+        {pts.map((p, i) => (
+          <g
+            key={i}
+            className="rig-grab"
+            data-pt={i}
+            data-cursor="grow"
+            transform={`translate(${r1(p.x)} ${r1(p.y)})`}
+          >
+            <circle className="rig-halo" r="20" />
+            <rect
+              className={`rig-anchor pen-node ${i === sel ? '' : 'rig-anchor--start'}`}
+              x="-7"
+              y="-7"
+              width="14"
+              height="14"
+            />
+          </g>
+        ))}
+        {/* first-visit nudge, riding the last anchor until any touch */}
+        {fresh && (
+          <g className="rig-hint" transform={`translate(${r1(last.x)} ${r1(last.y)})`}>
+            <g className="rig-hint-pop">
+              <g className="rig-hint-bob">
+                <path className="rig-hint-arrow" d="M0 26 C 4 21, -3 16, 1 11 M1 11 L -5 16 M1 11 L 6 17" />
+                <text className="rig-hint-text" x="0" y="44">
+                  drag me!
+                </text>
+              </g>
+            </g>
+          </g>
+        )}
       </svg>
       <p className="stage-caption">
-        drag the points · {TOUCH ? 'tap' : 'click'} the space to shuffle
+        {TOUCH ? 'tap' : 'click'} the space to add points · drag them into a drawing
       </p>
     </div>
   )
 }
 
-/* ---------------- Print: the type specimen ---------------- */
+/* ---------------- Print: the live specimen ---------------- */
 
-/* tapping the A cycles through the site's typefaces; the sliders keep
-   working on all of them (Fraunces via its variable axes, the others
-   via font-weight) */
+/* the sliders and the glyph drive the same two values: dragging the
+   letter scrubs weight on x and height on y, the sliders stay synced */
 const FONTS = [
   { label: 'Fraunces', family: "'Fraunces Variable', Georgia, 'Times New Roman', serif", variable: true },
   { label: 'Pepi', family: "'Pepi', 'Inter Variable', sans-serif" },
   { label: 'Inter', family: "'Inter Variable', system-ui, sans-serif" },
 ]
+const glyphStyle = (f, weight, alt) => ({
+  fontFamily: f.family,
+  fontStyle: alt ? 'italic' : 'normal',
+  ...(f.variable
+    ? { fontVariationSettings: `'opsz' 144, 'wght' ${weight}, 'SOFT' 0, 'WONK' ${alt ? 1 : 0}` }
+    : { fontWeight: Math.round(weight) }),
+})
 
 function PrintLetter() {
   const [font, setFont] = useState(0)
   const [weight, setWeight] = useState(620)
   const [height, setHeight] = useState(1)
   const [alt, setAlt] = useState(false)
+  const [ghosts, setGhosts] = useState([])
   const letterRef = useRef(null)
+  const stageRef = useRef(null)
+  const ghostId = useRef(0)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (REDUCED()) return
     gsap.from(letterRef.current, { scale: 0.7, duration: 0.8, ease: 'back.out(1.8)' })
     gsap.from('.print-controls > *', {
       y: 12,
@@ -339,35 +356,102 @@ function PrintLetter() {
     })
   }, [])
 
+  // drag the glyph itself: x scrubs the weight axis, y the height.
+  // A press that never travels is a tap = next typeface + proof stamp.
+  // Bound once; refs carry the live values so a re-render mid-drag
+  // can never reset the gesture.
+  const live = useRef({ weight, height })
+  live.current = { weight, height }
+  const stampRef = useRef(null)
+  useEffect(() => {
+    const el = letterRef.current
+    let start = null
+    const down = (e) => {
+      e.preventDefault()
+      el.setPointerCapture(e.pointerId)
+      start = { x: e.clientX, y: e.clientY, ...live.current, moved: false }
+    }
+    const move = (e) => {
+      if (!start) return
+      const dx = e.clientX - start.x
+      const dy = e.clientY - start.y
+      if (Math.abs(dx) + Math.abs(dy) > 6) start.moved = true
+      setWeight(gsap.utils.clamp(100, 900, start.weight + dx * 3.2))
+      setHeight(gsap.utils.clamp(0.7, 1.5, start.height + dy * 0.005))
+    }
+    const up = () => {
+      if (start && !start.moved) stampRef.current?.()
+      start = null
+    }
+    el.addEventListener('pointerdown', down)
+    el.addEventListener('pointermove', move)
+    el.addEventListener('pointerup', up)
+    el.addEventListener('pointercancel', up)
+    return () => {
+      el.removeEventListener('pointerdown', down)
+      el.removeEventListener('pointermove', move)
+      el.removeEventListener('pointerup', up)
+      el.removeEventListener('pointercancel', up)
+    }
+  }, [])
+
+  // next typeface; the outgoing cut stays behind as a faint proof stamp
   const stamp = () => {
+    setGhosts((g) => {
+      const next = [
+        ...g,
+        {
+          id: ghostId.current++,
+          font,
+          weight,
+          height,
+          alt,
+          x: gsap.utils.random(12, 72),
+          y: gsap.utils.random(8, 46),
+          rot: gsap.utils.random(-14, 14),
+        },
+      ]
+      return next.slice(-4)
+    })
     setFont((f) => (f + 1) % FONTS.length)
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (REDUCED()) return
     gsap.fromTo(
       letterRef.current,
       { scale: 0.82, rotate: gsap.utils.random(-5, 5) },
       { scale: 1, rotate: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' },
     )
+    requestAnimationFrame(() => {
+      const all = stageRef.current?.querySelectorAll('.print-ghost')
+      const born = all?.[all.length - 1]
+      if (born) gsap.from(born, { scale: 1.25, duration: 0.5, ease: 'power3.out' })
+    })
   }
+  stampRef.current = stamp
 
   const f = FONTS[font]
   return (
-    <div className="print-stage" aria-hidden="true">
+    <div className="print-stage" ref={stageRef} aria-hidden="true">
+      {/* the proof sheet: every discarded cut stays stamped behind */}
+      {ghosts.map((g) => (
+        <span
+          key={g.id}
+          className="print-ghost"
+          style={{
+            left: `${g.x}%`,
+            top: `${g.y}%`,
+            transform: `rotate(${g.rot}deg) scaleY(${g.height})`,
+            ...glyphStyle(FONTS[g.font], g.weight, g.alt),
+          }}
+        >
+          A
+        </span>
+      ))}
       <span className="print-letter-wrap" style={{ transform: `scaleY(${height})` }}>
-        {/* the capital A, azure outline; "alternates" swaps in the
-            italic cut */}
         <span
           ref={letterRef}
           className="print-letter"
-          style={{
-            fontFamily: f.family,
-            fontStyle: alt ? 'italic' : 'normal',
-            ...(f.variable
-              ? {
-                  fontVariationSettings: `'opsz' 144, 'wght' ${weight}, 'SOFT' 0, 'WONK' ${alt ? 1 : 0}`,
-                }
-              : { fontWeight: weight }),
-          }}
-          onClick={stamp}
+          style={glyphStyle(f, weight, alt)}
+          data-cursor="grow"
         >
           A
         </span>
@@ -391,7 +475,7 @@ function PrintLetter() {
             min="100"
             max="900"
             step="1"
-            value={weight}
+            value={Math.round(weight)}
             onChange={(e) => setWeight(+e.target.value)}
           />
         </label>
@@ -405,30 +489,33 @@ function PrintLetter() {
         </button>
       </div>
       <p className="stage-caption">
-        {f.label} · pull the sliders · {TOUCH ? 'tap' : 'click'} the A for the next font
+        {f.label} · drag the A to bend it · {TOUCH ? 'tap' : 'click'} it for the next cut
       </p>
     </div>
   )
 }
 
-/* ---------------- Code: source that renders ---------------- */
+/* ---------------- Code: source you can tweak ---------------- */
 
-/* asterisk burst when the element compiles: fixed polar directions,
-   alternating brand colors */
+/* two live values in the markup: the theme class and the label. Tap
+   them to cycle, then render - three languages, on brand */
+const THEMES = ['thing', 'cool', 'ink']
+const LABELS = ['ahoj!', 'ciao!', 'hello!']
+
 const BURST = Array.from({ length: 6 }, (_, i) => ({
   angle: (i / 6) * Math.PI * 2 - Math.PI / 2,
   azure: i % 2 === 1,
 }))
 
 function CodeLine() {
-  // one clean toggle: click/tap renders the button, click/tap again
-  // flips it back to source
   const [show, setShow] = useState(false)
+  const [theme, setTheme] = useState(0)
+  const [label, setLabel] = useState(0)
   const rootRef = useRef(null)
   const wasShown = useRef(false)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (REDUCED()) return
     // clearProps: the CSS class owns this element's transform for the
     // 3D flip - a leftover inline transform from the tween would win
     // over the class and block the rotation
@@ -447,9 +534,7 @@ function CodeLine() {
       return
     }
     wasShown.current = show
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    // no fade: the asterisks pop in at full ink and shrink away as
-    // they fly out
+    if (REDUCED()) return
     const asts = rootRef.current.querySelectorAll('.code-burst-ast')
     asts.forEach((el, i) => {
       const { angle } = BURST[i]
@@ -471,6 +556,25 @@ function CodeLine() {
     })
   }, [show])
 
+  const pop = (e) => {
+    if (REDUCED()) return
+    gsap.fromTo(
+      e.currentTarget,
+      { scale: 0.7 },
+      { scale: 1, duration: 0.45, ease: 'back.out(3)', clearProps: 'transform' },
+    )
+  }
+  const cycleTheme = (e) => {
+    e.stopPropagation()
+    setTheme((t) => (t + 1) % THEMES.length)
+    pop(e)
+  }
+  const cycleLabel = (e) => {
+    e.stopPropagation()
+    setLabel((l) => (l + 1) % LABELS.length)
+    pop(e)
+  }
+
   return (
     <div
       className="code-stage"
@@ -490,9 +594,15 @@ function CodeLine() {
             <span className="tok-tag">button</span>{' '}
             <span className="tok-attr">class</span>
             <span className="tok-p">=</span>
-            <span className="tok-str">"thing"</span>
+            <span className="tok-p">"</span>
+            <button type="button" className="tok-btn tok-str" onClick={cycleTheme}>
+              {THEMES[theme]}
+            </button>
+            <span className="tok-p">"</span>
             <span className="tok-p">&gt;</span>
-            <span className="tok-txt">ahoj!</span>
+            <button type="button" className="tok-btn tok-txt" onClick={cycleLabel}>
+              {LABELS[label]}
+            </button>
             <span className="tok-p">&lt;/</span>
             <span className="tok-tag">button</span>
             <span className="tok-p">&gt;</span>
@@ -507,20 +617,18 @@ function CodeLine() {
               />
             ))}
           </span>
-          <span className="code-demo-btn">
-            ahoj!
+          <span className={`code-demo-btn code-demo-btn--${THEMES[theme]}`}>
+            {LABELS[label]}
             <BrandAsterisk className="code-demo-ast" />
           </span>
         </div>
       </div>
       <p className="stage-caption">
-        {TOUCH
-          ? show
+        {show
+          ? TOUCH
             ? 'tap to flip it back'
-            : 'tap to render it'
-          : show
-            ? 'click to flip it back'
-            : 'click to render it'}
+            : 'click to flip it back'
+          : `tweak the values · ${TOUCH ? 'tap' : 'click'} to render it`}
       </p>
     </div>
   )
@@ -542,7 +650,7 @@ export default function HeroStage() {
   const indReady = useRef(false)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (REDUCED()) return
     gsap.from(rootRef.current, {
       y: 42,
       duration: 1,
@@ -578,7 +686,7 @@ export default function HeroStage() {
         <span className="stage-mark stage-mark--tr" aria-hidden="true" />
         <span className="stage-mark stage-mark--bl" aria-hidden="true" />
         <span className="stage-mark stage-mark--br" aria-hidden="true" />
-        {mode === 'design' && <BezierRig />}
+        {mode === 'design' && <PenTool />}
         {mode === 'print' && <PrintLetter />}
         {mode === 'code' && <CodeLine />}
       </div>
