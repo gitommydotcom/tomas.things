@@ -111,6 +111,7 @@ export const PROJECTS = [
     ],
     gallery: [
       { src: '/work/edilfer-logo.jpg', alt: 'The Corti Edil-Fer primary lockup: blue Corti, green Edil-Fer and the snail mark' },
+      { src: '/work/edilfer-web.jpg', alt: 'The Corti Edil-Fer website on three phones: homepage, the paints page and the menu' },
       { src: '/work/edilfer-cards.jpg', alt: 'Corti Edil-Fer business cards, a white front and a green back with the snail' },
       { src: '/work/edilfer-emblem.jpg', alt: 'The green Corti Edil-Fer emblem on navy' },
       { src: '/work/edilfer-suite.jpg', alt: 'The logo suite: lockup, emblem, Edil-Fer wordmark and the snail mascot' },
