@@ -128,7 +128,7 @@ export default function Work() {
         <BrandAsterisk className="cta-asterisk" />
         <span className="cta-banner-text">
           <span className="eyebrow eyebrow--light">
-            08
+            09
             <BrandAsterisk className="eyebrow-asterisk" />
             next
           </span>
