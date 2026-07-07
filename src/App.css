@@ -1908,15 +1908,24 @@
   width: clamp(96px, 10vw, 122px);
   overflow: visible;
 }
-/* on phones there is no room to her left: tuck her just above the button */
+/* on phones she drops to the lower-left of the section, by the EN/IT/CZ
+   line and just above the footer. .contact-actions is a framer-motion
+   div, so its inline transform makes it the containing block for Viky -
+   neutralise it here (position + transform + will-change) so she anchors
+   to .contact and can reach the section's lower-left corner. */
 @media (max-width: 620px) {
+  .contact-actions {
+    position: static;
+    transform: none !important;
+    will-change: auto !important;
+  }
   .contact-creature {
     right: auto;
     top: auto;
-    left: 8px;
-    bottom: calc(100% + 8px);
+    left: 14px;
+    bottom: clamp(48px, 8vh, 66px);
     margin: 0;
-    width: 68px;
+    width: 82px;
   }
 }
 

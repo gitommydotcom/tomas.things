@@ -18,14 +18,14 @@ export const PROJECTS = [
     title: 'Belgrado & Gargano',
     blurb: 'An interactive travel dossier: a day-by-day plan, maps and a shared packing list.',
     role: 'Product design · UI · Build',
-    cover: '/work/belgrado-ticket.jpg',
-    coverAlt: 'Belgrado boarding-pass ticket header in pine green',
+    cover: '/work/belgrado-browser.jpg',
+    coverAlt: 'The Belgrado & Gargano trip dossier open in a browser window',
     description: [
-      'A trip needs a plan, so I built one you can actually use on the road. Belgrado & Gargano is an interactive dossier for a week split between a city and the sea: a boarding-pass header, a day-by-day itinerary you open one day at a time, beach and parking cards, a little phrasebook, and interactive maps that pin every spot.',
-      'Two people share it live - a collaborative packing list and the checklists sync through the cloud and tick off on both phones at once, with an offline fallback when the signal drops. All wrapped in a warm, magazine-like layout that makes the logistics feel like part of the holiday. (Shown here with the personal details swapped out.)',
+      'Belgrado & Gargano is a template as much as a trip. It plans a full week split between a city and the sea, but the structure is built to be re-run for any destination: a boarding-pass header, a day-by-day itinerary you open one day at a time, beach and parking cards, a phrasebook, and interactive maps that pin every spot.',
+      'Under the warm, magazine-like surface it is a fairly deep system - dozens of moving parts across days, places, transport, budgets, packing and checklists, all editable and all kept in sync. Two people share it live through the cloud, ticking things off on both phones at once, with an offline fallback when the signal drops. Change the variables and the same dossier plans the next trip. (Shown here with the personal details swapped out.)',
     ],
     gallery: [
-      { src: '/work/belgrado-ticket.jpg', alt: 'Belgrado view: a boarding-pass ticket and the trip title in a warm serif' },
+      { src: '/work/belgrado-browser.jpg', alt: 'The Belgrado & Gargano dossier in a browser: the boarding-pass ticket and trip title' },
       { src: '/work/belgrado-peschici.jpg', alt: 'Peschici view: a teal seaside hero with travel facts' },
       { src: '/work/belgrado-valigia.jpg', alt: 'Packing view: an amber hero with per-person checklists' },
       { src: '/work/belgrado-see.jpg', alt: 'Belgrade day plan with cards for what to see' },
@@ -39,14 +39,14 @@ export const PROJECTS = [
     title: 'Pandino',
     blurb: 'A Tesla-style companion app for a 2007 Fiat Panda.',
     role: 'Product design · 3D · Build',
-    cover: '/work/pandino-dash-thumb.jpg',
-    coverAlt: 'Pandino app: a yellow 3D Fiat Panda beside a status dashboard',
+    cover: '/work/pandino-browser.jpg',
+    coverAlt: 'Pandino in a browser window: a yellow 3D Fiat Panda beside its status dashboard',
     description: [
       'Modern cars get a slick app. My 2007 Fiat Panda got Pandino. It keeps every deadline a car quietly piles up - insurance, road tax, the yearly inspection, the timing belt - in one calm dashboard that tells you what is due and exactly what to do about it.',
       'The car sits in the middle as a 3D model you can spin: tap a wheel, the hood or the body and it opens the right card. Everything lives on your device, offline. Built for one very specific car, designed so anyone could use it for theirs.',
     ],
     gallery: [
-      { src: '/work/pandino-dash.jpg', alt: 'Pandino dashboard with an interactive 3D Fiat Panda' },
+      { src: '/work/pandino-browser.jpg', alt: 'Pandino in a browser window with its interactive 3D Fiat Panda' },
       { src: '/work/pandino-sheet.jpg', alt: 'A Pandino detail card explaining the car inspection deadline' },
       { src: '/work/pandino-mobile.jpg', alt: 'Pandino on mobile: 3D car above the status tiles' },
     ],
@@ -59,14 +59,14 @@ export const PROJECTS = [
     title: 'Move',
     blurb: 'A social planner that turns a roster of clients into a month of posts.',
     role: 'Product design · UI · Build',
-    cover: '/work/move-dash-thumb.jpg',
-    coverAlt: 'Move dashboard: client cards with statistics and activity sparklines',
+    cover: '/work/move-browser.jpg',
+    coverAlt: 'The Move dashboard in a browser window: client cards, stats and sparklines',
     description: [
       'Move is the tool I built for the part of the job nobody enjoys: planning a month of social content for a whole roster of clients. Each client keeps a living profile - who they are, how they talk, what they sell, which platforms - and Move turns that into a finished editorial plan in one pass: dates, formats, objectives, captions, visual directions, hashtags and SEO notes, all ready to edit.',
       'It is built to actually run an agency week. A dashboard flags which clients are overdue and draws an activity sparkline for each one; the generator drafts a whole month at a time; and everything syncs to the cloud so it follows you between devices, with an offline-first fallback when the signal drops. Less staring at an empty calendar, more shipping.',
     ],
     gallery: [
-      { src: '/work/move-dash.jpg', alt: 'Move dashboard: six client cards with metrics and activity sparklines' },
+      { src: '/work/move-browser.jpg', alt: 'The Move dashboard in a browser: six client cards with metrics and sparklines' },
       { src: '/work/move-plan.jpg', alt: 'A generated editorial plan: post cards with date, format, caption, visual notes and hashtags' },
     ],
     links: [
@@ -90,8 +90,7 @@ export const PROJECTS = [
     gallery: [
       { src: '/work/berkana-stationery.jpg', alt: 'Berkana letterhead, cards and folder on a neutral surface' },
       { src: '/work/berkana-map.jpg', alt: 'A 3D territory map locating Berkana condo developments across Abruzzo' },
-      { src: '/work/berkana-cards.jpg', alt: 'Berkana business cards, navy and cream, held' },
-      { src: '/work/berkana-cards2.jpg', alt: 'Berkana cards: a cream front beside a navy stack' },
+      { src: '/work/berkana-cards3.jpg', alt: 'Berkana business cards, navy and cream, held against a teal backdrop' },
       { src: '/work/berkana-rsvp.jpg', alt: 'Berkana opening invitation with a duotone-blue architecture photo' },
     ],
   },
@@ -114,7 +113,6 @@ export const PROJECTS = [
       { src: '/work/edilfer-logo.jpg', alt: 'The Corti Edil-Fer primary lockup: blue Corti, green Edil-Fer and the snail mark' },
       { src: '/work/edilfer-web.jpg', alt: 'The Corti Edil-Fer website on three phones: homepage, the paints page and the menu' },
       { src: '/work/edilfer-cards.jpg', alt: 'Corti Edil-Fer business cards, a white front and a green back with the snail' },
-      { src: '/work/edilfer-emblem.jpg', alt: 'The green Corti Edil-Fer emblem on navy' },
       { src: '/work/edilfer-suite.jpg', alt: 'The logo suite: lockup, emblem, Edil-Fer wordmark and the snail mascot' },
     ],
     links: [
