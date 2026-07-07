@@ -1,7 +1,7 @@
 /*
  * Real work, grouped into macro sections (see `group`). `cover` is the
- * card thumbnail; galleries open full-size in the lightbox. Links render
- * as "Label: CTA" rows in the detail view.
+ * card image; galleries open full-size in the lightbox. Links render as
+ * "Label: CTA" rows in the detail view.
  */
 export const GROUPS = [
   { id: 'digital', label: 'Digital products' },
@@ -11,24 +11,24 @@ export const GROUPS = [
 
 export const PROJECTS = [
   {
-    id: 'move',
+    id: 'belgrado',
     index: '01',
     group: 'digital',
-    category: 'Product',
-    title: 'Move',
-    blurb: 'A social planner that turns a roster of clients into a month of posts.',
+    category: 'Web app',
+    title: 'Belgrado & Gargano',
+    blurb: 'An interactive travel dossier: a day-by-day plan, maps and a shared packing list.',
     role: 'Product design · UI · Build',
-    cover: '/work/move-login-thumb.jpg',
-    coverAlt: 'Move login screen, acid-green wordmark on near-black',
+    cover: '/work/belgrado-ticket.jpg',
+    coverAlt: 'Belgrado boarding-pass ticket header in pine green',
     description: [
-      'Move is the tool I built for the part of the job nobody enjoys: planning a month of social content for a whole roster of clients. Each client keeps a living profile - who they are, how they talk, what they sell, which platforms - and Move turns that into a finished editorial plan in one pass: dates, formats, objectives, captions, visual directions, hashtags and SEO notes, all ready to edit.',
-      'It is built to actually run an agency week. A dashboard flags which clients are overdue and draws an activity sparkline for each one; the generator drafts a whole month at a time; and everything syncs to the cloud so it follows you between devices, with an offline-first fallback when the signal drops. Less staring at an empty calendar, more shipping.',
+      'A trip needs a plan, so I built one you can actually use on the road. Belgrado & Gargano is an interactive dossier for a week split between a city and the sea: a boarding-pass header, a day-by-day itinerary you open one day at a time, beach and parking cards, a little phrasebook, and interactive maps that pin every spot.',
+      'Two people share it live - a collaborative packing list and the checklists sync through the cloud and tick off on both phones at once, with an offline fallback when the signal drops. All wrapped in a warm, magazine-like layout that makes the logistics feel like part of the holiday. (Shown here with the personal details swapped out.)',
     ],
     gallery: [
-      { src: '/work/move-plan.jpg', alt: 'A generated editorial plan: post cards with date, format, caption, visual notes and hashtags' },
-    ],
-    links: [
-      { label: 'Live tool', cta: 'Open Move', href: 'https://move-editorial-planner.netlify.app' },
+      { src: '/work/belgrado-ticket.jpg', alt: 'Belgrado view: a boarding-pass ticket and the trip title in a warm serif' },
+      { src: '/work/belgrado-peschici.jpg', alt: 'Peschici view: a teal seaside hero with travel facts' },
+      { src: '/work/belgrado-valigia.jpg', alt: 'Packing view: an amber hero with per-person checklists' },
+      { src: '/work/belgrado-see.jpg', alt: 'Belgrade day plan with cards for what to see' },
     ],
   },
   {
@@ -52,24 +52,24 @@ export const PROJECTS = [
     ],
   },
   {
-    id: 'belgrado',
+    id: 'move',
     index: '03',
     group: 'digital',
-    category: 'Web app',
-    title: 'Belgrado & Gargano',
-    blurb: 'An interactive travel dossier: a day-by-day plan, maps and a shared packing list.',
+    category: 'Product',
+    title: 'Move',
+    blurb: 'A social planner that turns a roster of clients into a month of posts.',
     role: 'Product design · UI · Build',
-    cover: '/work/belgrado-ticket-thumb.jpg',
-    coverAlt: 'Belgrado boarding-pass ticket header in pine green',
+    cover: '/work/move-login-thumb.jpg',
+    coverAlt: 'Move login screen, acid-green wordmark on near-black',
     description: [
-      'A trip needs a plan, so I built one you can actually use on the road. Belgrado & Gargano is an interactive dossier for a week split between a city and the sea: a boarding-pass header, a day-by-day itinerary you open one day at a time, beach and parking cards, a little phrasebook, and interactive maps that pin every spot.',
-      'Two people share it live - a collaborative packing list and the checklists sync through the cloud and tick off on both phones at once, with an offline fallback when the signal drops. All wrapped in a warm, magazine-like layout that makes the logistics feel like part of the holiday. (Shown here with the personal details swapped out.)',
+      'Move is the tool I built for the part of the job nobody enjoys: planning a month of social content for a whole roster of clients. Each client keeps a living profile - who they are, how they talk, what they sell, which platforms - and Move turns that into a finished editorial plan in one pass: dates, formats, objectives, captions, visual directions, hashtags and SEO notes, all ready to edit.',
+      'It is built to actually run an agency week. A dashboard flags which clients are overdue and draws an activity sparkline for each one; the generator drafts a whole month at a time; and everything syncs to the cloud so it follows you between devices, with an offline-first fallback when the signal drops. Less staring at an empty calendar, more shipping.',
     ],
     gallery: [
-      { src: '/work/belgrado-ticket.jpg', alt: 'Belgrado view: a boarding-pass ticket and the trip title in a warm serif' },
-      { src: '/work/belgrado-peschici.jpg', alt: 'Peschici view: a teal seaside hero with travel facts' },
-      { src: '/work/belgrado-valigia.jpg', alt: 'Packing view: an amber hero with per-person checklists' },
-      { src: '/work/belgrado-see.jpg', alt: 'Belgrade day plan with cards for what to see' },
+      { src: '/work/move-plan.jpg', alt: 'A generated editorial plan: post cards with date, format, caption, visual notes and hashtags' },
+    ],
+    links: [
+      { label: 'Live tool', cta: 'Open Move', href: 'https://move-editorial-planner.netlify.app' },
     ],
   },
   {
@@ -102,13 +102,14 @@ export const PROJECTS = [
     title: 'Fregno',
     blurb: 'A teaser identity for a music venue that is not open yet.',
     role: 'Identity · Poster system · Type',
-    cover: '/work/fregno-teal-thumb.jpg',
-    coverAlt: 'Fregno poster: bold acid-green type on teal',
+    cover: '/work/fregno-wall.jpg',
+    coverAlt: 'Three Fregno posters wheatpasted on a concrete wall',
     description: [
       'Fregno is a music venue in the making. Before the doors open, the job was to build curiosity - so the identity arrived as a run of posters that say a lot with almost nothing: a night, a place, a wall of loud type in colours that keep changing.',
       'One elastic system, many faces - acid green on teal, on cobalt, on black - made to spread across walls and feeds and leave you asking what it is.',
     ],
     gallery: [
+      { src: '/work/fregno-wall.jpg', alt: 'Three Fregno posters wheatpasted together on a wall' },
       { src: '/work/fregno-teal.jpg', alt: 'Fregno poster, acid green on teal: Ogni venerdi un party in centro' },
       { src: '/work/fregno-blue.jpg', alt: 'Fregno poster in the cobalt-blue colourway' },
       { src: '/work/fregno-black.jpg', alt: 'Fregno poster: genre list in lavender on black' },
@@ -122,8 +123,8 @@ export const PROJECTS = [
     title: 'Il manuale maniacale',
     blurb: 'A cover about the little habits we cannot quite stop.',
     role: 'Concept · Illustration · Type',
-    cover: '/work/manuale-thumb.jpg',
-    coverAlt: 'Cover of Il manuale maniacale: the letter m drawn as two bitten fingernails',
+    cover: '/work/manuale-detail.jpg',
+    coverAlt: 'Detail of Il manuale maniacale: the m drawn as two bitten fingernails',
     description: [
       'A cover for "Il manuale maniacale", the manual of small manias. The idea had to carry the whole page, so the title letter does the work: the m is a pair of fingers, nails bitten to the quick. You get the joke before you read a word.',
       'Flat colour, one clean display face, a single visual pun - the kind of cover that makes you pick the thing up.',
@@ -141,17 +142,17 @@ export const PROJECTS = [
     title: 'Album covers',
     blurb: 'Sleeves that sound like the record before you press play.',
     role: 'Art direction · Artwork · Type',
-    cover: '/work/zero75-chiedi-thumb.jpg',
-    coverAlt: 'Chiedi Di Me cover: torn-edge collage with duotone photography',
+    cover: '/work/album-vinyl-chiedi.jpg',
+    coverAlt: 'Chiedi Di Me sleeve with the record pulled out, the cover art on the label',
     description: [
       'Covers for Zero75, Panda, Donci Kong and Kid Kontrasto. Every record gets its own room: the unresolved charcoal face of "William Blake", the halftone childhood photo of "10 Settembre", the lantern against the dark in "Luce", the gold blackletter of "Non e Musica Soltanto".',
       'Different artists, different moods - the same job: make the sleeve sound like the music before you press play.',
     ],
     gallery: [
-      { src: '/work/zero75-chiedi.jpg', alt: 'Zero75 ft. Sean Poly - Chiedi Di Me single cover' },
-      { src: '/work/zero75-blake.jpg', alt: 'Zero75 - William Blake single cover' },
+      { src: '/work/album-vinyl-blake.jpg', alt: 'Zero75 - William Blake, sleeve and record' },
+      { src: '/work/album-vinyl-chiedi.jpg', alt: 'Zero75 ft. Sean Poly - Chiedi Di Me, sleeve and record' },
+      { src: '/work/album-vinyl-luce.jpg', alt: 'Donci Kong - Luce, sleeve and record' },
       { src: '/work/panda.jpg', alt: 'Panda - 10 Settembre album cover' },
-      { src: '/work/luce.jpg', alt: 'Donci Kong - Luce album cover' },
       { src: '/work/kid-cover.jpg', alt: 'Kid Kontrasto - Non e Musica Soltanto album cover' },
     ],
   },

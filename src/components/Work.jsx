@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -10,35 +10,35 @@ import ProjectModal from './ProjectModal.jsx'
 gsap.registerPlugin(ScrollTrigger)
 
 /*
- * Selected work as an editorial index, animated by the scrollbar:
- * rows rise in as they enter, thumbnails drift in gentle parallax,
- * the whole list leans with your scroll velocity, and the CTA banner
- * scales up scrubbed to the scroll. Movement only - nothing fades.
+ * Selected work, grouped into macro categories: each project is an
+ * image-forward card in a two-column grid. Cards rise in as they enter
+ * and lift on hover; the CTA banner scales up scrubbed to the scroll.
+ * Movement only - nothing fades.
  */
-function Row({ project, onOpen }) {
+function Card({ project, onOpen }) {
   const { index, category, title, blurb, cover, coverAlt } = project
   return (
     <li>
       <button
         type="button"
-        className="work-row"
+        className="work-card"
         onClick={() => onOpen(project)}
         aria-haspopup="dialog"
       >
-        <span className="work-num" aria-hidden="true">
-          {index}
-        </span>
-        <span className="work-thumb">
+        <span className="work-card-media">
           <img src={cover} alt={coverAlt} loading="lazy" decoding="async" />
-        </span>
-        <span className="work-row-text">
-          <span className="work-row-title">{title}</span>
-          <span className="work-row-meta">
-            <span className="work-tag">{category}</span>
-            <span className="work-blurb">{blurb}</span>
+          <span className="work-card-num" aria-hidden="true">
+            {index}
           </span>
         </span>
-        <SqArrow className="work-row-arrow" inView={false} />
+        <span className="work-card-body">
+          <span className="work-card-top">
+            <span className="work-tag">{category}</span>
+            <SqArrow className="work-card-arrow" inView={false} />
+          </span>
+          <span className="work-card-title">{title}</span>
+          <span className="work-card-blurb">{blurb}</span>
+        </span>
       </button>
     </li>
   )
@@ -51,52 +51,23 @@ export default function Work() {
   useEffect(() => {
     const mm = gsap.matchMedia(sectionRef)
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      // rows glide up into place as they enter - movement only, no fade
-      gsap.utils.toArray('.work-list li').forEach((row) => {
-        gsap.from(row, {
-          y: 70,
-          duration: 0.85,
+      // cards glide up into place as they enter - movement only, no fade
+      gsap.utils.toArray('.work-card').forEach((card) => {
+        gsap.from(card, {
+          y: 48,
+          duration: 0.8,
           ease: 'power3.out',
-          scrollTrigger: { trigger: row, start: 'top 96%', once: true },
+          scrollTrigger: { trigger: card, start: 'top 94%', once: true },
         })
       })
-      // thumbnails drift against the scroll while their row is on screen
-      gsap.utils.toArray('.work-thumb').forEach((thumb) => {
-        gsap.fromTo(
-          thumb,
-          { y: 12 },
-          {
-            y: -12,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: thumb,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true,
-            },
-          },
-        )
-      })
-      // the index leans with scroll velocity, then settles
-      const lean = { skew: 0 }
-      const setSkew = gsap.quickSetter('.work-list', 'skewY', 'deg')
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: 'top bottom',
-        end: 'bottom top',
-        onUpdate(self) {
-          const v = gsap.utils.clamp(-1.4, 1.4, self.getVelocity() / -400)
-          if (Math.abs(v) > Math.abs(lean.skew)) {
-            lean.skew = v
-            gsap.to(lean, {
-              skew: 0,
-              duration: 0.9,
-              ease: 'power3.out',
-              overwrite: true,
-              onUpdate: () => setSkew(lean.skew),
-            })
-          }
-        },
+      // the category headers rise in just ahead of their cards
+      gsap.utils.toArray('.work-group').forEach((head) => {
+        gsap.from(head, {
+          y: 22,
+          duration: 0.7,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: head, start: 'top 95%', once: true },
+        })
       })
       // CTA banner rises and scales up, scrubbed to the scrollbar
       gsap.fromTo(
@@ -135,21 +106,23 @@ export default function Work() {
         </Reveal>
       </header>
 
-      <ul className="work-list">
+      <div className="work-groups">
         {GROUPS.map((g) => (
-          <Fragment key={g.id}>
-            <li className="work-group" aria-hidden="true">
+          <section className="work-group-sec" key={g.id}>
+            <h3 className="work-group">
               <span className="work-group-label">
                 <BrandAsterisk className="work-group-ast" />
                 {g.label}
               </span>
-            </li>
-            {PROJECTS.filter((p) => p.group === g.id).map((p) => (
-              <Row key={p.id} project={p} onOpen={setOpen} />
-            ))}
-          </Fragment>
+            </h3>
+            <ul className="work-grid">
+              {PROJECTS.filter((p) => p.group === g.id).map((p) => (
+                <Card key={p.id} project={p} onOpen={setOpen} />
+              ))}
+            </ul>
+          </section>
         ))}
-      </ul>
+      </div>
 
       <a className="cta-banner" href="#contact">
         <BrandAsterisk className="cta-asterisk" />
