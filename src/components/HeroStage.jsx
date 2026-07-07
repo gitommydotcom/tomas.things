@@ -3,6 +3,10 @@ import gsap from 'gsap'
 import { BrandAsterisk } from './Doodles.jsx'
 import '@fontsource-variable/fraunces/full.css'
 import '@fontsource-variable/fraunces/full-italic.css'
+import '@fontsource-variable/playfair-display/index.css'
+import '@fontsource-variable/bricolage-grotesque/index.css'
+import '@fontsource-variable/unbounded/index.css'
+import '@fontsource-variable/caveat/index.css'
 
 /* touch devices get tap-worded captions; the interactions themselves
    (pointer drag, sliders, taps) work the same everywhere */
@@ -26,7 +30,7 @@ const REDUCED = () => window.matchMedia('(prefers-reduced-motion: reduce)').matc
 /* ---------------- Design: the pen tool ---------------- */
 
 const VB = { w: 290, h: 230 }
-const MAX_PTS = 8
+const MAX_PTS = 12
 /* anchors carry symmetric handles: the outgoing control point is
    (x+hx, y+hy), the incoming one mirrors it at (x-hx, y-hy) */
 const START_PTS = [
@@ -95,15 +99,19 @@ function PenTool() {
       ]
     }
     let drag = null // { kind: 'pt' | 'front' | 'back', idx }
-    let moved = false
+    // set fresh on EVERY press: a press that begins on a grab target
+    // must never add a point when its trailing click lands on the svg
+    // (pointer capture retargets that click), but a press on empty
+    // space must ALWAYS add - even right after a drag
+    let fromGrab = false
 
     const down = (e) => {
       setFresh(false)
       const t = e.target.closest('[data-pt],[data-h]')
+      fromGrab = !!t
       if (!t) return
       e.preventDefault()
       svg.setPointerCapture(e.pointerId)
-      moved = false
       if (t.dataset.pt != null) {
         const idx = +t.dataset.pt
         drag = { kind: 'pt', idx }
@@ -115,7 +123,6 @@ function PenTool() {
     const move = (e) => {
       if (!drag) return
       const [x, y] = toVB(e)
-      moved = true
       const { kind, idx } = drag
       setPts((prev) => {
         const next = prev.slice()
@@ -137,9 +144,9 @@ function PenTool() {
     const up = () => {
       drag = null
     }
-    // clicking the empty space (never a drag) adds the next anchor
+    // clicking the empty space (never a grab gesture) adds the next anchor
     const add = (e) => {
-      if (e.target.closest('[data-pt],[data-h],.pen-toolbar') || moved) return
+      if (fromGrab || e.target.closest('[data-pt],[data-h],.pen-toolbar')) return
       const [x, y] = toVB(e)
       const cur = ptsRef.current
       if (cur.length >= MAX_PTS) {
@@ -303,7 +310,7 @@ function PenTool() {
               <g className="rig-hint-bob">
                 <path className="rig-hint-arrow" d="M0 26 C 4 21, -3 16, 1 11 M1 11 L -5 16 M1 11 L 6 17" />
                 <text className="rig-hint-text" x="0" y="44">
-                  drag me!
+                  drag &amp; draw!
                 </text>
               </g>
             </g>
@@ -322,7 +329,11 @@ function PenTool() {
 /* the sliders and the glyph drive the same two values: dragging the
    letter scrubs weight on x and height on y, the sliders stay synced */
 const FONTS = [
-  { label: 'Fraunces', family: "'Fraunces Variable', Georgia, 'Times New Roman', serif", variable: true },
+  { label: 'Fraunces', family: "'Fraunces Variable', Georgia, serif", variable: true },
+  { label: 'Playfair', family: "'Playfair Display Variable', Georgia, serif" },
+  { label: 'Bricolage', family: "'Bricolage Grotesque Variable', system-ui, sans-serif" },
+  { label: 'Unbounded', family: "'Unbounded Variable', system-ui, sans-serif" },
+  { label: 'Caveat', family: "'Caveat Variable', ui-rounded, cursive" },
   { label: 'Pepi', family: "'Pepi', 'Inter Variable', sans-serif" },
   { label: 'Inter', family: "'Inter Variable', system-ui, sans-serif" },
 ]
@@ -511,6 +522,7 @@ function CodeLine() {
   const [show, setShow] = useState(false)
   const [theme, setTheme] = useState(0)
   const [label, setLabel] = useState(0)
+  const [tweaked, setTweaked] = useState(false) // stops the "edit me" pulse
   const rootRef = useRef(null)
   const wasShown = useRef(false)
 
@@ -566,11 +578,13 @@ function CodeLine() {
   }
   const cycleTheme = (e) => {
     e.stopPropagation()
+    setTweaked(true)
     setTheme((t) => (t + 1) % THEMES.length)
     pop(e)
   }
   const cycleLabel = (e) => {
     e.stopPropagation()
+    setTweaked(true)
     setLabel((l) => (l + 1) % LABELS.length)
     pop(e)
   }
@@ -589,7 +603,7 @@ function CodeLine() {
             <i />
             <i />
           </span>
-          <code className="code-src">
+          <code className={`code-src ${tweaked ? '' : 'code-src--hint'}`}>
             <span className="tok-p">&lt;</span>
             <span className="tok-tag">button</span>{' '}
             <span className="tok-attr">class</span>
@@ -628,7 +642,7 @@ function CodeLine() {
           ? TOUCH
             ? 'tap to flip it back'
             : 'click to flip it back'
-          : `tweak the values · ${TOUCH ? 'tap' : 'click'} to render it`}
+          : `${TOUCH ? 'tap' : 'click'} the boxed values · then anywhere to run it`}
       </p>
     </div>
   )

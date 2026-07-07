@@ -520,11 +520,20 @@
 }
 .code-src {
   font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
-  /* sized so the nowrap line always fits the stage: full-width on
-     phones, a ~33vw side column on desktop */
-  font-size: clamp(12.5px, 3.4vw, 17px);
+  /* sized so the nowrap line (with its editable chips) always fits the
+     stage: full-width on phones, a ~33vw side column on desktop */
+  font-size: clamp(10.5px, 3vw, 16px);
   white-space: nowrap;
   color: var(--ink);
+}
+/* on phones the chips get compact so the nowrap line clears 360px */
+@media (max-width: 860px) {
+  .tok-btn {
+    padding: 1px 12px 1px 4px;
+  }
+  .tok-btn::after {
+    right: 2px;
+  }
 }
 @media (min-width: 861px) {
   .code-src {
@@ -583,17 +592,45 @@
 .code-demo-btn--ink .code-demo-ast {
   color: var(--pink);
 }
-/* live values in the source: tap to cycle them */
+/* live values in the source: editable chips you click to cycle. The
+   dashed box + trailing cycle glyph read as "form field", so it's
+   obvious these two tokens are the tweakable bits of the line. */
 .tok-btn {
+  position: relative;
   font: inherit;
   color: inherit;
-  padding: 0 1px;
-  border-radius: 4px;
-  border-bottom: 2px dotted currentColor;
-  transition: background 0.25s var(--ease-out);
+  margin: 0 1px;
+  padding: 1px 15px 1px 6px;
+  border-radius: 5px;
+  border: 1.5px dashed currentColor;
+  background: rgba(24, 22, 22, 0.045);
+  transition:
+    background 0.2s var(--ease-out),
+    transform 0.2s var(--ease-out);
+}
+.tok-btn::after {
+  content: '⇅';
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.62em;
+  opacity: 0.7;
 }
 .tok-btn:hover {
   background: var(--pink-soft);
+  transform: translateY(-1px);
+}
+/* until the visitor edits a value, both chips breathe to invite it */
+.code-src--hint .tok-btn {
+  animation: tok-nudge 1.5s ease-in-out infinite;
+}
+.code-src--hint .tok-btn.tok-txt {
+  animation-delay: 0.4s;
+}
+@keyframes tok-nudge {
+  0%, 100% { background: rgba(24, 22, 22, 0.045); }
+  50% { background: var(--pink-soft); }
 }
 .code-demo-btn::after {
   content: '';
