@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
+import { useLang, useUI } from '../i18n/LangContext.jsx'
 import { BrandAsterisk } from './Doodles.jsx'
 import '@fontsource-variable/fraunces/full.css'
 import '@fontsource-variable/fraunces/full-italic.css'
@@ -54,6 +55,7 @@ const pathFrom = (pts) =>
     .join('')
 
 function PenTool() {
+  const ui = useUI()
   const svgRef = useRef(null)
   const [pts, setPts] = useState(START_PTS)
   const [sel, setSel] = useState(1)
@@ -314,7 +316,7 @@ function PenTool() {
               <g className="rig-hint-bob">
                 <path className="rig-hint-arrow" d="M0 26 C 4 21, -3 16, 1 11 M1 11 L -5 16 M1 11 L 6 17" />
                 <text className="rig-hint-text" x="0" y="44">
-                  drag &amp; draw!
+                  {ui.stage.dragDraw}
                 </text>
               </g>
             </g>
@@ -322,7 +324,7 @@ function PenTool() {
         )}
       </svg>
       <p className="stage-caption">
-        {TOUCH ? 'tap' : 'click'} the space to add points · drag them into a drawing
+        {ui.stage.penCaption(TOUCH ? ui.stage.tap : ui.stage.click)}
       </p>
     </div>
   )
@@ -361,6 +363,7 @@ const glyphStyle = (f, weight, alt) => ({
 const GLYPHS = ['A', 'a', 'g', 'Q', 'R', '&', '@', '3']
 
 function PrintLetter() {
+  const ui = useUI()
   const [font, setFont] = useState(0)
   const [weight, setWeight] = useState(620)
   const [height, setHeight] = useState(1)
@@ -499,7 +502,7 @@ function PrintLetter() {
           ))}
         </div>
         <label className="print-ctl">
-          <span>height</span>
+          <span>{ui.stage.height}</span>
           <input
             type="range"
             min="0.7"
@@ -510,7 +513,7 @@ function PrintLetter() {
           />
         </label>
         <label className="print-ctl">
-          <span>weight</span>
+          <span>{ui.stage.weight}</span>
           <input
             type="range"
             min="100"
@@ -526,11 +529,11 @@ function PrintLetter() {
           onClick={() => setAlt((a) => !a)}
           aria-pressed={alt}
         >
-          alternates
+          {ui.stage.alternates}
         </button>
       </div>
       <p className="stage-caption">
-        {f.label} · drag to bend it · {TOUCH ? 'tap' : 'click'} it for the next cut
+        {ui.stage.printCaption(f.label, TOUCH ? ui.stage.tap : ui.stage.click)}
       </p>
     </div>
   )
@@ -549,6 +552,7 @@ const BURST = Array.from({ length: 6 }, (_, i) => ({
 }))
 
 function CodeLine() {
+  const ui = useUI()
   const [show, setShow] = useState(false)
   const [theme, setTheme] = useState(0)
   const [label, setLabel] = useState(0)
@@ -655,7 +659,7 @@ function CodeLine() {
             <svg className="code-run-ico" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M7 4.5 L 19.5 12 L 7 19.5 Z" />
             </svg>
-            render
+            {ui.stage.render}
           </button>
         </div>
         <div className="code-face code-face--out">
@@ -672,14 +676,14 @@ function CodeLine() {
             <BrandAsterisk className="code-demo-ast" />
           </span>
           <button type="button" className="code-back-btn" onClick={() => setShow(false)}>
-            ‹ edit source
+            {ui.stage.editSource}
           </button>
         </div>
       </div>
       <p className="stage-caption">
         {show
-          ? `it's live · ${TOUCH ? 'tap' : 'click'} edit to keep tweaking`
-          : `${TOUCH ? 'tap' : 'click'} the boxed values, then hit render`}
+          ? ui.stage.codeLive(TOUCH ? ui.stage.tap : ui.stage.click)
+          : ui.stage.codeIdle(TOUCH ? ui.stage.tap : ui.stage.click)}
       </p>
     </div>
   )
@@ -687,13 +691,11 @@ function CodeLine() {
 
 /* ---------------- The stage ---------------- */
 
-const MODES = [
-  { id: 'design', label: 'Design' },
-  { id: 'print', label: 'Print' },
-  { id: 'code', label: 'Code' },
-]
+const MODES = ['design', 'print', 'code']
 
 export default function HeroStage() {
+  const { lang } = useLang()
+  const ui = useUI()
   const [mode, setMode] = useState('design')
   const rootRef = useRef(null)
   const tabsRef = useRef(null)
@@ -728,7 +730,8 @@ export default function HeroStage() {
     document.fonts?.ready?.then(place)
     window.addEventListener('resize', place)
     return () => window.removeEventListener('resize', place)
-  }, [mode])
+    // re-run on language change too: the tab labels change width
+  }, [mode, lang])
 
   return (
     <div className="hero-stage" ref={rootRef}>
@@ -741,18 +744,18 @@ export default function HeroStage() {
         {mode === 'print' && <PrintLetter />}
         {mode === 'code' && <CodeLine />}
       </div>
-      <div className="stage-tabs" role="tablist" aria-label="Pick a craft to play with" ref={tabsRef}>
+      <div className="stage-tabs" role="tablist" aria-label={ui.stage.pick} ref={tabsRef}>
         <span className="stage-tab-ind" ref={indRef} aria-hidden="true" />
-        {MODES.map((m) => (
+        {MODES.map((id) => (
           <button
-            key={m.id}
+            key={id}
             type="button"
             role="tab"
-            aria-selected={mode === m.id}
-            className={`stage-tab ${mode === m.id ? 'stage-tab--active' : ''}`}
-            onClick={() => setMode(m.id)}
+            aria-selected={mode === id}
+            className={`stage-tab ${mode === id ? 'stage-tab--active' : ''}`}
+            onClick={() => setMode(id)}
           >
-            {m.label}
+            {ui.stage.modes[id]}
           </button>
         ))}
       </div>

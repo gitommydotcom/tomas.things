@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { EASE } from './Reveal.jsx'
+import { useUI } from '../i18n/LangContext.jsx'
+import LangSwitcher from '../i18n/LangSwitcher.jsx'
 import logo from '../assets/logo.svg'
-
-const LINKS = [
-  { href: '#work', label: 'Work' },
-  { href: '#about', label: 'About' },
-  { href: '#contact', label: 'Contact' },
-]
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
+  const ui = useUI()
+
+  const links = [
+    { href: '#work', label: ui.nav.work },
+    { href: '#about', label: ui.nav.about },
+    { href: '#contact', label: ui.nav.contact },
+  ]
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -27,21 +30,24 @@ export default function Nav() {
       transition={{ duration: 0.9, ease: EASE, delay: 1.1 }}
     >
       <a className="skip-link" href="#work">
-        Skip to content
+        {ui.nav.skip}
       </a>
-      <nav className="nav-inner container" aria-label="Main">
-        <a href="#top" className="logo" aria-label="tomáš - back to top">
+      <nav className="nav-inner container" aria-label={ui.nav.menu}>
+        <a href="#top" className="logo" aria-label={ui.nav.backToTop}>
           <img src={logo} alt="" className="logo-img" />
         </a>
-        <ul className="nav-links">
-          {LINKS.map(({ href, label }) => (
-            <li key={href}>
-              <a href={href} className="nav-link">
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div className="nav-right">
+          <ul className="nav-links">
+            {links.map(({ href, label }) => (
+              <li key={href}>
+                <a href={href} className="nav-link">
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <LangSwitcher />
+        </div>
       </nav>
     </motion.header>
   )

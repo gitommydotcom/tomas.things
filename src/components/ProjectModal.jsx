@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { EASE } from './Reveal.jsx'
+import { useUI } from '../i18n/LangContext.jsx'
 import { BrandAsterisk } from './Doodles.jsx'
 
 /*
@@ -13,6 +14,7 @@ import { BrandAsterisk } from './Doodles.jsx'
  * ESC and backdrop click both close.
  */
 export default function ProjectModal({ project, onClose }) {
+  const ui = useUI()
   const panelRef = useRef(null)
   const [zoom, setZoom] = useState(null)
 
@@ -89,7 +91,7 @@ export default function ProjectModal({ project, onClose }) {
         exit={{ y: '4%', scale: 0.99 }}
         transition={{ duration: 0.32, ease: EASE }}
       >
-        <button className="modal-close" onClick={onClose} aria-label="Close project details">
+        <button className="modal-close" onClick={onClose} aria-label={ui.work.close}>
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path
               d="M5 5 L19 19 M19 5 L5 19"
@@ -143,7 +145,7 @@ export default function ProjectModal({ project, onClose }) {
               key={img.src}
               className="modal-shot"
               onClick={() => setZoom(img)}
-              aria-label={`Enlarge image: ${img.alt}`}
+              aria-label={`${ui.work.enlarge}: ${img.alt}`}
             >
               <img
                 src={img.src}
@@ -179,7 +181,7 @@ export default function ProjectModal({ project, onClose }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
           >
-            <button className="modal-lightbox-close" aria-label="Close image">
+            <button className="modal-lightbox-close" aria-label={ui.work.closeImage}>
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   d="M5 5 L19 19 M19 5 L5 19"

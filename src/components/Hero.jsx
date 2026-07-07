@@ -1,18 +1,19 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { EASE } from './Reveal.jsx'
+import { useLang, useUI } from '../i18n/LangContext.jsx'
 import { SqUnderline, SqArrow, BrandAsterisk } from './Doodles.jsx'
 import HeroStage from './HeroStage.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
 /*
- * The jewel piece. Each slogan word flips on hover (tap on touch) to a
- * translation - Italian or Czech. Every word alternates between the two
- * languages, starting from a random one, so both always show up and no
- * two visits read the same.
+ * The jewel piece. Each slogan word rests in the current site language
+ * and flips on hover (tap on touch) to the OTHER two - so the sentence
+ * literally translates itself, live. A word alternates between its two
+ * "other" languages, starting from a random one, so both always show up.
  *
  * Layout rules:
  * - The slogan is composed of FIXED lines - words never jump between
@@ -25,10 +26,12 @@ gsap.registerPlugin(ScrollTrigger)
  *   word's resting footprint, so the width animation can't push the
  *   pointer off the word and make it rattle at the borders.
  */
-const LANGS = {
+const LANG_META = {
+  en: { label: 'EN', html: 'en' },
   it: { label: 'IT', html: 'it' },
   cz: { label: 'CZ', html: 'cs' }, // displayed as CZ; BCP-47 tag stays "cs"
 }
+const ALL_LANGS = ['en', 'it', 'cz']
 
 const LINES = [
   [
@@ -53,11 +56,15 @@ const shuffle = (arr) => {
   return a
 }
 
-function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
+function FlipWord({ word, index, revealed, tapped, onTap, onRevealed, lang }) {
   const [hovered, setHovered] = useState(false)
-  // the language this word will flip to next - random start, then
-  // strict alternation so a visitor always gets to see both
-  const [lang, setLang] = useState(() => (Math.random() < 0.5 ? 'it' : 'cz'))
+  // the two languages this word can flip to (everything but the current
+  // site language) - it alternates between them, starting random
+  const others = useMemo(() => ALL_LANGS.filter((l) => l !== lang), [lang])
+  const [flip, setFlip] = useState(() => {
+    const o = ALL_LANGS.filter((l) => l !== lang)
+    return o[Math.floor(Math.random() * o.length)]
+  })
   const [widths, setWidths] = useState(null)
   const sizerEn = useRef(null)
   const sizerIt = useRef(null)
@@ -65,12 +72,18 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
 
   const active = hovered || tapped
 
+  // if the site language changes, keep the flip target valid (it must
+  // never equal the language the word is now resting in)
+  useEffect(() => {
+    setFlip((f) => (others.includes(f) ? f : others[0]))
+  }, [others])
+
   // advance the language on each activation, while the back face is
   // still hidden (rotation 0), so the swap is never visible
   const wasActive = useRef(false)
   useEffect(() => {
     if (active && !wasActive.current) {
-      setLang((l) => (l === 'it' ? 'cz' : 'it'))
+      setFlip((f) => others[(others.indexOf(f) + 1) % others.length])
     }
     wasActive.current = active
   }, [active])
@@ -91,11 +104,12 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
     return () => ro.disconnect()
   }, [])
 
-  const back = word[lang]
-  const width = widths ? (active ? widths[lang] : widths.en) : null
+  const front = word[lang]
+  const back = word[flip]
+  const width = widths ? (active ? widths[flip] : widths[lang]) : null
   // the hit area covers the resting word AND the flipped word, so the
   // pointer can never fall off mid-transition
-  const hitWidth = widths ? (active ? Math.max(widths.en, widths[lang]) : widths.en) : null
+  const hitWidth = widths ? (active ? Math.max(widths[lang], widths[flip]) : widths[lang]) : null
 
   return (
     <span
@@ -123,10 +137,10 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
             {word.cz}
           </span>
           <span className="flip-pivot">
-            <span className="flip-face flip-front">{word.en}</span>
-            <span className="flip-face flip-back" lang={LANGS[lang].html}>
+            <span className="flip-face flip-front" lang={LANG_META[lang].html}>{front}</span>
+            <span className="flip-face flip-back" lang={LANG_META[flip].html}>
               {back}
-              <span className="flip-lang">{LANGS[lang].label}</span>
+              <span className="flip-lang">{LANG_META[flip].label}</span>
             </span>
           </span>
           {word.contrast && <SqUnderline className="ideas-underline" delay={1.6} />}
@@ -157,6 +171,8 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
 }
 
 export default function Hero() {
+  const { lang } = useLang()
+  const ui = useUI()
   const [revealed, setRevealed] = useState(false)
   // one tapped word at a time - tapping another flips the first back
   const [tappedId, setTappedId] = useState(null)
@@ -247,7 +263,7 @@ export default function Hero() {
         <div className="hero-main">
           <h1
             className="hero-slogan"
-            aria-label="I translate ideas into things."
+            aria-label={ui.hero.slogan}
             ref={sloganRef}
           >
           {LINES.map((line, li) => (
@@ -260,6 +276,7 @@ export default function Hero() {
                     key={id}
                     word={word}
                     index={wordIndex}
+                    lang={lang}
                     revealed={revealed}
                     tapped={tappedId === id}
                     onTap={() => {
@@ -281,7 +298,7 @@ export default function Hero() {
               animate={{ y: 0 }}
               transition={{ duration: 0.9, ease: EASE, delay: 1.25 }}
             >
-              Design, print, code - from the idea to the finished thing.
+              {ui.hero.sub}
             </motion.p>
           </div>
         </div>
@@ -297,7 +314,7 @@ export default function Hero() {
         transition={{ duration: 0.9, ease: EASE, delay: 1.8 }}
         aria-hidden="true"
       >
-        <span>scroll</span>
+        <span>{ui.hero.scroll}</span>
         <SqArrow className="hero-scroll-arrow" inView={false} delay={2} />
       </motion.div>
     </section>

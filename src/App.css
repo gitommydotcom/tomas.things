@@ -101,6 +101,68 @@
   transform: scaleX(1);
   transform-origin: left;
 }
+/* the links and the language chooser share the right side of the nav */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2.6vw, 34px);
+}
+
+/* ================= Language switcher ================= */
+/* segmented control in the header */
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  flex: none;
+}
+.lang-btn {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  padding: 6px 9px;
+  border-radius: 100px;
+  color: var(--ink-50);
+  transition:
+    color 0.35s var(--ease-out),
+    background 0.35s var(--ease-out);
+}
+.lang-btn:hover {
+  color: var(--ink);
+}
+.lang-btn--on,
+.lang-btn--on:hover {
+  color: var(--bg);
+  background: var(--ink);
+}
+/* inline variant reused in the contact section (styled by .contact-langs) */
+.lang-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.lang-inline-sep {
+  opacity: 0.5;
+}
+.lang-inline-btn {
+  color: inherit;
+  opacity: 0.55;
+  transition:
+    opacity 0.3s var(--ease-out),
+    color 0.3s var(--ease-out);
+}
+.lang-inline-btn:hover {
+  opacity: 1;
+}
+.lang-inline-btn--on,
+.lang-inline-btn--on:hover {
+  opacity: 1;
+  color: var(--pink);
+}
 
 /* ================= Hero ================= */
 .hero {
@@ -1967,12 +2029,21 @@
   .logo-img {
     height: 21px;
   }
+  /* on phones the three section links + a trilingual switcher can't
+     both fit (the longest labels overflow the header), so the header
+     keeps the logo and the language chooser - the sections are one
+     short scroll away. The full nav returns on tablet and up. */
   .nav-links {
-    gap: 14px;
+    display: none;
   }
-  .nav-link {
-    font-size: 11px;
-    letter-spacing: 0.08em;
+  .lang-switch {
+    gap: 1px;
+    padding: 2px;
+  }
+  .lang-btn {
+    font-size: 10px;
+    padding: 5px 6px;
+    letter-spacing: 0.02em;
   }
   .hero-slogan {
     font-size: clamp(46px, 14vw, 60px);

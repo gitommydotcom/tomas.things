@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Reveal, SplitTitle } from './Reveal.jsx'
 import { SqArrow, BrandAsterisk, WaveCreature } from './Doodles.jsx'
-import { PROJECTS, GROUPS } from '../data/projects.js'
+import { localizeProjects, GROUPS } from '../data/projects.js'
+import { useLang, useUI } from '../i18n/LangContext.jsx'
 import ProjectModal from './ProjectModal.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -45,6 +46,9 @@ function Card({ project, onOpen }) {
 }
 
 export default function Work() {
+  const { lang } = useLang()
+  const ui = useUI()
+  const projects = useMemo(() => localizeProjects(lang), [lang])
   const [open, setOpen] = useState(null)
   const sectionRef = useRef(null)
 
@@ -94,15 +98,15 @@ export default function Work() {
       <header className="section-head">
         <Reveal as="p" className="eyebrow">
           <BrandAsterisk className="eyebrow-asterisk eyebrow-asterisk--lead" />
-          Selected work
+          {ui.work.eyebrow}
         </Reveal>
         {/* Elvis greets first, waving beside the first title */}
         <div className="work-title-row">
-          <SplitTitle className="section-title" text="Things, not just files." />
+          <SplitTitle key={lang} className="section-title" text={ui.work.title} />
           <WaveCreature className="work-creature" />
         </div>
         <Reveal as="p" className="section-lead" delay={0.16}>
-          Open a project for the full story.
+          {ui.work.lead}
         </Reveal>
       </header>
 
@@ -112,11 +116,11 @@ export default function Work() {
             <h3 className="work-group">
               <span className="work-group-label">
                 <BrandAsterisk className="work-group-ast" />
-                {g.label}
+                {ui.work.groups[g.id]}
               </span>
             </h3>
             <ul className="work-grid">
-              {PROJECTS.filter((p) => p.group === g.id).map((p) => (
+              {projects.filter((p) => p.group === g.id).map((p) => (
                 <Card key={p.id} project={p} onOpen={setOpen} />
               ))}
             </ul>
@@ -130,11 +134,11 @@ export default function Work() {
           <span className="eyebrow eyebrow--light">
             09
             <BrandAsterisk className="eyebrow-asterisk" />
-            next
+            {ui.work.ctaNext}
           </span>
-          <span className="cta-banner-title">Your idea here.</span>
+          <span className="cta-banner-title">{ui.work.ctaTitle}</span>
           <span className="cta-banner-link">
-            Let's make it a thing
+            {ui.work.ctaLink}
             <SqArrow className="cta-banner-arrow" inView={false} />
           </span>
         </span>

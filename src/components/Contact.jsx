@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Reveal, EASE } from './Reveal.jsx'
+import { useUI } from '../i18n/LangContext.jsx'
+import LangSwitcher from '../i18n/LangSwitcher.jsx'
 import { BrandAsterisk, SqCreature } from './Doodles.jsx'
 
 export default function Contact() {
+  const ui = useUI()
   const eyesRef = useRef(null)
 
   // Viky sits in the corner and watches the pink dot while you decide
@@ -44,14 +47,15 @@ export default function Contact() {
     <section className="contact container" id="contact">
       <Reveal as="p" className="eyebrow contact-eyebrow">
         <BrandAsterisk className="eyebrow-asterisk eyebrow-asterisk--lead" />
-        Contact
+        {ui.contact.eyebrow}
       </Reveal>
       <h2 className="contact-title">
         <Reveal as="span" className="contact-line" delay={0.08}>
-          Let's make
+          {ui.contact.l1}
         </Reveal>
         <Reveal as="span" className="contact-line" delay={0.2}>
-          a <em className="contact-thing">thing</em>
+          {ui.contact.article ? `${ui.contact.article} ` : ''}
+          <em className="contact-thing">{ui.contact.thing}</em>
           <motion.span
             className="contact-asterisk"
             initial={{ scale: 0, rotate: -120 }}
@@ -78,7 +82,7 @@ export default function Contact() {
         <a className="contact-alt" href="tel:+393493569260">
           +39 349 356 9260
         </a>
-        <span className="contact-langs">EN&ensp;·&ensp;IT&ensp;·&ensp;CZ</span>
+        <LangSwitcher variant="inline" className="contact-langs" />
       </motion.div>
     </section>
   )
