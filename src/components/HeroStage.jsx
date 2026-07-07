@@ -4,9 +4,13 @@ import { BrandAsterisk } from './Doodles.jsx'
 import '@fontsource-variable/fraunces/full.css'
 import '@fontsource-variable/fraunces/full-italic.css'
 import '@fontsource-variable/playfair-display/index.css'
-import '@fontsource-variable/bricolage-grotesque/index.css'
 import '@fontsource-variable/unbounded/index.css'
 import '@fontsource-variable/caveat/index.css'
+import '@fontsource/libre-baskerville/400.css'
+import '@fontsource/libre-baskerville/400-italic.css'
+import '@fontsource/libre-baskerville/700.css'
+import '@fontsource/pinyon-script/400.css'
+import '@fontsource/ultra/400.css'
 
 /* touch devices get tap-worded captions; the interactions themselves
    (pointer drag, sliders, taps) work the same everywhere */
@@ -328,14 +332,22 @@ function PenTool() {
 
 /* the sliders and the glyph drive the same two values: dragging the
    letter scrubs weight on x and height on y, the sliders stay synced */
+/* a deliberately wide spread of styles: a fancy variable serif, a
+   classic book serif, a high-contrast Didone, a heavy retro display, a
+   neutral grotesque, a geometric display, a formal script, a casual
+   hand, and Tomáš's own brand cut. Cooper / Edwardian / Helvetica /
+   Baskerville are honoured with open-source stand-ins (Ultra, Pinyon
+   Script, the system Helvetica, Libre Baskerville). */
 const FONTS = [
   { label: 'Fraunces', family: "'Fraunces Variable', Georgia, serif", variable: true },
-  { label: 'Playfair', family: "'Playfair Display Variable', Georgia, serif" },
-  { label: 'Bricolage', family: "'Bricolage Grotesque Variable', system-ui, sans-serif" },
-  { label: 'Unbounded', family: "'Unbounded Variable', system-ui, sans-serif" },
-  { label: 'Caveat', family: "'Caveat Variable', ui-rounded, cursive" },
+  { label: 'Baskerville', family: "'Libre Baskerville', Georgia, serif" },
+  { label: 'Playfair', family: "'Playfair Display Variable', Georgia, serif", variable: true },
+  { label: 'Cooper', family: "'Ultra', Rockwell, Georgia, serif" },
+  { label: 'Helvetica', family: "'Helvetica Neue', Helvetica, Arial, sans-serif" },
+  { label: 'Unbounded', family: "'Unbounded Variable', system-ui, sans-serif", variable: true },
+  { label: 'Edwardian', family: "'Pinyon Script', 'Snell Roundhand', cursive" },
+  { label: 'Caveat', family: "'Caveat Variable', ui-rounded, cursive", variable: true },
   { label: 'Pepi', family: "'Pepi', 'Inter Variable', sans-serif" },
-  { label: 'Inter', family: "'Inter Variable', system-ui, sans-serif" },
 ]
 const glyphStyle = (f, weight, alt) => ({
   fontFamily: f.family,
@@ -344,12 +356,16 @@ const glyphStyle = (f, weight, alt) => ({
     ? { fontVariationSettings: `'opsz' 144, 'wght' ${weight}, 'SOFT' 0, 'WONK' ${alt ? 1 : 0}` }
     : { fontWeight: Math.round(weight) }),
 })
+/* the characters a type designer reaches for first - each one shows a
+   different part of a face's personality */
+const GLYPHS = ['A', 'a', 'g', 'Q', 'R', '&', '@', '3']
 
 function PrintLetter() {
   const [font, setFont] = useState(0)
   const [weight, setWeight] = useState(620)
   const [height, setHeight] = useState(1)
   const [alt, setAlt] = useState(false)
+  const [glyph, setGlyph] = useState('A')
   const [ghosts, setGhosts] = useState([])
   const letterRef = useRef(null)
   const stageRef = useRef(null)
@@ -417,6 +433,7 @@ function PrintLetter() {
           weight,
           height,
           alt,
+          glyph,
           x: gsap.utils.random(12, 72),
           y: gsap.utils.random(8, 46),
           rot: gsap.utils.random(-14, 14),
@@ -454,7 +471,7 @@ function PrintLetter() {
             ...glyphStyle(FONTS[g.font], g.weight, g.alt),
           }}
         >
-          A
+          {g.glyph}
         </span>
       ))}
       <span className="print-letter-wrap" style={{ transform: `scaleY(${height})` }}>
@@ -464,10 +481,23 @@ function PrintLetter() {
           style={glyphStyle(f, weight, alt)}
           data-cursor="grow"
         >
-          A
+          {glyph}
         </span>
       </span>
       <div className="print-controls">
+        <div className="print-glyphs" role="group" aria-label="pick a glyph">
+          {GLYPHS.map((ch) => (
+            <button
+              key={ch}
+              type="button"
+              className={`glyph-chip ${ch === glyph ? 'glyph-chip--on' : ''}`}
+              onClick={() => setGlyph(ch)}
+              aria-pressed={ch === glyph}
+            >
+              {ch}
+            </button>
+          ))}
+        </div>
         <label className="print-ctl">
           <span>height</span>
           <input
@@ -500,7 +530,7 @@ function PrintLetter() {
         </button>
       </div>
       <p className="stage-caption">
-        {f.label} · drag the A to bend it · {TOUCH ? 'tap' : 'click'} it for the next cut
+        {f.label} · drag to bend it · {TOUCH ? 'tap' : 'click'} it for the next cut
       </p>
     </div>
   )
@@ -590,18 +620,14 @@ function CodeLine() {
   }
 
   return (
-    <div
-      className="code-stage"
-      ref={rootRef}
-      onClick={() => setShow((v) => !v)}
-      aria-hidden="true"
-    >
+    <div className="code-stage" ref={rootRef} aria-hidden="true">
       <div className={`code-flip ${show ? 'code-flip--on' : ''}`}>
         <div className="code-face code-face--src">
           <span className="code-chrome">
             <i />
             <i />
             <i />
+            <b className="code-chrome-name">button.jsx</b>
           </span>
           <code className={`code-src ${tweaked ? '' : 'code-src--hint'}`}>
             <span className="tok-p">&lt;</span>
@@ -621,6 +647,16 @@ function CodeLine() {
             <span className="tok-tag">button</span>
             <span className="tok-p">&gt;</span>
           </code>
+          <button
+            type="button"
+            className={`code-run-btn ${show ? '' : 'code-run-btn--pulse'}`}
+            onClick={() => setShow(true)}
+          >
+            <svg className="code-run-ico" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 4.5 L 19.5 12 L 7 19.5 Z" />
+            </svg>
+            render
+          </button>
         </div>
         <div className="code-face code-face--out">
           <span className="code-burst">
@@ -635,14 +671,15 @@ function CodeLine() {
             {LABELS[label]}
             <BrandAsterisk className="code-demo-ast" />
           </span>
+          <button type="button" className="code-back-btn" onClick={() => setShow(false)}>
+            ‹ edit source
+          </button>
         </div>
       </div>
       <p className="stage-caption">
         {show
-          ? TOUCH
-            ? 'tap to flip it back'
-            : 'click to flip it back'
-          : `${TOUCH ? 'tap' : 'click'} the boxed values · then anywhere to run it`}
+          ? `it's live · ${TOUCH ? 'tap' : 'click'} edit to keep tweaking`
+          : `${TOUCH ? 'tap' : 'click'} the boxed values, then hit render`}
       </p>
     </div>
   )
