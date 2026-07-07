@@ -101,12 +101,13 @@ export const PROJECTS = [
     category: 'Rebrand',
     title: 'Corti Edil-Fer',
     blurb: 'A full rebrand for a construction firm - snail and all.',
-    role: 'Brand identity · Logo · Mascot',
+    role: 'Brand identity · Mascot · Web design · Build',
     cover: '/work/edilfer-cards.jpg',
     coverAlt: 'Corti Edil-Fer business cards, green and white with the snail mark',
     description: [
       'Corti Edil-Fer is a building firm, and building is the one job where rushing shows. So the rebrand leans into it: a snail as the mascot, unhurried and exact, curled into a mark that doubles as the C of Corti and the e of Edil-Fer.',
       'A green-and-navy system built to survive a construction site: one bold emblem for stamps and signage, the full Corti Edil-Fer lockup for paperwork, the parent Edil-Fer cut, and the snail on its own for everything small. Loud where it needs to be, legible everywhere.',
+      'The same system runs the website, cortiedilfer.it - designed and built end to end, so the brand you meet on a business card is the brand you meet online.',
     ],
     gallery: [
       { src: '/work/edilfer-logo.jpg', alt: 'The Corti Edil-Fer primary lockup: blue Corti, green Edil-Fer and the snail mark' },
