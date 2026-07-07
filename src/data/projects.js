@@ -88,9 +88,9 @@ export const PROJECTS = [
     ],
     gallery: [
       { src: '/work/berkana-stationery.jpg', alt: 'Berkana letterhead, cards and folder on a neutral surface' },
+      { src: '/work/berkana-map.jpg', alt: 'A 3D territory map locating Berkana condo developments across Abruzzo' },
       { src: '/work/berkana-cards.jpg', alt: 'Berkana business cards, navy and cream, held' },
       { src: '/work/berkana-cards2.jpg', alt: 'Berkana cards: a cream front beside a navy stack' },
-      { src: '/work/berkana-cards3.jpg', alt: 'Berkana cards held against a teal backdrop' },
       { src: '/work/berkana-rsvp.jpg', alt: 'Berkana opening invitation with a duotone-blue architecture photo' },
     ],
   },
