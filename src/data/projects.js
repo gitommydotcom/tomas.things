@@ -59,13 +59,14 @@ export const PROJECTS = [
     title: 'Move',
     blurb: 'A social planner that turns a roster of clients into a month of posts.',
     role: 'Product design · UI · Build',
-    cover: '/work/move-login-thumb.jpg',
-    coverAlt: 'Move login screen, acid-green wordmark on near-black',
+    cover: '/work/move-dash-thumb.jpg',
+    coverAlt: 'Move dashboard: client cards with statistics and activity sparklines',
     description: [
       'Move is the tool I built for the part of the job nobody enjoys: planning a month of social content for a whole roster of clients. Each client keeps a living profile - who they are, how they talk, what they sell, which platforms - and Move turns that into a finished editorial plan in one pass: dates, formats, objectives, captions, visual directions, hashtags and SEO notes, all ready to edit.',
       'It is built to actually run an agency week. A dashboard flags which clients are overdue and draws an activity sparkline for each one; the generator drafts a whole month at a time; and everything syncs to the cloud so it follows you between devices, with an offline-first fallback when the signal drops. Less staring at an empty calendar, more shipping.',
     ],
     gallery: [
+      { src: '/work/move-dash.jpg', alt: 'Move dashboard: six client cards with metrics and activity sparklines' },
       { src: '/work/move-plan.jpg', alt: 'A generated editorial plan: post cards with date, format, caption, visual notes and hashtags' },
     ],
     links: [
@@ -147,13 +148,13 @@ export const PROJECTS = [
     group: 'editorial',
     category: 'Editorial',
     title: 'Il manuale maniacale',
-    blurb: 'A cover about the little habits we cannot quite stop.',
+    blurb: 'The cover for a diary I made to help people quit biting their nails.',
     role: 'Concept · Illustration · Type',
     cover: '/work/manuale-detail.jpg',
     coverAlt: 'Detail of Il manuale maniacale: the m drawn as two bitten fingernails',
     description: [
-      'A cover for "Il manuale maniacale", the manual of small manias. The idea had to carry the whole page, so the title letter does the work: the m is a pair of fingers, nails bitten to the quick. You get the joke before you read a word.',
-      'Flat colour, one clean display face, a single visual pun - the kind of cover that makes you pick the thing up.',
+      'The cover for "Il manuale maniacale", a diary I made to help people stop biting their nails - a small daily companion for a habit that is hard to break. The idea had to carry the whole page, so the title letter does the work: the m is a pair of fingers, nails bitten to the quick. You get the joke, and the point, before you read a word.',
+      'Flat colour, one clean display face, a single visual pun - the kind of cover that makes you pick the thing up, and maybe put your fingers down.',
     ],
     gallery: [
       { src: '/work/manuale.jpg', alt: 'Il manuale maniacale, the cover as a printed booklet' },
@@ -171,15 +172,14 @@ export const PROJECTS = [
     cover: '/work/album-vinyl-chiedi.jpg',
     coverAlt: 'Chiedi Di Me sleeve with the record pulled out, the cover art on the label',
     description: [
-      'Covers for Zero75, Panda, Donci Kong and Kid Kontrasto. Every record gets its own room: the unresolved charcoal face of "William Blake", the halftone childhood photo of "10 Settembre", the lantern against the dark in "Luce", the gold blackletter of "Non e Musica Soltanto".',
+      'Covers for Zero75, Donci Kong and Kid Kontrasto. Every record gets its own room: the unresolved charcoal face of "William Blake", the teal duotone of "Chiedi Di Me", the lantern against the dark in "Luce", the gold blackletter of "Non e Musica Soltanto".',
       'Different artists, different moods - the same job: make the sleeve sound like the music before you press play.',
     ],
     gallery: [
       { src: '/work/album-vinyl-blake.jpg', alt: 'Zero75 - William Blake, sleeve and record' },
       { src: '/work/album-vinyl-chiedi.jpg', alt: 'Zero75 ft. Sean Poly - Chiedi Di Me, sleeve and record' },
       { src: '/work/album-vinyl-luce.jpg', alt: 'Donci Kong - Luce, sleeve and record' },
-      { src: '/work/panda.jpg', alt: 'Panda - 10 Settembre album cover' },
-      { src: '/work/kid-cover.jpg', alt: 'Kid Kontrasto - Non e Musica Soltanto album cover' },
+      { src: '/work/album-vinyl-kid.jpg', alt: 'Kid Kontrasto - Non e Musica Soltanto, sleeve and record' },
     ],
   },
 ]
