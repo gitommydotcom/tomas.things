@@ -12,16 +12,16 @@ export const PROJECTS = [
     title: 'Move',
     blurb: 'A social planner that turns a stack of clients into a month of posts.',
     role: 'Product design · UI · Build',
-    cover: '/work/move-dash-thumb.jpg',
-    coverAlt: 'Move editorial planner dashboard, dark UI with acid-green accents',
+    cover: '/work/move-login-thumb.jpg',
+    coverAlt: 'Move login screen, acid-green wordmark on near-black',
     description: [
       'Move is a tool I built for the part of the job nobody enjoys: planning a month of social content for a stack of different clients. Each client keeps a profile - who they are, how they talk, what they sell - and Move turns that into a ready editorial plan in minutes.',
-      'One dark, fast workspace: a dashboard that flags who needs a new plan, client cards with their own history, and a generator that drafts the calendar so the time goes into editing, not staring at an empty grid.',
+      'One dark, fast workspace: a dashboard that flags who needs a new plan, and a generator that drafts a whole month of posts - dates, formats, captions and visual notes - so the time goes into editing, not staring at an empty grid.',
     ],
     gallery: [
+      { src: '/work/move-plan.jpg', alt: 'A generated editorial plan: post cards with date, format, caption and visual notes' },
       { src: '/work/move-dash.jpg', alt: 'Move dashboard: client cards, metrics and activity sparklines' },
       { src: '/work/move-generate.jpg', alt: 'Move plan generator, picking a client to start from' },
-      { src: '/work/move-clients.jpg', alt: 'Move client list, each with its own profile' },
     ],
     links: [
       { label: 'Live tool', cta: 'Open Move', href: 'https://move-editorial-planner.netlify.app' },
@@ -61,7 +61,9 @@ export const PROJECTS = [
     ],
     gallery: [
       { src: '/work/berkana-stationery.jpg', alt: 'Berkana letterhead, cards and folder on a neutral surface' },
-      { src: '/work/berkana-cards.jpg', alt: 'Berkana business cards, navy and cream, front and back' },
+      { src: '/work/berkana-cards.jpg', alt: 'Berkana business cards, navy and cream, held' },
+      { src: '/work/berkana-cards2.jpg', alt: 'Berkana cards: a cream front beside a navy stack' },
+      { src: '/work/berkana-cards3.jpg', alt: 'Berkana cards held against a teal backdrop' },
       { src: '/work/berkana-rsvp.jpg', alt: 'Berkana opening invitation with a duotone-blue architecture photo' },
     ],
   },
@@ -98,7 +100,8 @@ export const PROJECTS = [
       'Flat colour, one clean display face, a single visual pun - the kind of cover that makes you pick the thing up.',
     ],
     gallery: [
-      { src: '/work/manuale.jpg', alt: 'Il manuale maniacale cover in pink, orange and red' },
+      { src: '/work/manuale.jpg', alt: 'Il manuale maniacale, the cover as a printed booklet' },
+      { src: '/work/manuale-detail.jpg', alt: 'Detail: the m drawn as two fingers with bitten nails' },
     ],
   },
   {

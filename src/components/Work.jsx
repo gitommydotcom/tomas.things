@@ -34,7 +34,8 @@ function Row({ project, onOpen }) {
         <span className="work-row-text">
           <span className="work-row-title">{title}</span>
           <span className="work-row-meta">
-            <strong>{category}</strong> - {blurb}
+            <span className="work-tag">{category}</span>
+            <span className="work-blurb">{blurb}</span>
           </span>
         </span>
         <SqArrow className="work-row-arrow" inView={false} />

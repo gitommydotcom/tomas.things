@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { EASE } from './Reveal.jsx'
 import { BrandAsterisk } from './Doodles.jsx'
 
@@ -14,6 +14,21 @@ import { BrandAsterisk } from './Doodles.jsx'
  */
 export default function ProjectModal({ project, onClose }) {
   const panelRef = useRef(null)
+  const [zoom, setZoom] = useState(null)
+
+  // when the lightbox is open, ESC closes it first (capture phase, so it
+  // runs before the modal's own ESC handler and never closes the modal)
+  useEffect(() => {
+    if (!zoom) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        setZoom(null)
+      }
+    }
+    document.addEventListener('keydown', onKey, true)
+    return () => document.removeEventListener('keydown', onKey, true)
+  }, [zoom])
 
   useEffect(() => {
     const opener = document.activeElement
@@ -123,16 +138,69 @@ export default function ProjectModal({ project, onClose }) {
 
         <div className={`modal-gallery ${single ? 'modal-gallery--single' : ''}`}>
           {project.gallery.map((img, i) => (
-            <img
+            <button
+              type="button"
               key={img.src}
-              src={img.src}
-              alt={img.alt}
-              loading={i < 2 ? 'eager' : 'lazy'}
-              decoding="async"
-            />
+              className="modal-shot"
+              onClick={() => setZoom(img)}
+              aria-label={`Enlarge image: ${img.alt}`}
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                loading={i < 2 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+              <span className="modal-shot-zoom" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M4 9V4H9 M15 4H20V9 M20 15V20H15 M9 20H4V15"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </button>
           ))}
         </div>
       </motion.div>
+
+      {/* lightbox: any gallery image opens full-size, click anywhere or ESC to close */}
+      <AnimatePresence>
+        {zoom && (
+          <motion.div
+            className="modal-lightbox"
+            onClick={() => setZoom(null)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+          >
+            <button className="modal-lightbox-close" aria-label="Close image">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M5 5 L19 19 M19 5 L5 19"
+                  stroke="currentColor"
+                  strokeWidth="2.4"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </svg>
+            </button>
+            <motion.img
+              src={zoom.src}
+              alt={zoom.alt}
+              initial={{ scale: 0.96 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.98 }}
+              transition={{ duration: 0.22, ease: EASE }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
