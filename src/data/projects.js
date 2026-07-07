@@ -1,102 +1,125 @@
 /*
- * Real work. Descriptions are working copy - tweak freely.
- * `cover` is the card thumbnail (640px), galleries use full-size images.
+ * Real work. `cover` is the card thumbnail; galleries use full-size images.
  * Links render as "Label: CTA" rows in the detail view.
+ * The lineup spans the whole craft: two shipped digital products, a brand
+ * identity, an event identity, an editorial cover and a set of sleeves.
  */
 export const PROJECTS = [
   {
-    id: 'vans-jeda',
+    id: 'move',
     index: '01',
-    category: 'Campaign',
-    title: 'Vans × Jeda',
-    blurb: 'Social campaign for a collab drop - built to stop the scroll.',
-    role: 'Art direction · Layout · Social set',
-    cover: '/work/vans-2-thumb.jpg',
-    coverAlt: 'Vans × Jeda campaign post with bold layout',
+    category: 'Product',
+    title: 'Move',
+    blurb: 'A social planner that turns a stack of clients into a month of posts.',
+    role: 'Product design · UI · Build',
+    cover: '/work/move-dash-thumb.jpg',
+    coverAlt: 'Move editorial planner dashboard, dark UI with acid-green accents',
     description: [
-      'A full social set for a Vans collaboration drop: feed posts and stories cut from one visual system - type, color and rhythm consistent across every format.',
-      'Designed so each post works alone, and the grid works as one piece.',
+      'Move is a tool I built for the part of the job nobody enjoys: planning a month of social content for a stack of different clients. Each client keeps a profile - who they are, how they talk, what they sell - and Move turns that into a ready editorial plan in minutes.',
+      'One dark, fast workspace: a dashboard that flags who needs a new plan, client cards with their own history, and a generator that drafts the calendar so the time goes into editing, not staring at an empty grid.',
     ],
     gallery: [
-      { src: '/work/vans-2.jpg', alt: 'Vans × Jeda feed post 1' },
-      { src: '/work/vans-3.jpg', alt: 'Vans × Jeda feed post 2' },
-      { src: '/work/vans-4.jpg', alt: 'Vans × Jeda feed post 3' },
-      { src: '/work/vans-story.jpg', alt: 'Vans × Jeda story format' },
+      { src: '/work/move-dash.jpg', alt: 'Move dashboard: client cards, metrics and activity sparklines' },
+      { src: '/work/move-generate.jpg', alt: 'Move plan generator, picking a client to start from' },
+      { src: '/work/move-clients.jpg', alt: 'Move client list, each with its own profile' },
+    ],
+    links: [
+      { label: 'Live tool', cta: 'Open Move', href: 'https://move-editorial-planner.netlify.app' },
+    ],
+  },
+  {
+    id: 'pandino',
+    index: '02',
+    category: 'App',
+    title: 'Pandino',
+    blurb: 'A Tesla-style companion app for a 2007 Fiat Panda.',
+    role: 'Product design · 3D · Build',
+    cover: '/work/pandino-dash-thumb.jpg',
+    coverAlt: 'Pandino app: a yellow 3D Fiat Panda beside a status dashboard',
+    description: [
+      'Modern cars get a slick app. My 2007 Fiat Panda got Pandino. It keeps every deadline a car quietly piles up - insurance, road tax, the yearly inspection, the timing belt - in one calm dashboard that tells you what is due and exactly what to do about it.',
+      'The car sits in the middle as a 3D model you can spin: tap a wheel, the hood or the body and it opens the right card. Everything lives on your device, offline. Built for one very specific car, designed so anyone could use it for theirs.',
+    ],
+    gallery: [
+      { src: '/work/pandino-dash.jpg', alt: 'Pandino dashboard with an interactive 3D Fiat Panda' },
+      { src: '/work/pandino-sheet.jpg', alt: 'A Pandino detail card explaining the car inspection deadline' },
+      { src: '/work/pandino-mobile.jpg', alt: 'Pandino on mobile: 3D car above the status tiles' },
+    ],
+  },
+  {
+    id: 'berkana',
+    index: '03',
+    category: 'Brand identity',
+    title: 'studio Berkana',
+    blurb: 'Identity and communication for a high-end architecture studio.',
+    role: 'Brand identity · Art direction · Print',
+    cover: '/work/berkana-stationery-thumb.jpg',
+    coverAlt: 'studio Berkana stationery: navy and cream letterhead and cards',
+    description: [
+      "Studio Berkana is a high-end architecture and engineering practice in L'Aquila. They do precise, considered work, and their communication needed to match. I gave them an identity that says it plainly - a geometric mark, a deep navy, a lot of quiet space - and carried it across everything the studio hands a client.",
+      'Business cards, letterhead, a folded invitation for the new-office opening, plus the project and social visuals: one clear system, so every piece looks like it came from the same careful hand.',
+    ],
+    gallery: [
+      { src: '/work/berkana-stationery.jpg', alt: 'Berkana letterhead, cards and folder on a neutral surface' },
+      { src: '/work/berkana-cards.jpg', alt: 'Berkana business cards, navy and cream, front and back' },
+      { src: '/work/berkana-rsvp.jpg', alt: 'Berkana opening invitation with a duotone-blue architecture photo' },
+    ],
+  },
+  {
+    id: 'fregno',
+    index: '04',
+    category: 'Identity',
+    title: 'Fregno',
+    blurb: 'A teaser identity for a music venue that is not open yet.',
+    role: 'Identity · Poster system · Type',
+    cover: '/work/fregno-teal-thumb.jpg',
+    coverAlt: 'Fregno poster: bold acid-green type on teal',
+    description: [
+      'Fregno is a music venue in the making. Before the doors open, the job was to build curiosity - so the identity arrived as a run of posters that say a lot with almost nothing: a night, a place, a wall of loud type in colours that keep changing.',
+      'One elastic system, many faces - acid green on teal, on cobalt, on black - made to spread across walls and feeds and leave you asking what it is.',
+    ],
+    gallery: [
+      { src: '/work/fregno-teal.jpg', alt: 'Fregno poster, acid green on teal: Ogni venerdi un party in centro' },
+      { src: '/work/fregno-blue.jpg', alt: 'Fregno poster in the cobalt-blue colourway' },
+      { src: '/work/fregno-black.jpg', alt: 'Fregno poster: genre list in lavender on black' },
+    ],
+  },
+  {
+    id: 'manuale',
+    index: '05',
+    category: 'Editorial',
+    title: 'Il manuale maniacale',
+    blurb: 'A cover about the little habits we cannot quite stop.',
+    role: 'Concept · Illustration · Type',
+    cover: '/work/manuale-thumb.jpg',
+    coverAlt: "Cover of Il manuale maniacale: the letter m drawn as two bitten fingernails",
+    description: [
+      'A cover for "Il manuale maniacale", the manual of small manias. The idea had to carry the whole page, so the title letter does the work: the m is a pair of fingers, nails bitten to the quick. You get the joke before you read a word.',
+      'Flat colour, one clean display face, a single visual pun - the kind of cover that makes you pick the thing up.',
+    ],
+    gallery: [
+      { src: '/work/manuale.jpg', alt: 'Il manuale maniacale cover in pink, orange and red' },
     ],
   },
   {
     id: 'covers',
-    index: '02',
+    index: '06',
     category: 'Cover art',
     title: 'Album covers',
-    blurb: 'Six covers, six moods - charcoal, halftone, night sky, gold.',
+    blurb: 'Sleeves that sound like the record before you press play.',
     role: 'Art direction · Artwork · Type',
     cover: '/work/zero75-chiedi-thumb.jpg',
     coverAlt: 'Chiedi Di Me cover: torn-edge collage with duotone photography',
     description: [
-      'Covers for Zero75, Panda, Donci Kong and Kid Kontrasto. Every record gets its own room: the unresolved charcoal face of "William Blake", the halftone childhood memory of "10 Settembre", the lantern against the dark in "Luce", the gold blackletter of "Non è Musica Soltanto".',
-      'Different artists, different moods - the same job: make the sleeve tell you what the music sounds like before you press play.',
+      'Covers for Zero75, Panda, Donci Kong and Kid Kontrasto. Every record gets its own room: the unresolved charcoal face of "William Blake", the halftone childhood photo of "10 Settembre", the lantern against the dark in "Luce", the gold blackletter of "Non e Musica Soltanto".',
+      'Different artists, different moods - the same job: make the sleeve sound like the music before you press play.',
     ],
     gallery: [
       { src: '/work/zero75-chiedi.jpg', alt: 'Zero75 ft. Sean Poly - Chiedi Di Me single cover' },
       { src: '/work/zero75-blake.jpg', alt: 'Zero75 - William Blake single cover' },
       { src: '/work/panda.jpg', alt: 'Panda - 10 Settembre album cover' },
       { src: '/work/luce.jpg', alt: 'Donci Kong - Luce album cover' },
-      { src: '/work/kid-cover.jpg', alt: 'Kid Kontrasto - Non è Musica Soltanto album cover' },
-      { src: '/work/slammer-cd.jpg', alt: 'Slammer Soundcrew - Dans Les Rues CD artwork' },
-    ],
-  },
-  {
-    id: 'posters',
-    index: '03',
-    category: 'Posters & promo',
-    title: 'Ink on walls',
-    blurb: 'Event posters and release promo, designed knowing the printer.',
-    role: 'Poster design · Print production',
-    cover: '/work/kid-promo-thumb.jpg',
-    coverAlt: 'Kid Kontrasto release party poster with blackletter title',
-    description: [
-      'The launch-night poster for Kid Kontrasto\'s "Non è Musica Soltanto" and the anniversary poster for Slammer Sounds\' B-Day N°6 - graphics born on screen, finished on paper.',
-      'Inks, formats and finishes chosen up front: the kind of job where knowing the press matters as much as knowing the pen.',
-    ],
-    gallery: [
-      { src: '/work/kid-promo.jpg', alt: 'Release party poster for Non è Musica Soltanto' },
-      { src: '/work/slammer-bday.jpg', alt: 'Slammer B-Day N°6 anniversary poster, black and white graffiti' },
-    ],
-  },
-  {
-    id: 'motion',
-    index: '04',
-    category: 'Motion',
-    title: 'Moving pictures',
-    blurb: 'Video direction, edits and logo animation.',
-    role: 'Direction · Editing · Animation',
-    cover: '/work/motion-direction.jpg',
-    coverAlt: 'Still frame from a directed music video',
-    description: [
-      'Direction and editing for music videos, plus animated identity work - like the All Bars Game theme logo animation.',
-      'Cut, timed and delivered ready to post.',
-    ],
-    gallery: [
-      { src: '/work/motion-direction.jpg', alt: 'Video direction still' },
-      { src: '/work/motion-edit.jpg', alt: 'Video editing still' },
-    ],
-    links: [
-      {
-        label: 'Direction and editing',
-        cta: 'Watch video',
-        href: 'https://www.youtube.com/watch?v=JwZPe_SuJ7w',
-      },
-      {
-        label: 'Editing',
-        cta: 'Watch video',
-        href: 'https://www.youtube.com/watch?v=p9TI1u2b0JM',
-      },
-      {
-        label: 'Theme logo animation',
-        cta: 'See channel',
-        href: 'https://www.youtube.com/@All_Bars_Game',
-      },
+      { src: '/work/kid-cover.jpg', alt: 'Kid Kontrasto - Non e Musica Soltanto album cover' },
     ],
   },
 ]
