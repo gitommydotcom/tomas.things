@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Reveal, SplitTitle } from './Reveal.jsx'
 import { SqArrow, BrandAsterisk, WaveCreature } from './Doodles.jsx'
-import { PROJECTS } from '../data/projects.js'
+import { PROJECTS, GROUPS } from '../data/projects.js'
 import ProjectModal from './ProjectModal.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -136,8 +136,18 @@ export default function Work() {
       </header>
 
       <ul className="work-list">
-        {PROJECTS.map((p) => (
-          <Row key={p.id} project={p} onOpen={setOpen} />
+        {GROUPS.map((g) => (
+          <Fragment key={g.id}>
+            <li className="work-group" aria-hidden="true">
+              <span className="work-group-label">
+                <BrandAsterisk className="work-group-ast" />
+                {g.label}
+              </span>
+            </li>
+            {PROJECTS.filter((p) => p.group === g.id).map((p) => (
+              <Row key={p.id} project={p} onOpen={setOpen} />
+            ))}
+          </Fragment>
         ))}
       </ul>
 
@@ -145,7 +155,7 @@ export default function Work() {
         <BrandAsterisk className="cta-asterisk" />
         <span className="cta-banner-text">
           <span className="eyebrow eyebrow--light">
-            07
+            08
             <BrandAsterisk className="eyebrow-asterisk" />
             next
           </span>

@@ -1,27 +1,31 @@
 /*
- * Real work. `cover` is the card thumbnail; galleries use full-size images.
- * Links render as "Label: CTA" rows in the detail view.
- * The lineup spans the whole craft: two shipped digital products, a brand
- * identity, an event identity, an editorial cover and a set of sleeves.
+ * Real work, grouped into macro sections (see `group`). `cover` is the
+ * card thumbnail; galleries open full-size in the lightbox. Links render
+ * as "Label: CTA" rows in the detail view.
  */
+export const GROUPS = [
+  { id: 'digital', label: 'Digital products' },
+  { id: 'identity', label: 'Brand identity' },
+  { id: 'editorial', label: 'Print & editorial' },
+]
+
 export const PROJECTS = [
   {
     id: 'move',
     index: '01',
+    group: 'digital',
     category: 'Product',
     title: 'Move',
-    blurb: 'A social planner that turns a stack of clients into a month of posts.',
+    blurb: 'A social planner that turns a roster of clients into a month of posts.',
     role: 'Product design · UI · Build',
     cover: '/work/move-login-thumb.jpg',
     coverAlt: 'Move login screen, acid-green wordmark on near-black',
     description: [
-      'Move is a tool I built for the part of the job nobody enjoys: planning a month of social content for a stack of different clients. Each client keeps a profile - who they are, how they talk, what they sell - and Move turns that into a ready editorial plan in minutes.',
-      'One dark, fast workspace: a dashboard that flags who needs a new plan, and a generator that drafts a whole month of posts - dates, formats, captions and visual notes - so the time goes into editing, not staring at an empty grid.',
+      'Move is the tool I built for the part of the job nobody enjoys: planning a month of social content for a whole roster of clients. Each client keeps a living profile - who they are, how they talk, what they sell, which platforms - and Move turns that into a finished editorial plan in one pass: dates, formats, objectives, captions, visual directions, hashtags and SEO notes, all ready to edit.',
+      'It is built to actually run an agency week. A dashboard flags which clients are overdue and draws an activity sparkline for each one; the generator drafts a whole month at a time; and everything syncs to the cloud so it follows you between devices, with an offline-first fallback when the signal drops. Less staring at an empty calendar, more shipping.',
     ],
     gallery: [
-      { src: '/work/move-plan.jpg', alt: 'A generated editorial plan: post cards with date, format, caption and visual notes' },
-      { src: '/work/move-dash.jpg', alt: 'Move dashboard: client cards, metrics and activity sparklines' },
-      { src: '/work/move-generate.jpg', alt: 'Move plan generator, picking a client to start from' },
+      { src: '/work/move-plan.jpg', alt: 'A generated editorial plan: post cards with date, format, caption, visual notes and hashtags' },
     ],
     links: [
       { label: 'Live tool', cta: 'Open Move', href: 'https://move-editorial-planner.netlify.app' },
@@ -30,6 +34,7 @@ export const PROJECTS = [
   {
     id: 'pandino',
     index: '02',
+    group: 'digital',
     category: 'App',
     title: 'Pandino',
     blurb: 'A Tesla-style companion app for a 2007 Fiat Panda.',
@@ -47,8 +52,30 @@ export const PROJECTS = [
     ],
   },
   {
-    id: 'berkana',
+    id: 'belgrado',
     index: '03',
+    group: 'digital',
+    category: 'Web app',
+    title: 'Belgrado & Gargano',
+    blurb: 'An interactive travel dossier: a day-by-day plan, maps and a shared packing list.',
+    role: 'Product design · UI · Build',
+    cover: '/work/belgrado-ticket-thumb.jpg',
+    coverAlt: 'Belgrado boarding-pass ticket header in pine green',
+    description: [
+      'A trip needs a plan, so I built one you can actually use on the road. Belgrado & Gargano is an interactive dossier for a week split between a city and the sea: a boarding-pass header, a day-by-day itinerary you open one day at a time, beach and parking cards, a little phrasebook, and interactive maps that pin every spot.',
+      'Two people share it live - a collaborative packing list and the checklists sync through the cloud and tick off on both phones at once, with an offline fallback when the signal drops. All wrapped in a warm, magazine-like layout that makes the logistics feel like part of the holiday. (Shown here with the personal details swapped out.)',
+    ],
+    gallery: [
+      { src: '/work/belgrado-ticket.jpg', alt: 'Belgrado view: a boarding-pass ticket and the trip title in a warm serif' },
+      { src: '/work/belgrado-peschici.jpg', alt: 'Peschici view: a teal seaside hero with travel facts' },
+      { src: '/work/belgrado-valigia.jpg', alt: 'Packing view: an amber hero with per-person checklists' },
+      { src: '/work/belgrado-see.jpg', alt: 'Belgrade day plan with cards for what to see' },
+    ],
+  },
+  {
+    id: 'berkana',
+    index: '04',
+    group: 'identity',
     category: 'Brand identity',
     title: 'studio Berkana',
     blurb: 'Identity and communication for a high-end architecture studio.',
@@ -69,7 +96,8 @@ export const PROJECTS = [
   },
   {
     id: 'fregno',
-    index: '04',
+    index: '05',
+    group: 'identity',
     category: 'Identity',
     title: 'Fregno',
     blurb: 'A teaser identity for a music venue that is not open yet.',
@@ -88,13 +116,14 @@ export const PROJECTS = [
   },
   {
     id: 'manuale',
-    index: '05',
+    index: '06',
+    group: 'editorial',
     category: 'Editorial',
     title: 'Il manuale maniacale',
     blurb: 'A cover about the little habits we cannot quite stop.',
     role: 'Concept · Illustration · Type',
     cover: '/work/manuale-thumb.jpg',
-    coverAlt: "Cover of Il manuale maniacale: the letter m drawn as two bitten fingernails",
+    coverAlt: 'Cover of Il manuale maniacale: the letter m drawn as two bitten fingernails',
     description: [
       'A cover for "Il manuale maniacale", the manual of small manias. The idea had to carry the whole page, so the title letter does the work: the m is a pair of fingers, nails bitten to the quick. You get the joke before you read a word.',
       'Flat colour, one clean display face, a single visual pun - the kind of cover that makes you pick the thing up.',
@@ -106,7 +135,8 @@ export const PROJECTS = [
   },
   {
     id: 'covers',
-    index: '06',
+    index: '07',
+    group: 'editorial',
     category: 'Cover art',
     title: 'Album covers',
     blurb: 'Sleeves that sound like the record before you press play.',

@@ -71,6 +71,7 @@ export default function Contact() {
         viewport={{ once: true, margin: '-10% 0px' }}
         transition={{ duration: 0.9, ease: EASE, delay: 0.4 }}
       >
+        <SqCreature className="contact-creature" eyeRef={eyesRef} />
         <a className="contact-button" href="mailto:tomas.mtj@gmail.com">
           tomas.mtj@gmail.com
         </a>
@@ -79,8 +80,6 @@ export default function Contact() {
         </a>
         <span className="contact-langs">EN&ensp;·&ensp;IT&ensp;·&ensp;CZ</span>
       </motion.div>
-
-      <SqCreature className="contact-creature" eyeRef={eyesRef} />
     </section>
   )
 }
