@@ -64,7 +64,9 @@ export default function ProjectModal({ project, onClose }) {
     }
   }, [onClose])
 
-  const single = project.gallery.length === 1
+  // the story opens on a lead image, then the text, then the rest of
+  // the images (per the detail layout brief)
+  const [lead, ...rest] = project.gallery
 
   return (
     <div className="modal-root">
@@ -103,10 +105,34 @@ export default function ProjectModal({ project, onClose }) {
           </svg>
         </button>
 
+        {/* 1. the lead image */}
+        {lead && (
+          <button
+            type="button"
+            className="modal-lead"
+            onClick={() => setZoom(lead)}
+            aria-label={`${ui.work.enlarge}: ${lead.alt}`}
+          >
+            <img src={lead.src} alt={lead.alt} loading="eager" decoding="async" />
+            <span className="modal-shot-zoom" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M4 9V4H9 M15 4H20V9 M20 15V20H15 M9 20H4V15"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        )}
+
+        {/* 2. the text */}
         <div className="modal-head">
           <div className="modal-head-left">
             <p className="eyebrow modal-eyebrow">
-              {project.index}
               <BrandAsterisk className="eyebrow-asterisk" />
               {project.category}
             </p>
@@ -114,6 +140,9 @@ export default function ProjectModal({ project, onClose }) {
               {project.title}
             </h3>
             <p className="modal-role">{project.role}</p>
+            {project.tools && (
+              <p className="modal-tools">{project.tools.join(' · ')}</p>
+            )}
           </div>
 
           <div className="modal-head-right">
@@ -138,36 +167,39 @@ export default function ProjectModal({ project, onClose }) {
           </div>
         </div>
 
-        <div className={`modal-gallery ${single ? 'modal-gallery--single' : ''}`}>
-          {project.gallery.map((img, i) => (
-            <button
-              type="button"
-              key={img.src}
-              className="modal-shot"
-              onClick={() => setZoom(img)}
-              aria-label={`${ui.work.enlarge}: ${img.alt}`}
-            >
-              <img
-                src={img.src}
-                alt={img.alt}
-                loading={i < 2 ? 'eager' : 'lazy'}
-                decoding="async"
-              />
-              <span className="modal-shot-zoom" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path
-                    d="M4 9V4H9 M15 4H20V9 M20 15V20H15 M9 20H4V15"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </button>
-          ))}
-        </div>
+        {/* 3. the rest of the images */}
+        {rest.length > 0 && (
+          <div className={`modal-gallery ${rest.length === 1 ? 'modal-gallery--single' : ''}`}>
+            {rest.map((img, i) => (
+              <button
+                type="button"
+                key={img.src}
+                className="modal-shot"
+                onClick={() => setZoom(img)}
+                aria-label={`${ui.work.enlarge}: ${img.alt}`}
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading={i < 2 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+                <span className="modal-shot-zoom" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path
+                      d="M4 9V4H9 M15 4H20V9 M20 15V20H15 M9 20H4V15"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </motion.div>
 
       {/* lightbox: any gallery image opens full-size, click anywhere or ESC to close */}

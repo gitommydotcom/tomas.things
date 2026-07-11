@@ -116,9 +116,9 @@ export const UI = {
       modes: { design: 'Design', print: 'Stampa', code: 'Codice' },
       tap: 'tocca',
       click: 'clicca',
-      penCaption: (t) => `${t} nello spazio per aggiungere punti · trascinali in un disegno`,
+      penCaption: (t) => `${t} nello spazio per aggiungere punti · trascinali per disegnare`,
       dragDraw: 'trascina & disegna!',
-      printCaption: (font, t) => `${font} · trascina per deformarla · ${t} per il taglio successivo`,
+      printCaption: (font, t) => `${font} · trascina per deformarla · ${t} per il carattere successivo`,
       height: 'altezza',
       weight: 'peso',
       alternates: 'alternative',
@@ -162,7 +162,7 @@ export const UI = {
       craftLabel: 'Di cosa mi occupo',
       craft: [
         ['Identità & artwork', 'loghi, copertine, manifesti che reggono l’uso reale'],
-        ['Produzione stampa', 'file pronti per la stampa; inchiostri e finiture decisi prima'],
+        ['Produzione stampa', 'file pronti per la stampa; inchiostri e finiture scelti a monte'],
         ['Web & codice', 'siti e strumenti, costruiti da chi li ha disegnati'],
         ['Motion & contenuti', 'regia, montaggio, animazione, pronti da pubblicare'],
         ['Il risultato', 'stampato, online o funzionante: una cosa, non un file'],
@@ -171,7 +171,7 @@ export const UI = {
       toolkit: [
         ['Design', ['Photoshop', 'Illustrator', 'InDesign', 'Premiere Pro']],
         ['Codice', ['HTML & CSS', 'JavaScript', 'React', 'Python']],
-        ['Extra', ['Flussi con AI', 'Stampa offset', 'EN · IT · CZ']],
+        ['Extra', ['Workflow con AI', 'Stampa offset', 'EN · IT · CZ']],
       ],
     },
     contact: {

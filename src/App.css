@@ -1225,152 +1225,125 @@
   0%, 100% { transform: rotate(4deg); }
   50% { transform: rotate(-34deg); }
 }
-/* Selected work: macro-category sections, each an image-forward card grid */
-.work-groups {
+/* Selected work: a typographic index - compact rows, no thumbnails and
+   no numbering. Each row lays out name / type / tools / category and
+   opens the full story. */
+.work-list {
   display: flex;
   flex-direction: column;
-  gap: clamp(36px, 4.6vw, 64px);
+  border-top: 1px solid var(--line);
 }
-.work-group {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin: 0 0 clamp(18px, 2vw, 28px);
-  font-weight: 400;
-}
-.work-group::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--line);
-}
-.work-group-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  font-size: 12px;
-  font-weight: 650;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-50);
-}
-.work-group-ast {
-  width: 12px;
-  height: 12px;
-  color: var(--pink);
-}
-.work-grid {
+.work-row {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(20px, 2.4vw, 38px);
-}
-.work-card {
-  display: flex;
-  flex-direction: column;
+  grid-template-columns:
+    minmax(0, 1.9fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr) 26px;
+  align-items: baseline;
+  gap: clamp(12px, 2.2vw, 34px);
   width: 100%;
   text-align: left;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  overflow: hidden;
-  transition:
-    transform 0.5s var(--ease-out),
-    box-shadow 0.5s var(--ease-out);
-}
-.work-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 34px 64px -36px rgba(24, 22, 22, 0.55);
-}
-.work-card:focus-visible {
-  outline: 3px solid var(--azure-deep);
-  outline-offset: 3px;
-}
-.work-card-media {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--pink-soft);
+  padding: clamp(19px, 2.3vw, 30px) 4px;
   border-bottom: 1px solid var(--line);
+  transition:
+    background 0.45s var(--ease-out),
+    padding-left 0.45s var(--ease-out);
 }
-.work-card-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.7s var(--ease-out);
+.work-row:hover,
+.work-row:focus-visible {
+  background: var(--surface);
+  padding-left: 15px;
 }
-.work-card:hover .work-card-media img {
-  transform: scale(1.05);
+.work-row:focus-visible {
+  outline: 3px solid var(--azure-deep);
+  outline-offset: 2px;
 }
-.work-card-num {
-  position: absolute;
-  top: 13px;
-  left: 14px;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 12.5px;
-  letter-spacing: 0.02em;
-  color: #fff;
-  background: rgba(24, 22, 22, 0.5);
-  padding: 3px 10px;
-  border-radius: 100px;
-}
-.work-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px) clamp(20px, 2vw, 26px);
-}
-.work-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.work-card-arrow {
-  width: 42px;
-  flex: none;
-  /* springs out on hover */
-  transform: translateX(-8px) scale(0);
-  transform-origin: left center;
-  transition: transform 0.45s var(--ease-out);
-}
-.work-card-arrow path {
-  stroke: var(--azure);
-}
-.work-card:hover .work-card-arrow,
-.work-card:focus-visible .work-card-arrow {
-  transform: translateX(0) scale(1);
-}
-.work-card-title {
+.work-row-name {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(24px, 2.3vw, 33px);
-  line-height: 1.08;
-  letter-spacing: -0.01em;
+  font-size: clamp(24px, 2.9vw, 40px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  transition: color 0.35s var(--ease-out);
 }
-.work-card-blurb {
-  font-size: 15px;
-  color: var(--ink-70);
+.work-row:hover .work-row-name,
+.work-row:focus-visible .work-row-name {
+  color: var(--pink-deep);
 }
-.work-tag {
-  flex: none;
+/* on desktop the three meta pieces flow into the row's own columns */
+.work-row-meta {
+  display: contents;
+}
+.work-row-type,
+.work-row-tools,
+.work-row-cat {
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.work-row-type {
+  font-weight: 600;
+  color: var(--ink);
+}
+.work-row-tools {
+  color: var(--ink-50);
+}
+.work-row-cat {
   font-size: 11px;
   font-weight: 650;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--azure-deep);
-  padding: 4px 11px;
-  border: 1px solid var(--azure);
-  border-radius: 100px;
-  background: var(--bg);
 }
-@media (max-width: 720px) {
-  .work-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
+.work-row-arrow {
+  width: 26px;
+  flex: none;
+  align-self: center;
+  transform: translateX(-6px) scale(0);
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease-out);
+}
+.work-row-arrow path {
+  stroke: var(--azure);
+}
+.work-row:hover .work-row-arrow,
+.work-row:focus-visible .work-row-arrow {
+  transform: translateX(0) scale(1);
+}
+/* on phones the row stacks: name + arrow on top, the meta on one line */
+@media (max-width: 760px) {
+  .work-row {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'name arrow'
+      'meta meta';
+    align-items: center;
+    row-gap: 9px;
+    padding: 19px 2px;
   }
-  .work-card-title {
-    font-size: 24px;
+  .work-row:hover,
+  .work-row:focus-visible {
+    padding-left: 2px;
+  }
+  .work-row-name {
+    grid-area: name;
+    font-size: clamp(23px, 7vw, 31px);
+  }
+  .work-row-arrow {
+    grid-area: arrow;
+  }
+  .work-row-meta {
+    grid-area: meta;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 3px 10px;
+  }
+  .work-row-tools::before {
+    content: '·';
+    margin-right: 10px;
+    color: var(--ink-50);
+  }
+  .work-row-cat {
+    flex-basis: 100%;
+    margin-top: 1px;
   }
 }
 
@@ -1498,13 +1471,40 @@
   background: var(--azure-deep);
   transform: rotate(90deg);
 }
+/* the story opens on a lead image, pulled up under the sticky close
+   button so it sits flush to the panel top */
+.modal-lead {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-top: -44px;
+  background: var(--pink-soft);
+  cursor: zoom-in;
+  overflow: hidden;
+}
+.modal-lead img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(66vh, 560px);
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s var(--ease-out);
+}
+.modal-lead:hover img {
+  transform: scale(1.02);
+}
+.modal-lead:focus-visible {
+  outline: 3px solid var(--azure-deep);
+  outline-offset: -3px;
+}
 /* editorial head: title block left, story + links right */
 .modal-head {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
   gap: clamp(24px, 4vw, 64px);
   padding: clamp(24px, 3.4vw, 48px) clamp(24px, 3.4vw, 48px) clamp(18px, 2vw, 28px);
-  margin-top: -44px;
 }
 @media (max-width: 820px) {
   .modal-head {
@@ -1534,6 +1534,12 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--pink-deep);
+}
+.modal-tools {
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-50);
+  margin-top: -6px;
 }
 .modal-para {
   color: var(--ink-70);
@@ -1644,7 +1650,9 @@
   height: 15px;
 }
 .modal-shot:hover .modal-shot-zoom,
-.modal-shot:focus-visible .modal-shot-zoom {
+.modal-shot:focus-visible .modal-shot-zoom,
+.modal-lead:hover .modal-shot-zoom,
+.modal-lead:focus-visible .modal-shot-zoom {
   opacity: 1;
   transform: scale(1);
 }
@@ -2027,23 +2035,40 @@
     height: 64px;
   }
   .logo-img {
-    height: 21px;
+    height: 19px;
   }
-  /* on phones the three section links + a trilingual switcher can't
-     both fit (the longest labels overflow the header), so the header
-     keeps the logo and the language chooser - the sections are one
-     short scroll away. The full nav returns on tablet and up. */
+  /* the section links + a trilingual switcher are a lot for a phone
+     header, so everything tightens: the links go compact and never
+     wrap, and the switcher sheds its pill to read as small text with
+     the active language picked out in pink (like the contact label).
+     Tap targets stay tall via vertical padding - only the width shrinks. */
+  .nav-right {
+    gap: 10px;
+  }
   .nav-links {
-    display: none;
+    gap: 10px;
+  }
+  .nav-link {
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    padding: 10px 1px;
   }
   .lang-switch {
-    gap: 1px;
-    padding: 2px;
+    border: none;
+    padding: 0;
+    gap: 2px;
   }
   .lang-btn {
     font-size: 10px;
-    padding: 5px 6px;
+    padding: 9px 3px;
     letter-spacing: 0.02em;
+    border-radius: 6px;
+  }
+  .lang-btn--on,
+  .lang-btn--on:hover {
+    background: none;
+    color: var(--pink);
   }
   .hero-slogan {
     font-size: clamp(46px, 14vw, 60px);

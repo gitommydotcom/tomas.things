@@ -1,19 +1,20 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { EASE } from './Reveal.jsx'
-import { useLang, useUI } from '../i18n/LangContext.jsx'
+import { useUI } from '../i18n/LangContext.jsx'
 import { SqUnderline, SqArrow, BrandAsterisk } from './Doodles.jsx'
 import HeroStage from './HeroStage.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
 /*
- * The jewel piece. Each slogan word rests in the current site language
- * and flips on hover (tap on touch) to the OTHER two - so the sentence
- * literally translates itself, live. A word alternates between its two
- * "other" languages, starting from a random one, so both always show up.
+ * The jewel piece. The slogan itself always reads in English - it is the
+ * brand line - and each word flips on hover (tap on touch) to a
+ * translation, Italian or Czech. Every word alternates between the two,
+ * starting from a random one, so both always show up. The site language
+ * does not change the slogan; only the single words flip.
  *
  * Layout rules:
  * - The slogan is composed of FIXED lines - words never jump between
@@ -27,11 +28,9 @@ gsap.registerPlugin(ScrollTrigger)
  *   pointer off the word and make it rattle at the borders.
  */
 const LANG_META = {
-  en: { label: 'EN', html: 'en' },
   it: { label: 'IT', html: 'it' },
   cz: { label: 'CZ', html: 'cs' }, // displayed as CZ; BCP-47 tag stays "cs"
 }
-const ALL_LANGS = ['en', 'it', 'cz']
 
 const LINES = [
   [
@@ -56,15 +55,11 @@ const shuffle = (arr) => {
   return a
 }
 
-function FlipWord({ word, index, revealed, tapped, onTap, onRevealed, lang }) {
+function FlipWord({ word, index, revealed, tapped, onTap, onRevealed }) {
   const [hovered, setHovered] = useState(false)
-  // the two languages this word can flip to (everything but the current
-  // site language) - it alternates between them, starting random
-  const others = useMemo(() => ALL_LANGS.filter((l) => l !== lang), [lang])
-  const [flip, setFlip] = useState(() => {
-    const o = ALL_LANGS.filter((l) => l !== lang)
-    return o[Math.floor(Math.random() * o.length)]
-  })
+  // the translation this word flips to next - random start, then strict
+  // alternation between Italian and Czech so both always show up
+  const [flip, setFlip] = useState(() => (Math.random() < 0.5 ? 'it' : 'cz'))
   const [widths, setWidths] = useState(null)
   const sizerEn = useRef(null)
   const sizerIt = useRef(null)
@@ -72,18 +67,12 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed, lang }) {
 
   const active = hovered || tapped
 
-  // if the site language changes, keep the flip target valid (it must
-  // never equal the language the word is now resting in)
-  useEffect(() => {
-    setFlip((f) => (others.includes(f) ? f : others[0]))
-  }, [others])
-
   // advance the language on each activation, while the back face is
   // still hidden (rotation 0), so the swap is never visible
   const wasActive = useRef(false)
   useEffect(() => {
     if (active && !wasActive.current) {
-      setFlip((f) => others[(others.indexOf(f) + 1) % others.length])
+      setFlip((f) => (f === 'it' ? 'cz' : 'it'))
     }
     wasActive.current = active
   }, [active])
@@ -104,12 +93,11 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed, lang }) {
     return () => ro.disconnect()
   }, [])
 
-  const front = word[lang]
   const back = word[flip]
-  const width = widths ? (active ? widths[flip] : widths[lang]) : null
+  const width = widths ? (active ? widths[flip] : widths.en) : null
   // the hit area covers the resting word AND the flipped word, so the
   // pointer can never fall off mid-transition
-  const hitWidth = widths ? (active ? Math.max(widths[lang], widths[flip]) : widths[lang]) : null
+  const hitWidth = widths ? (active ? Math.max(widths.en, widths[flip]) : widths.en) : null
 
   return (
     <span
@@ -137,7 +125,7 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed, lang }) {
             {word.cz}
           </span>
           <span className="flip-pivot">
-            <span className="flip-face flip-front" lang={LANG_META[lang].html}>{front}</span>
+            <span className="flip-face flip-front">{word.en}</span>
             <span className="flip-face flip-back" lang={LANG_META[flip].html}>
               {back}
               <span className="flip-lang">{LANG_META[flip].label}</span>
@@ -171,7 +159,6 @@ function FlipWord({ word, index, revealed, tapped, onTap, onRevealed, lang }) {
 }
 
 export default function Hero() {
-  const { lang } = useLang()
   const ui = useUI()
   const [revealed, setRevealed] = useState(false)
   // one tapped word at a time - tapping another flips the first back
@@ -263,7 +250,7 @@ export default function Hero() {
         <div className="hero-main">
           <h1
             className="hero-slogan"
-            aria-label={ui.hero.slogan}
+            aria-label="I translate ideas into things."
             ref={sloganRef}
           >
           {LINES.map((line, li) => (
@@ -276,7 +263,6 @@ export default function Hero() {
                     key={id}
                     word={word}
                     index={wordIndex}
-                    lang={lang}
                     revealed={revealed}
                     tapped={tappedId === id}
                     onTap={() => {
