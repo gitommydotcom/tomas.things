@@ -42,14 +42,14 @@ export const PROJECTS = [
     ),
     description: [
       L(
-        'Belgrado & Gargano is a template as much as a trip. It plans a full week split between a city and the sea, but the structure is built to be re-run for any destination: a boarding-pass header, a day-by-day itinerary you open one day at a time, beach and parking cards, a phrasebook, and interactive maps that pin every spot.',
-        'Belgrado & Gargano è un viaggio, ma anche un template. Organizza una settimana intera divisa tra città e mare, con una struttura pronta a essere riusata per qualsiasi meta: un’intestazione in stile carta d’imbarco, un itinerario che apri un giorno alla volta, schede per spiagge e parcheggi, un frasario e mappe interattive che segnano ogni tappa.',
-        'Belgrado & Gargano je stejně tak šablona jako výlet. Naplánuje celý týden rozdělený mezi město a moře, ale struktura je udělaná tak, aby se dala spustit znovu pro jakoukoli destinaci: hlavička jako palubní lístek, itinerář den po dni, který otevíráš vždy po jednom dni, karty pláží a parkování, konverzační příručka a interaktivní mapy, které připnou každé místo.',
+        'An interactive travel dossier that doubles as a template: a boarding-pass header, a day-by-day itinerary, beach and parking cards, a phrasebook and maps that pin every stop.',
+        'Un dossier di viaggio interattivo che è anche un template: intestazione in stile carta d’imbarco, itinerario giorno per giorno, schede per spiagge e parcheggi, un frasario e mappe che segnano ogni tappa.',
+        'Interaktivní cestovní dossier, který je zároveň šablonou: hlavička jako palubní lístek, itinerář den po dni, karty pláží a parkování, konverzační příručka a mapy, které připnou každé místo.',
       ),
       L(
-        'Under the warm, magazine-like surface it is a fairly deep system - dozens of moving parts across days, places, transport, budgets, packing and checklists, all editable and all kept in sync. Two people share it live through the cloud, ticking things off on both phones at once, with an offline fallback when the signal drops. Change the variables and the same dossier plans the next trip. (Shown here with the personal details swapped out.)',
-        'Sotto la superficie calda e da rivista c’è un sistema piuttosto articolato: decine di variabili tra giorni, luoghi, trasporti, budget, bagagli e checklist, tutte modificabili e sempre sincronizzate. Due persone lo usano insieme in tempo reale tramite il cloud, spuntando le voci da entrambi i telefoni, con una modalità offline quando salta il segnale. Cambi le variabili e lo stesso dossier organizza il viaggio dopo. (Qui con i dati personali sostituiti.)',
-        'Pod teplým, magazínovým povrchem je to poměrně propracovaný systém: desítky proměnných napříč dny, místy, dopravou, rozpočty, balením a seznamy, všechny editovatelné a stále synchronizované. Dva lidé ho používají naživo přes cloud a odškrtávají položky na obou telefonech zároveň, s offline režimem, když vypadne signál. Změníš proměnné a stejný dossier naplánuje další cestu. (Zde s vyměněnými osobními údaji.)',
+        'Two people share it live through the cloud, with an offline fallback. Change the variables and it plans the next trip. (Personal details swapped out.)',
+        'Due persone lo usano insieme in tempo reale, con una modalità offline quando salta il segnale. Cambi le variabili e organizza il viaggio dopo. (Dati personali sostituiti.)',
+        'Dva lidé ho používají naživo přes cloud, s offline režimem. Změníš proměnné a naplánuje další cestu. (Osobní údaje vyměněné.)',
       ),
     ],
     gallery: [
@@ -95,14 +95,14 @@ export const PROJECTS = [
     ),
     description: [
       L(
-        'Modern cars get a slick app. My 2007 Fiat Panda got Pandino. It keeps every deadline a car quietly piles up - insurance, road tax, the yearly inspection, the timing belt - in one calm dashboard that tells you what is due and exactly what to do about it.',
-        'Le auto moderne hanno un’app curata. La mia Fiat Panda del 2007 ha Pandino. Raccoglie ogni scadenza che un’auto accumula in silenzio - assicurazione, bollo, revisione, cinghia di distribuzione - in un’unica schermata chiara, che ti dice cosa scade e cosa fare.',
-        'Moderní auta mají uhlazenou appku. Můj Fiat Panda z roku 2007 dostal Pandino. Sbírá každou lhůtu, kterou auto tiše nasčítá - pojištění, silniční daň, technickou, rozvodový řemen - do jedné přehledné obrazovky, která ti řekne, co tě čeká a co s tím.',
+        'Modern cars get a slick app. My 2007 Fiat Panda got Pandino: every deadline a car piles up - insurance, road tax, inspection, timing belt - gathered into one calm dashboard.',
+        'Le auto moderne hanno un’app curata. La mia Fiat Panda del 2007 ha Pandino: ogni scadenza - assicurazione, bollo, revisione, cinghia - raccolta in un’unica schermata chiara.',
+        'Moderní auta mají uhlazenou appku. Můj Fiat Panda z roku 2007 dostal Pandino: každá lhůta - pojištění, daň, technická, rozvody - v jedné přehledné obrazovce.',
       ),
       L(
-        'The car sits in the middle as a 3D model you can spin: tap a wheel, the hood or the body and it opens the right card. Everything lives on your device, offline. Built for one very specific car, designed so anyone could use it for theirs.',
-        'L’auto sta al centro come modello 3D che puoi ruotare: tocca una ruota, il cofano o la carrozzeria e si apre la scheda giusta. Tutto vive sul tuo dispositivo, offline. Costruita per un’auto ben precisa, pensata perché chiunque possa usarla per la propria.',
-        'Auto je uprostřed jako 3D model, kterým můžeš otáčet: ťukni na kolo, kapotu nebo karoserii a otevře se správná karta. Všechno běží ve tvém zařízení, offline. Postavené pro jedno konkrétní auto, navržené tak, aby ho pro to svoje mohl použít kdokoli.',
+        'The car sits in the middle as a 3D model you can spin: tap a part and the right card opens. Everything offline, on your device.',
+        'Al centro c’è l’auto in 3D, che puoi ruotare: tocchi un pezzo e si apre la scheda giusta. Tutto offline, sul tuo dispositivo.',
+        'Uprostřed je auto ve 3D, kterým můžeš otáčet: ťukneš na díl a otevře se správná karta. Všechno offline, ve tvém zařízení.',
       ),
     ],
     gallery: [
@@ -143,14 +143,14 @@ export const PROJECTS = [
     ),
     description: [
       L(
-        'Move is the tool I built for the part of the job nobody enjoys: planning a month of social content for a whole roster of clients. Each client keeps a living profile - who they are, how they talk, what they sell, which platforms - and Move turns that into a finished editorial plan in one pass: dates, formats, objectives, captions, visual directions, hashtags and SEO notes, all ready to edit.',
-        'Move è lo strumento che ho costruito per la parte del lavoro che non piace a nessuno: pianificare un mese di contenuti social per un intero parco clienti. Ogni cliente ha un profilo vivo - chi è, come parla, cosa vende, su quali piattaforme - e Move lo trasforma in un piano editoriale completo in un colpo solo: date, formati, obiettivi, caption, indicazioni visive, hashtag e note SEO, tutto pronto da modificare.',
-        'Move je nástroj, který jsem postavil pro tu část práce, co nikoho nebaví: naplánovat měsíc obsahu na sociální sítě pro celé portfolio klientů. Každý klient má živý profil - kdo je, jak mluví, co prodává, na jakých platformách - a Move z toho na jeden zátah udělá hotový redakční plán: termíny, formáty, cíle, popisky, vizuální směr, hashtagy a SEO poznámky, všechno připravené k úpravě.',
+        'The tool I built for the part of the job nobody enjoys: planning a month of social content for a whole roster of clients. Each client keeps a living profile, and Move turns it into a finished editorial plan in one pass - dates, formats, captions, hashtags, SEO.',
+        'Lo strumento che ho costruito per la parte del lavoro che non piace a nessuno: pianificare un mese di social per tutti i clienti. Ogni cliente ha un suo profilo, e Move lo trasforma in un piano editoriale completo in un colpo solo - date, formati, caption, hashtag, SEO.',
+        'Nástroj pro tu část práce, co nikoho nebaví: naplánovat měsíc obsahu pro celé portfolio klientů. Každý klient má svůj profil a Move z něj na jeden zátah udělá hotový redakční plán - termíny, formáty, popisky, hashtagy, SEO.',
       ),
       L(
-        'It is built to actually run an agency week. A dashboard flags which clients are overdue and draws an activity sparkline for each one; the generator drafts a whole month at a time; and everything syncs to the cloud so it follows you between devices, with an offline-first fallback when the signal drops. Less staring at an empty calendar, more shipping.',
-        'È fatto per reggere davvero la settimana di un’agenzia. Una dashboard segnala quali clienti sono in ritardo e traccia una sparkline di attività per ognuno; il generatore prepara un mese intero alla volta; e tutto si sincronizza nel cloud, così ti segue tra i dispositivi, con una modalità offline quando salta il segnale. Meno tempo a fissare un calendario vuoto, più cose che escono davvero.',
-        'Je postavený tak, aby opravdu utáhl agenturní týden. Nástěnka označí, kteří klienti mají zpoždění, a pro každého vykreslí sparkline aktivity; generátor připraví rovnou celý měsíc; a všechno se synchronizuje do cloudu, takže tě to sleduje mezi zařízeními, s offline režimem, když vypadne signál. Míň zírání do prázdného kalendáře, víc hotové práce.',
+        'A dashboard flags who is overdue; everything syncs to the cloud, offline-first. Less staring at an empty calendar, more shipping.',
+        'Una dashboard segnala chi è in ritardo; tutto si sincronizza nel cloud, anche offline. Meno calendario vuoto, più cose pubblicate.',
+        'Nástěnka označí, kdo má zpoždění; všechno se synchronizuje do cloudu, i offline. Míň prázdného kalendáře, víc hotového.',
       ),
     ],
     gallery: [
@@ -199,14 +199,14 @@ export const PROJECTS = [
     ),
     description: [
       L(
-        "Studio Berkana is a high-end architecture and engineering practice in L'Aquila. They do precise, considered work, and their communication needed to match. I gave them an identity that says it plainly - a geometric mark, a deep navy, a lot of quiet space - and carried it across everything the studio hands a client.",
-        "Studio Berkana è uno studio di architettura e ingegneria di alto livello a L'Aquila. Fanno un lavoro preciso e ragionato, e la comunicazione doveva essere all’altezza. Gli ho dato un’identità che lo dice con chiarezza - un marchio geometrico, un blu notte profondo, molto respiro - e l’ho portata su tutto ciò che lo studio mette in mano a un cliente.",
-        "Studio Berkana je špičkové architektonické a inženýrské studio v L'Aquile. Dělají přesnou, promyšlenou práci a jejich komunikace jí měla odpovídat. Dal jsem jim identitu, která to říká jasně - geometrická značka, hluboká tmavě modrá, spousta klidného prostoru - a přenesl ji na všechno, co studio předává klientovi.",
+        "A high-end architecture and engineering studio in L'Aquila. Precise, considered work - so I gave them an identity to match: a geometric mark, a deep navy, a lot of quiet space.",
+        "Uno studio di architettura e ingegneria di alto livello a L'Aquila. Un lavoro preciso e ragionato: gli ho dato un’identità all’altezza, fatta di un marchio geometrico, un blu notte profondo e tanto respiro.",
+        "Špičkové architektonické a inženýrské studio v L'Aquile. Přesná, promyšlená práce - dal jsem jim tomu odpovídající identitu: geometrická značka, hluboká modrá, spousta klidného prostoru.",
       ),
       L(
-        'Business cards, letterhead, a folded invitation for the new-office opening, plus the project and social visuals: one clear system, so every piece looks like it came from the same careful hand.',
-        'Biglietti da visita, carta intestata, un invito pieghevole per l’inaugurazione della nuova sede, più i visual per progetti e social: un unico sistema chiaro, così ogni pezzo sembra uscito dalla stessa mano attenta.',
-        'Vizitky, hlavičkový papír, skládané pozvání na otevření nové kanceláře a k tomu vizuály pro projekty i sociální sítě: jeden jasný systém, aby každý kus vypadal, že vyšel ze stejné pečlivé ruky.',
+        'Business cards, letterhead, a folded opening invitation, project and social visuals: one clear system, every piece from the same careful hand.',
+        'Biglietti, carta intestata, un invito per l’inaugurazione, visual per progetti e social: un sistema unico, ogni pezzo uscito dalla stessa mano.',
+        'Vizitky, hlavičkový papír, pozvánka na otevření, vizuály pro projekty i sítě: jeden systém, každý kus ze stejné ruky.',
       ),
     ],
     gallery: [
@@ -252,19 +252,14 @@ export const PROJECTS = [
     ),
     description: [
       L(
-        'Corti Edil-Fer is a building firm, and building is the one job where rushing shows. So the rebrand leans into it: a snail as the mascot, unhurried and exact, curled into a mark that doubles as the C of Corti and the e of Edil-Fer.',
-        'Corti Edil-Fer è un’impresa edile, e l’edilizia è uno di quei lavori in cui la fretta si vede. Così il rebrand ci gioca sopra: una lumaca come mascotte, lenta e precisa, raccolta in un marchio che è insieme la C di Corti e la e di Edil-Fer.',
-        'Corti Edil-Fer je stavební firma a stavařina je jedna z těch prací, kde je spěch vidět. Rebrand na tom staví: šnek jako maskot, beze spěchu a přesný, stočený do značky, která je zároveň C od Corti i e od Edil-Fer.',
+        'A building firm - and building is the one job where rushing shows. So the mascot is a snail, unhurried and exact, curled into a mark that is both the C of Corti and the e of Edil-Fer.',
+        'Un’impresa edile - e nell’edilizia la fretta si vede. Così la mascotte è una lumaca, lenta e precisa, raccolta in un marchio che è insieme la C di Corti e la e di Edil-Fer.',
+        'Stavební firma - a na stavbě je spěch vidět. Maskotem je proto šnek, pomalý a přesný, stočený do značky, která je zároveň C od Corti i e od Edil-Fer.',
       ),
       L(
-        'A green-and-navy system built to survive a construction site: one bold emblem for stamps and signage, the full Corti Edil-Fer lockup for paperwork, the parent Edil-Fer cut, and the snail on its own for everything small. Loud where it needs to be, legible everywhere.',
-        'Un sistema verde e blu notte fatto per sopravvivere a un cantiere: un emblema deciso per timbri e insegne, il logo completo Corti Edil-Fer per i documenti, la versione della casa madre Edil-Fer e la lumaca da sola per tutto ciò che è piccolo. Forte dove serve, leggibile ovunque.',
-        'Zeleno-modrý systém udělaný tak, aby přežil stavbu: jeden výrazný emblém na razítka a cedule, celé logo Corti Edil-Fer na dokumenty, verze mateřské značky Edil-Fer a samotný šnek na všechno malé. Hlasitý, kde je potřeba, čitelný všude.',
-      ),
-      L(
-        'The same system runs the website, cortiedilfer.it - designed and built end to end, so the brand you meet on a business card is the brand you meet online.',
-        'Lo stesso sistema regge anche il sito, cortiedilfer.it - progettato e sviluppato da cima a fondo, così il brand che incontri sul biglietto da visita è lo stesso che trovi online.',
-        'Stejný systém pohání i web, cortiedilfer.it - navržený a postavený od začátku do konce, takže značka, kterou potkáš na vizitce, je ta samá, kterou potkáš online.',
+        'A green-and-navy system built to survive a site: emblem, full lockup, the parent Edil-Fer cut, the snail alone. The same system runs the website, cortiedilfer.it, designed and built end to end.',
+        'Un sistema verde e blu notte pensato per il cantiere: emblema, logo completo, la versione Edil-Fer, la lumaca da sola. Lo stesso sistema regge il sito, cortiedilfer.it, progettato e sviluppato da cima a fondo.',
+        'Zeleno-modrý systém pro stavbu: emblém, celé logo, verze Edil-Fer, samotný šnek. Stejný systém pohání i web, cortiedilfer.it, navržený a postavený od začátku do konce.',
       ),
     ],
     gallery: [
@@ -313,14 +308,14 @@ export const PROJECTS = [
     ),
     description: [
       L(
-        'Fregno is a music venue in the making. Before the doors open, the job was to build curiosity - so the identity arrived as a run of posters that say a lot with almost nothing: a night, a place, a wall of loud type in colours that keep changing.',
-        'Fregno è un locale musicale che deve ancora nascere. Prima dell’apertura il compito era creare curiosità - così l’identità è arrivata come una serie di manifesti che dicono molto con quasi niente: una serata, un luogo, un muro di lettere urlate in colori che cambiano di continuo.',
-        'Fregno je hudební klub, který teprve vzniká. Než se otevřou dveře, úkolem bylo vzbudit zvědavost - identita proto přišla jako série plakátů, které řeknou hodně skoro ničím: jedna noc, jedno místo, zeď hlasitého písma v barvách, které se pořád mění.',
+        'A music venue that has not opened yet, so the job was pure curiosity: a run of posters that say a lot with almost nothing - a night, a place, a wall of loud type.',
+        'Un locale che deve ancora aprire, quindi il compito era uno solo: curiosità. Una serie di manifesti che dicono molto con quasi niente - una serata, un luogo, un muro di lettere urlate.',
+        'Klub, který ještě neotevřel, takže úkol byl jediný: zvědavost. Série plakátů, které řeknou hodně skoro ničím - noc, místo, zeď hlasitého písma.',
       ),
       L(
-        'One elastic system, many faces - acid green on teal, on cobalt, on black - made to spread across walls and feeds and leave you asking what it is.',
-        'Un sistema elastico, tante facce - verde acido su verde acqua, su cobalto, su nero - fatto per spargersi tra muri e feed e lasciarti con la domanda: cosa sarà?',
-        'Jeden pružný systém, spousta tváří - kyselá zelená na petrolejové, na kobaltové, na černé - udělaný tak, aby se šířil po zdech i ve feedech a nechal tě ptát se, co to je.',
+        'One elastic system, many faces: acid green on teal, on cobalt, on black. Made to spread across walls and feeds.',
+        'Un sistema elastico, tante facce: verde acido su verde acqua, su cobalto, su nero. Fatto per spargersi tra muri e feed.',
+        'Jeden pružný systém, spousta tváří: kyselá zelená na petrolejové, na kobaltové, na černé. Udělaný, aby se šířil po zdech i ve feedech.',
       ),
     ],
     gallery: [
@@ -366,14 +361,14 @@ export const PROJECTS = [
     ),
     description: [
       L(
-        'The cover for "Il manuale maniacale", a diary I made to help people stop biting their nails - a small daily companion for a habit that is hard to break. The idea had to carry the whole page, so the title letter does the work: the m is a pair of fingers, nails bitten to the quick. You get the joke, and the point, before you read a word.',
-        'La copertina di "Il manuale maniacale", un diario che ho creato per aiutare a smettere di mangiarsi le unghie - un piccolo compagno quotidiano per un vizio difficile da togliersi. L’idea doveva reggere l’intera pagina, così a lavorare è la lettera del titolo: la m sono due dita, con le unghie mangiate fino alla carne. Cogli la battuta, e il senso, prima ancora di leggere una parola.',
-        'Obálka knihy "Il manuale maniacale", deníku, který jsem udělal, aby lidem pomohl přestat si okusovat nehty - malý každodenní společník pro zlozvyk, který se těžko láme. Nápad musel unést celou stránku, takže práci odvede písmeno z názvu: m jsou dva prsty s nehty okousanými až do masa. Vtip i pointu pochopíš dřív, než přečteš jediné slovo.',
+        'The cover for a diary made to help people stop biting their nails. The idea had to carry the page, so the title letter does the work: the m is a pair of fingers, nails bitten to the quick.',
+        'La copertina di un diario per aiutare a smettere di mangiarsi le unghie. L’idea doveva reggere la pagina, così a lavorare è la lettera del titolo: la m sono due dita, con le unghie mangiate fino alla carne.',
+        'Obálka deníku, který má pomoct přestat si okusovat nehty. Nápad musel unést stránku, tak pracuje písmeno z názvu: m jsou dva prsty s nehty okousanými až do masa.',
       ),
       L(
-        'Flat colour, one clean display face, a single visual pun - the kind of cover that makes you pick the thing up, and maybe put your fingers down.',
-        'Colore piatto, un solo carattere display pulito, un’unica trovata visiva - il tipo di copertina che ti fa prendere il libro in mano, e magari toglierti le dita dalla bocca.',
-        'Plochá barva, jeden čistý display font, jediná vizuální slovní hříčka - přesně ta obálka, po které knihu vezmeš do ruky a možná dáš prsty pryč od pusy.',
+        'Flat colour, one clean display face, a single visual pun - the kind of cover that makes you pick it up, and maybe put your fingers down.',
+        'Colore piatto, un solo carattere display, un’unica trovata visiva - la copertina che ti fa prendere il libro, e magari toglierti le dita dalla bocca.',
+        'Plochá barva, jeden display font, jediná vizuální hříčka - obálka, po které knihu vezmeš do ruky a možná dáš prsty pryč od pusy.',
       ),
     ],
     gallery: [
@@ -414,14 +409,14 @@ export const PROJECTS = [
     ),
     description: [
       L(
-        'Covers for Zero75, Donci Kong and Kid Kontrasto. Every record gets its own room: the unresolved charcoal face of "William Blake", the teal duotone of "Chiedi Di Me", the lantern against the dark in "Luce", the gold blackletter of "Non e Musica Soltanto".',
-        'Copertine per Zero75, Donci Kong e Kid Kontrasto. Ogni disco ha il suo mondo: il volto a carboncino, irrisolto, di "William Blake", il duotone verde acqua di "Chiedi Di Me", la lanterna contro il buio di "Luce", il blackletter dorato di "Non è Musica Soltanto".',
-        'Obaly pro Zero75, Donci Kong a Kid Kontrasto. Každá deska má svůj vlastní svět: nedořešená uhlová tvář "William Blake", tyrkysový duoton "Chiedi Di Me", lucerna proti tmě v "Luce", zlatý blackletter "Non è Musica Soltanto".',
+        'Covers for Zero75, Donci Kong and Kid Kontrasto. Every record gets its own world: the charcoal face of "William Blake", the teal duotone of "Chiedi Di Me", the lantern in "Luce", the gold blackletter of "Non e Musica Soltanto".',
+        'Copertine per Zero75, Donci Kong e Kid Kontrasto. Ogni disco ha il suo mondo: il volto a carboncino di "William Blake", il duotone verde acqua di "Chiedi Di Me", la lanterna di "Luce", il blackletter dorato di "Non è Musica Soltanto".',
+        'Obaly pro Zero75, Donci Kong a Kid Kontrasto. Každá deska má svůj svět: uhlová tvář "William Blake", tyrkysový duoton "Chiedi Di Me", lucerna v "Luce", zlatý blackletter "Non è Musica Soltanto".',
       ),
       L(
-        'Different artists, different moods - the same job: make the sleeve sound like the music before you press play.',
-        'Artisti diversi, atmosfere diverse - lo stesso compito: far suonare la copertina come la musica prima di premere play.',
-        'Různí umělci, různé nálady - stejný úkol: rozeznít obal jako hudbu ještě předtím, než pustíš play.',
+        'Different artists, different moods - one job: make the sleeve sound like the music before you press play.',
+        'Artisti diversi, atmosfere diverse - un solo compito: far suonare la copertina come la musica prima di premere play.',
+        'Různí umělci, různé nálady - jeden úkol: rozeznít obal jako hudbu ještě předtím, než pustíš play.',
       ),
     ],
     gallery: [

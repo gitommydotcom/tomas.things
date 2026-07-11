@@ -116,7 +116,7 @@ export const UI = {
       modes: { design: 'Design', print: 'Stampa', code: 'Codice' },
       tap: 'tocca',
       click: 'clicca',
-      penCaption: (t) => `${t} nello spazio per aggiungere punti · trascinali per disegnare`,
+      penCaption: (t) => `${t} per aggiungere punti · trascinali per disegnare`,
       dragDraw: 'trascina & disegna!',
       printCaption: (font, t) => `${font} · trascina per deformarla · ${t} per il carattere successivo`,
       height: 'altezza',
@@ -130,7 +130,7 @@ export const UI = {
     work: {
       eyebrow: 'Lavori selezionati',
       title: 'Cose, non solo file.',
-      lead: 'Apri un progetto per la storia completa.',
+      lead: 'Apri un progetto e leggi tutta la storia.',
       ctaNext: 'prossimo',
       ctaTitle: 'La tua idea qui.',
       ctaLink: 'Facciamone una cosa',
@@ -151,10 +151,10 @@ export const UI = {
         { w: 'poi' }, { w: 'resto' }, { w: 'a' }, { w: 'costruirle', em: true },
       ],
       copy1:
-        'Sono cresciuto parlando inglese, ceco e italiano, traducendo di continuo un mondo nell’altro. Quell’abitudine è diventata un mestiere: prendo un’idea e la porto fino in fondo, dalla prima matita all’artwork, al sito, al video, alla stampa.',
+        'Sono cresciuto tra tre lingue - inglese, ceco e italiano - passando di continuo dall’una all’altra. Quel modo di fare è diventato il mio mestiere: prendo un’idea e la porto fino in fondo, dallo schizzo all’artwork finito, al sito, al video, alla stampa.',
       copy2:
-        'La maggior parte dei progetti si spegne un po’ a ogni passaggio di mano. I miei non lasciano mai la mia scrivania: chi disegna il tuo logo prepara anche le lastre, scrive il codice e manda tutto online. Parli con una sola persona e ricevi qualcosa che semplicemente funziona.',
-      copy2em: ' L’AI moltiplica la mia velocità. L’occhio e la cura restano miei.',
+        'Quasi tutti i progetti si spengono un po’ a ogni passaggio di mano. I miei non lasciano mai la mia scrivania: chi disegna il logo prepara anche le lastre, scrive il codice e manda tutto online. Parli con una persona sola e ricevi qualcosa che funziona e basta.',
+      copy2em: ' L’AI mi fa andare più veloce. L’occhio e la cura restano miei.',
       quote1: '"Un designer ti passa un file.',
       quote2: 'Io consegno prodotti finiti."',
       ideaWord: 'idea',

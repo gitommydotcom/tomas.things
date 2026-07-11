@@ -1236,12 +1236,12 @@
 .work-row {
   display: grid;
   grid-template-columns:
-    minmax(0, 1.9fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1fr) 26px;
-  align-items: baseline;
-  gap: clamp(12px, 2.2vw, 34px);
+    clamp(84px, 8.5vw, 132px) minmax(0, 1.6fr) minmax(0, 0.9fr) minmax(0, 1.2fr) minmax(0, 0.9fr) 26px;
+  align-items: center;
+  gap: clamp(14px, 2.1vw, 30px);
   width: 100%;
   text-align: left;
-  padding: clamp(19px, 2.3vw, 30px) 4px;
+  padding: clamp(15px, 1.7vw, 22px) 4px;
   border-bottom: 1px solid var(--line);
   transition:
     background 0.45s var(--ease-out),
@@ -1256,11 +1256,31 @@
   outline: 3px solid var(--azure-deep);
   outline-offset: 2px;
 }
+/* the cover thumbnail - the eye-catcher on each row */
+.work-row-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--pink-soft);
+  border: 1px solid var(--line);
+}
+.work-row-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease-out);
+}
+.work-row:hover .work-row-thumb img,
+.work-row:focus-visible .work-row-thumb img {
+  transform: scale(1.07);
+}
 .work-row-name {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(24px, 2.9vw, 40px);
-  line-height: 1.02;
+  font-size: clamp(21px, 2.15vw, 30px);
+  line-height: 1.05;
   letter-spacing: -0.015em;
   transition: color 0.35s var(--ease-out);
 }
@@ -1307,24 +1327,30 @@
 .work-row:focus-visible .work-row-arrow {
   transform: translateX(0) scale(1);
 }
-/* on phones the row stacks: name + arrow on top, the meta on one line */
+/* on phones the row stacks: thumbnail on the left, name + arrow on top,
+   the meta on one line underneath */
 @media (max-width: 760px) {
   .work-row {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: clamp(72px, 20vw, 96px) 1fr auto;
     grid-template-areas:
-      'name arrow'
-      'meta meta';
+      'thumb name arrow'
+      'thumb meta meta';
     align-items: center;
-    row-gap: 9px;
-    padding: 19px 2px;
+    column-gap: 15px;
+    row-gap: 7px;
+    padding: 14px 2px;
   }
   .work-row:hover,
   .work-row:focus-visible {
     padding-left: 2px;
   }
+  .work-row-thumb {
+    grid-area: thumb;
+    align-self: center;
+  }
   .work-row-name {
     grid-area: name;
-    font-size: clamp(23px, 7vw, 31px);
+    font-size: clamp(21px, 6vw, 28px);
   }
   .work-row-arrow {
     grid-area: arrow;

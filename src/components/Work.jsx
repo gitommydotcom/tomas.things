@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger)
  * fades.
  */
 function Row({ project, categoryLabel, onOpen }) {
-  const { category, title, tools } = project
+  const { category, title, tools, cover, coverAlt } = project
   return (
     <li>
       <button
@@ -28,6 +28,9 @@ function Row({ project, categoryLabel, onOpen }) {
         onClick={() => onOpen(project)}
         aria-haspopup="dialog"
       >
+        <span className="work-row-thumb">
+          <img src={cover} alt={coverAlt} loading="lazy" decoding="async" />
+        </span>
         <span className="work-row-name">{title}</span>
         {/* display:contents on desktop - these flow into the row's columns;
             on phones the wrapper collapses them onto one meta line */}
