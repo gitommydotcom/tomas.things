@@ -4,42 +4,47 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Reveal, SplitTitle } from './Reveal.jsx'
 import { SqArrow, BrandAsterisk, WaveCreature } from './Doodles.jsx'
-import { localizeProjects } from '../data/projects.js'
+import { localizeProjects, GROUPS } from '../data/projects.js'
 import { useLang, useUI } from '../i18n/LangContext.jsx'
 import ProjectModal from './ProjectModal.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
 /*
- * Selected work as a typographic index: each project is a compact row -
- * name, type, tools, category - with no thumbnail and no numbering. Rows
- * rise in as they enter and underline on hover; opening one reveals the
- * full story (a lead image, the text, then the rest of the images). The
- * CTA banner scales up scrubbed to the scroll. Movement only - nothing
- * fades.
+ * Selected work, grouped into macro categories: each project is an
+ * image-forward card - a big cover, then the type, title and the skills
+ * used. No numbering. Cards rise in as they enter and lift on hover;
+ * opening one reveals the full story (a lead image, the text, then the
+ * rest of the images). Movement only - nothing fades.
  */
-function Row({ project, categoryLabel, onOpen }) {
-  const { category, title, tools, cover, coverAlt } = project
+function Card({ project, onOpen }) {
+  const { category, title, blurb, tools, cover, coverAlt } = project
   return (
     <li>
       <button
         type="button"
-        className="work-row"
+        className="work-card"
         onClick={() => onOpen(project)}
         aria-haspopup="dialog"
       >
-        <span className="work-row-thumb">
+        <span className="work-card-media">
           <img src={cover} alt={coverAlt} loading="lazy" decoding="async" />
         </span>
-        <span className="work-row-name">{title}</span>
-        {/* display:contents on desktop - these flow into the row's columns;
-            on phones the wrapper collapses them onto one meta line */}
-        <span className="work-row-meta">
-          <span className="work-row-type">{category}</span>
-          <span className="work-row-tools">{tools.join(' · ')}</span>
-          <span className="work-row-cat">{categoryLabel}</span>
+        <span className="work-card-body">
+          <span className="work-card-top">
+            <span className="work-tag">{category}</span>
+            <SqArrow className="work-card-arrow" inView={false} />
+          </span>
+          <span className="work-card-title">{title}</span>
+          <span className="work-card-blurb">{blurb}</span>
+          <span className="work-card-skills" aria-label="tools">
+            {tools.map((t) => (
+              <span className="work-skill" key={t}>
+                {t}
+              </span>
+            ))}
+          </span>
         </span>
-        <SqArrow className="work-row-arrow" inView={false} />
       </button>
     </li>
   )
@@ -55,13 +60,22 @@ export default function Work() {
   useEffect(() => {
     const mm = gsap.matchMedia(sectionRef)
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      // rows glide up into place as they enter - movement only, no fade
-      gsap.utils.toArray('.work-row').forEach((row) => {
-        gsap.from(row, {
-          y: 30,
+      // cards glide up into place as they enter - movement only, no fade
+      gsap.utils.toArray('.work-card').forEach((card) => {
+        gsap.from(card, {
+          y: 44,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: { trigger: card, start: 'top 94%', once: true },
+        })
+      })
+      // the category headers rise in just ahead of their cards
+      gsap.utils.toArray('.work-group').forEach((head) => {
+        gsap.from(head, {
+          y: 22,
           duration: 0.7,
           ease: 'power3.out',
-          scrollTrigger: { trigger: row, start: 'top 96%', once: true },
+          scrollTrigger: { trigger: head, start: 'top 95%', once: true },
         })
       })
       // CTA banner rises and scales up, scrubbed to the scrollbar
@@ -101,16 +115,25 @@ export default function Work() {
         </Reveal>
       </header>
 
-      <ul className="work-list">
-        {projects.map((p) => (
-          <Row
-            key={p.id}
-            project={p}
-            categoryLabel={ui.work.groups[p.group]}
-            onOpen={setOpen}
-          />
+      <div className="work-groups">
+        {GROUPS.map((g) => (
+          <section className="work-group-sec" key={g.id}>
+            <h3 className="work-group">
+              <span className="work-group-label">
+                <BrandAsterisk className="work-group-ast" />
+                {ui.work.groups[g.id]}
+              </span>
+            </h3>
+            <ul className="work-grid">
+              {projects
+                .filter((p) => p.group === g.id)
+                .map((p) => (
+                  <Card key={p.id} project={p} onOpen={setOpen} />
+                ))}
+            </ul>
+          </section>
         ))}
-      </ul>
+      </div>
 
       <a className="cta-banner" href="#contact">
         <BrandAsterisk className="cta-asterisk" />

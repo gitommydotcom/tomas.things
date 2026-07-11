@@ -244,6 +244,43 @@
   color: var(--ink-50);
   pointer-events: none;
 }
+/* dormant workbench (touch): it waits behind a "Let's play!" button, so
+   a swipe over it scrolls the page instead of grabbing the tools. The
+   button re-enables pointers on tap. */
+.hero-stage--dormant .stage-canvas {
+  pointer-events: none;
+}
+.hero-stage--dormant .stage-caption,
+.hero-stage--dormant .rig-hint {
+  opacity: 0;
+}
+.stage-play {
+  position: relative;
+  z-index: 3;
+  width: auto;
+  height: auto;
+  justify-self: center;
+  align-self: center;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 15px 30px;
+  border-radius: 100px;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 18px;
+  box-shadow: var(--shadow-lift);
+  will-change: transform;
+}
+.stage-play-ast {
+  width: 18px;
+  height: 18px;
+  color: var(--pink);
+  flex: none;
+}
 .stage-tabs {
   position: relative;
   display: flex;
@@ -1059,6 +1096,34 @@
   transform: rotate(58deg);
   transform-origin: center;
 }
+/* phones: a small pink scroll cue under the subline (desktop uses the
+   bottom-left .hero-scroll instead, hidden on phones) */
+.hero-scroll-cue {
+  display: none;
+}
+@media (max-width: 860px) {
+  .hero-scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: 22px;
+  }
+  .hero-scroll-cue-word {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+  }
+  .hero-scroll-cue-arrow {
+    width: 30px;
+    animation: scrollcue 1.7s ease-in-out infinite;
+  }
+}
+@keyframes scrollcue {
+  0%, 100% { transform: rotate(90deg) translateX(0); }
+  50% { transform: rotate(90deg) translateX(6px); }
+}
 
 /* ================= Marquee ================= */
 /* Two ink-black bands crossing at opposite angles, rolling opposite
@@ -1225,151 +1290,157 @@
   0%, 100% { transform: rotate(4deg); }
   50% { transform: rotate(-34deg); }
 }
-/* Selected work: a typographic index - compact rows, no thumbnails and
-   no numbering. Each row lays out name / type / tools / category and
-   opens the full story. */
-.work-list {
+/* Selected work: macro-category sections, each an image-forward card
+   grid. The cover leads; the type, title and skills follow. No numbers. */
+.work-groups {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--line);
+  gap: clamp(38px, 4.6vw, 66px);
 }
-.work-row {
-  display: grid;
-  grid-template-columns:
-    clamp(84px, 8.5vw, 132px) minmax(0, 1.6fr) minmax(0, 0.9fr) minmax(0, 1.2fr) minmax(0, 0.9fr) 26px;
+.work-group {
+  display: flex;
   align-items: center;
-  gap: clamp(14px, 2.1vw, 30px);
+  gap: 16px;
+  margin: 0 0 clamp(18px, 2vw, 28px);
+  font-weight: 400;
+}
+.work-group::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.work-group-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+.work-group-ast {
+  width: 12px;
+  height: 12px;
+  color: var(--pink);
+}
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 38px);
+}
+.work-card {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   text-align: left;
-  padding: clamp(15px, 1.7vw, 22px) 4px;
-  border-bottom: 1px solid var(--line);
-  transition:
-    background 0.45s var(--ease-out),
-    padding-left 0.45s var(--ease-out);
-}
-.work-row:hover,
-.work-row:focus-visible {
   background: var(--surface);
-  padding-left: 15px;
-}
-.work-row:focus-visible {
-  outline: 3px solid var(--azure-deep);
-  outline-offset: 2px;
-}
-/* the cover thumbnail - the eye-catcher on each row */
-.work-row-thumb {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 10px;
-  background: var(--pink-soft);
   border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  transition:
+    transform 0.5s var(--ease-out),
+    box-shadow 0.5s var(--ease-out);
 }
-.work-row-thumb img {
+.work-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 34px 64px -36px rgba(24, 22, 22, 0.55);
+}
+.work-card:focus-visible {
+  outline: 3px solid var(--azure-deep);
+  outline-offset: 3px;
+}
+.work-card-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--pink-soft);
+  border-bottom: 1px solid var(--line);
+}
+.work-card-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s var(--ease-out);
+  transition: transform 0.7s var(--ease-out);
 }
-.work-row:hover .work-row-thumb img,
-.work-row:focus-visible .work-row-thumb img {
-  transform: scale(1.07);
+.work-card:hover .work-card-media img {
+  transform: scale(1.05);
 }
-.work-row-name {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: clamp(21px, 2.15vw, 30px);
-  line-height: 1.05;
-  letter-spacing: -0.015em;
-  transition: color 0.35s var(--ease-out);
+.work-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: clamp(16px, 1.6vw, 22px) clamp(18px, 1.8vw, 24px) clamp(18px, 1.9vw, 24px);
 }
-.work-row:hover .work-row-name,
-.work-row:focus-visible .work-row-name {
-  color: var(--pink-deep);
+.work-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
-/* on desktop the three meta pieces flow into the row's own columns */
-.work-row-meta {
-  display: contents;
-}
-.work-row-type,
-.work-row-tools,
-.work-row-cat {
-  font-size: 13.5px;
-  line-height: 1.4;
-}
-.work-row-type {
-  font-weight: 600;
-  color: var(--ink);
-}
-.work-row-tools {
-  color: var(--ink-50);
-}
-.work-row-cat {
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--azure-deep);
-}
-.work-row-arrow {
-  width: 26px;
+.work-card-arrow {
+  width: 42px;
   flex: none;
-  align-self: center;
-  transform: translateX(-6px) scale(0);
+  /* springs out on hover */
+  transform: translateX(-8px) scale(0);
   transform-origin: left center;
-  transition: transform 0.4s var(--ease-out);
+  transition: transform 0.45s var(--ease-out);
 }
-.work-row-arrow path {
+.work-card-arrow path {
   stroke: var(--azure);
 }
-.work-row:hover .work-row-arrow,
-.work-row:focus-visible .work-row-arrow {
+.work-card:hover .work-card-arrow,
+.work-card:focus-visible .work-card-arrow {
   transform: translateX(0) scale(1);
 }
-/* on phones the row stacks: thumbnail on the left, name + arrow on top,
-   the meta on one line underneath */
-@media (max-width: 760px) {
-  .work-row {
-    grid-template-columns: clamp(72px, 20vw, 96px) 1fr auto;
-    grid-template-areas:
-      'thumb name arrow'
-      'thumb meta meta';
-    align-items: center;
-    column-gap: 15px;
-    row-gap: 7px;
-    padding: 14px 2px;
+.work-card-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(24px, 2.3vw, 33px);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+}
+.work-card-blurb {
+  font-size: 15px;
+  color: var(--ink-70);
+}
+.work-tag {
+  flex: none;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--azure-deep);
+  padding: 4px 11px;
+  border: 1px solid var(--azure);
+  border-radius: 100px;
+  background: var(--bg);
+}
+/* the skills used - small pills under the blurb */
+.work-card-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 5px;
+}
+.work-skill {
+  font-size: 11.5px;
+  font-weight: 550;
+  letter-spacing: 0.01em;
+  color: var(--ink-70);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+@media (max-width: 720px) {
+  .work-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
-  .work-row:hover,
-  .work-row:focus-visible {
-    padding-left: 2px;
-  }
-  .work-row-thumb {
-    grid-area: thumb;
-    align-self: center;
-  }
-  .work-row-name {
-    grid-area: name;
-    font-size: clamp(21px, 6vw, 28px);
-  }
-  .work-row-arrow {
-    grid-area: arrow;
-  }
-  .work-row-meta {
-    grid-area: meta;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 3px 10px;
-  }
-  .work-row-tools::before {
-    content: '·';
-    margin-right: 10px;
-    color: var(--ink-50);
-  }
-  .work-row-cat {
-    flex-basis: 100%;
-    margin-top: 1px;
+  .work-card-title {
+    font-size: 25px;
   }
 }
 

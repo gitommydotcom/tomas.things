@@ -25,6 +25,7 @@ export const UI = {
     },
     stage: {
       pick: 'Pick a craft to play with',
+      play: "Let's play!",
       modes: { design: 'Design', print: 'Print', code: 'Code' },
       tap: 'tap',
       click: 'click',
@@ -113,6 +114,7 @@ export const UI = {
     },
     stage: {
       pick: 'Scegli un mestiere con cui giocare',
+      play: 'Giochiamo!',
       modes: { design: 'Design', print: 'Stampa', code: 'Codice' },
       tap: 'tocca',
       click: 'clicca',
@@ -200,6 +202,7 @@ export const UI = {
     },
     stage: {
       pick: 'Vyber si řemeslo na hraní',
+      play: 'Zahraj si!',
       modes: { design: 'Design', print: 'Tisk', code: 'Kód' },
       tap: 'ťukni',
       click: 'klikni',

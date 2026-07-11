@@ -697,10 +697,15 @@ export default function HeroStage() {
   const { lang } = useLang()
   const ui = useUI()
   const [mode, setMode] = useState('design')
+  // on touch the workbench captures drags, which fights page scroll - so
+  // it stays dormant behind a "Let's play!" button until the visitor opts
+  // in. Pointers only reach the tools once they tap. Desktop plays at once.
+  const [playing, setPlaying] = useState(!TOUCH)
   const rootRef = useRef(null)
   const tabsRef = useRef(null)
   const indRef = useRef(null)
   const indReady = useRef(false)
+  const playRef = useRef(null)
 
   useEffect(() => {
     if (REDUCED()) return
@@ -712,6 +717,35 @@ export default function HeroStage() {
       clearProps: 'all',
     })
   }, [])
+
+  // the play button pops in, then breathes; its asterisk spins slowly
+  useEffect(() => {
+    if (playing || REDUCED()) return
+    const el = playRef.current
+    if (!el) return
+    gsap.fromTo(
+      el,
+      { scale: 0.7, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 0.5, ease: 'back.out(2)' },
+    )
+    const pulse = gsap.to(el, {
+      scale: 1.05,
+      duration: 0.9,
+      ease: 'sine.inOut',
+      repeat: -1,
+      yoyo: true,
+      delay: 0.5,
+    })
+    const ast = el.querySelector('.stage-play-ast')
+    const spin = ast
+      ? gsap.to(ast, { rotate: 360, duration: 6, ease: 'none', repeat: -1, transformOrigin: '50% 50%' })
+      : null
+    return () => {
+      pulse.kill()
+      spin?.kill()
+      gsap.killTweensOf(el)
+    }
+  }, [playing])
 
   // the active-tab pill slides between tabs instead of jumping
   useLayoutEffect(() => {
@@ -734,7 +768,7 @@ export default function HeroStage() {
   }, [mode, lang])
 
   return (
-    <div className="hero-stage" ref={rootRef}>
+    <div className={`hero-stage ${playing ? '' : 'hero-stage--dormant'}`} ref={rootRef}>
       <div className="stage-canvas">
         <span className="stage-mark stage-mark--tl" aria-hidden="true" />
         <span className="stage-mark stage-mark--tr" aria-hidden="true" />
@@ -743,6 +777,17 @@ export default function HeroStage() {
         {mode === 'design' && <PenTool />}
         {mode === 'print' && <PrintLetter />}
         {mode === 'code' && <CodeLine />}
+        {!playing && (
+          <button
+            type="button"
+            className="stage-play"
+            ref={playRef}
+            onClick={() => setPlaying(true)}
+          >
+            <BrandAsterisk className="stage-play-ast" />
+            {ui.stage.play}
+          </button>
+        )}
       </div>
       <div className="stage-tabs" role="tablist" aria-label={ui.stage.pick} ref={tabsRef}>
         <span className="stage-tab-ind" ref={indRef} aria-hidden="true" />

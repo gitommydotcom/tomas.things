@@ -27,7 +27,7 @@ export const PROJECTS = [
     group: 'digital',
     category: L('Web app', 'Web app', 'Webová appka'),
     title: 'Belgrado & Gargano',
-    tools: ['React', 'Leaflet', 'Firebase'],
+    tools: ['HTML & CSS', 'JavaScript', 'React', 'Leaflet', 'Firebase'],
     blurb: L(
       'An interactive travel dossier: a day-by-day plan, maps and a shared packing list.',
       'Un dossier di viaggio interattivo: programma giorno per giorno, mappe e una lista bagagli condivisa.',
@@ -80,7 +80,7 @@ export const PROJECTS = [
     group: 'digital',
     category: L('Mobile app', 'App mobile', 'Mobilní appka'),
     title: 'Pandino',
-    tools: ['React', 'Three.js'],
+    tools: ['HTML & CSS', 'JavaScript', 'React', 'Three.js'],
     blurb: L(
       'A Tesla-style companion app for a 2007 Fiat Panda.',
       'Un’app in stile Tesla per una Fiat Panda del 2007.',
@@ -128,7 +128,7 @@ export const PROJECTS = [
     group: 'digital',
     category: L('Web app', 'Web app', 'Webová appka'),
     title: 'Move',
-    tools: ['React', 'Supabase'],
+    tools: ['HTML & CSS', 'JavaScript', 'React', 'Python', 'Supabase'],
     blurb: L(
       'A social planner that turns a roster of clients into a month of posts.',
       'Un planner social che trasforma un parco clienti in un mese di post.',
@@ -237,7 +237,7 @@ export const PROJECTS = [
     group: 'identity',
     category: L('Rebrand', 'Rebrand', 'Rebrand'),
     title: 'Corti Edil-Fer',
-    tools: ['Illustrator', 'Photoshop', 'React'],
+    tools: ['Illustrator', 'Photoshop', 'HTML & CSS', 'JavaScript', 'React'],
     blurb: L(
       'A full rebrand for a construction firm - snail and all.',
       'Un rebrand completo per un’impresa edile - lumaca compresa.',
