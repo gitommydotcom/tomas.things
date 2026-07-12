@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Doodles & elementi grafici — Playground animato · Tomáš Matějček</title>
+<style>
+  @font-face{font-family:'Pepi';src:url('fonts/PepiLight-Regular.otf') format('opentype');font-weight:300;font-style:normal;font-display:swap}
+  @font-face{font-family:'Pepi';src:url('fonts/PepiLight-Italic.otf') format('opentype');font-weight:300;font-style:italic;font-display:swap}
+  @font-face{font-family:'Pepi';src:url('fonts/PepiMedium-Regular.otf') format('opentype');font-weight:500;font-style:normal;font-display:swap}
+  @font-face{font-family:'Pepi';src:url('fonts/PepiBlack-Regular.otf') format('opentype');font-weight:900;font-style:normal;font-display:swap}
+  :root{
+    --bg:#f9f2e8;--surface:#fffcf5;--ink:#181616;--ink-70:rgba(24,22,22,.72);
+    --ink-50:rgba(24,22,22,.52);--line:rgba(24,22,22,.12);
+    --pink:#db4082;--pink-deep:#b13366;--azure:#0f96d9;--azure-deep:#0a6da3;
+    --ease:cubic-bezier(0.16,1,0.3,1);
+    --font-body:'Inter','Inter Variable',system-ui,-apple-system,sans-serif;
+    --font-display:'Pepi','Inter',system-ui,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.6;
+    -webkit-font-smoothing:antialiased;padding:clamp(20px,5vw,64px)}
+  svg{display:block}
+  ::selection{background:var(--pink);color:var(--bg)}
+
+  header.top{max-width:1180px;margin:0 auto 40px}
+  .eyebrow{display:inline-flex;align-items:center;gap:.6em;font-size:12px;font-weight:600;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--ink-70)}
+  .eyebrow svg{width:1em;height:1em;color:var(--pink)}
+  h1{font-family:var(--font-display);font-weight:300;font-size:clamp(30px,5vw,52px);
+    line-height:1.05;letter-spacing:-.01em;margin:.4em 0 .3em}
+  h1 em{font-style:italic;color:var(--pink)}
+  header.top p{max-width:60ch;color:var(--ink-70);font-size:16px}
+
+  .toolbar{max-width:1180px;margin:0 auto 28px;display:flex;flex-wrap:wrap;gap:20px 32px;
+    align-items:center;padding:16px 20px;background:var(--surface);border:1px solid var(--line);
+    border-radius:16px}
+  .toolbar .grp{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-70)}
+  .toolbar label{font-weight:600;letter-spacing:.02em}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:100px;overflow:hidden;background:var(--bg)}
+  .seg button{font:inherit;font-size:13px;border:none;background:none;cursor:pointer;color:var(--ink-70);
+    padding:7px 14px;transition:.2s var(--ease)}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+  .swatch-dot{width:14px;height:14px;border-radius:50%;border:1px solid var(--line);display:inline-block}
+
+  .grid{max-width:1180px;margin:0 auto;display:grid;gap:24px;
+    grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;
+    padding:22px;display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(24,22,22,.05)}
+  .card h2{font-family:var(--font-display);font-weight:500;font-size:22px;letter-spacing:-.01em;
+    display:flex;align-items:baseline;gap:10px}
+  .card h2 .tag{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--pink-deep)}
+  .card .desc{font-size:13.5px;color:var(--ink-70);margin-top:6px;min-height:2.8em}
+  .stage{margin:16px 0;border-radius:14px;min-height:190px;display:grid;place-items:center;
+    padding:24px;transition:background .2s var(--ease);position:relative;overflow:hidden}
+  .stage[data-bg="cream"]{background:var(--bg)}
+  .stage[data-bg="ink"]{background:var(--ink)}
+  .stage[data-bg="transparent"]{
+    background-image:linear-gradient(45deg,rgba(24,22,22,.06) 25%,transparent 25%,transparent 75%,rgba(24,22,22,.06) 75%),
+      linear-gradient(45deg,rgba(24,22,22,.06) 25%,transparent 25%,transparent 75%,rgba(24,22,22,.06) 75%);
+    background-size:20px 20px;background-position:0 0,10px 10px}
+  .stage svg.live{width:auto;height:auto;max-width:100%;max-height:170px}
+  .btns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:auto}
+  .btns button{font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);
+    background:var(--bg);color:var(--ink);border-radius:10px;padding:9px 8px;cursor:pointer;
+    transition:.18s var(--ease);white-space:nowrap}
+  .btns button:hover{border-color:var(--azure);color:var(--azure-deep)}
+  .btns button:active{transform:translateY(1px)}
+  .btns button.busy{opacity:.5;pointer-events:none}
+  .btns button.rec{border-color:var(--pink);color:var(--pink-deep)}
+  .hint{font-size:12px;color:var(--ink-50);margin-top:10px;line-height:1.5}
+  footer{max-width:1180px;margin:48px auto 0;padding-top:24px;border-top:1px solid var(--line);
+    font-size:13px;color:var(--ink-50)}
+  footer b{color:var(--ink-70);font-weight:600}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120%);
+    background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:100px;font-size:13.5px;
+    box-shadow:0 12px 30px rgba(24,22,22,.25);transition:transform .35s var(--ease);z-index:50}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <span class="eyebrow">
+    <svg viewBox="0 0.3 28.6 28.4"><path fill="currentColor" d="M 14.29 28.61 C 13.38 28.61 12.65 28.28 12.11 27.62 C 11.56 26.96 11.29 25.97 11.29 24.65 C 11.29 23.04 11.28 21.81 11.25 20.95 C 11.22 20.09 11.11 19.52 10.91 19.22 C 10.72 18.92 10.38 18.85 9.90 19.00 C 9.68 19.09 9.34 19.32 8.88 19.68 C 8.41 20.04 7.89 20.46 7.32 20.95 C 6.75 21.43 6.18 21.91 5.60 22.37 C 5.03 22.83 4.52 23.21 4.07 23.49 C 3.20 24 2.45 24.16 1.81 23.96 C 1.18 23.76 0.70 23.35 0.37 22.73 C 0.05 22.12 -0.07 21.45 0.04 20.73 C 0.14 20.02 0.50 19.41 1.13 18.90 C 1.75 18.40 2.41 17.92 3.12 17.48 C 3.83 17.04 4.53 16.61 5.21 16.20 C 5.90 15.75 6.52 15.41 7.07 15.16 C 7.62 14.90 7.91 14.66 7.91 14.41 C 7.91 14.26 7.71 14.08 7.32 13.87 C 6.93 13.66 6.43 13.43 5.81 13.17 C 5.19 12.92 4.54 12.65 3.85 12.36 C 3.17 12.08 2.51 11.79 1.88 11.51 C 1.25 11.18 0.86 10.72 0.69 10.14 C 0.52 9.55 0.49 8.96 0.59 8.37 C 0.70 7.77 0.83 7.32 1.00 7.02 C 1.46 6.18 2.08 5.64 2.86 5.41 C 3.63 5.18 4.42 5.33 5.21 5.86 C 5.66 6.12 6.16 6.45 6.72 6.83 C 7.29 7.22 7.85 7.59 8.40 7.96 C 8.96 8.32 9.45 8.61 9.88 8.81 C 10.30 9.02 10.59 9.09 10.73 9.03 C 10.86 8.96 10.96 8.79 11.04 8.50 C 11.11 8.21 11.18 7.85 11.23 7.39 C 11.29 6.94 11.33 6.41 11.36 5.79 C 11.39 5.18 11.40 4.52 11.40 3.81 C 11.40 2.78 11.66 1.94 12.16 1.30 C 12.67 0.66 13.55 0.34 14.79 0.34 C 15.73 0.34 16.34 0.64 16.62 1.25 C 16.89 1.86 17.02 2.68 16.98 3.71 C 16.98 4.30 16.98 4.88 16.99 5.41 C 17 5.95 17.03 6.45 17.08 6.90 C 17.12 7.35 17.22 7.73 17.37 8.04 C 17.52 8.35 17.71 8.55 17.95 8.66 C 18.29 8.82 18.72 8.74 19.25 8.42 C 19.79 8.10 20.42 7.68 21.13 7.16 C 21.84 6.64 22.62 6.18 23.47 5.76 C 24.27 5.39 25.03 5.23 25.75 5.28 C 26.47 5.34 27.06 5.70 27.52 6.39 C 28.23 7.38 28.47 8.35 28.25 9.31 C 28.02 10.27 27.46 11.03 26.55 11.61 C 26.22 11.80 25.79 12.01 25.25 12.23 C 24.71 12.45 24.18 12.67 23.64 12.88 C 23.11 13.09 22.65 13.29 22.28 13.50 C 21.91 13.71 21.71 13.92 21.70 14.11 C 21.66 14.42 21.88 14.78 22.35 15.19 C 22.82 15.59 23.32 15.99 23.86 16.36 C 24.53 16.87 25.27 17.50 26.10 18.24 C 26.92 18.99 27.52 19.64 27.91 20.19 C 28.34 20.81 28.55 21.46 28.54 22.14 C 28.53 22.82 28.34 23.42 27.98 23.92 C 27.62 24.43 27.12 24.74 26.47 24.85 C 25.82 24.96 25.07 24.77 24.22 24.29 C 23.76 24.02 23.18 23.50 22.49 22.73 C 21.79 21.96 20.98 21.08 20.06 20.09 C 19.52 19.54 19.04 19.03 18.60 18.56 C 18.17 18.08 17.80 18 17.51 18.31 C 17.30 18.55 17.19 19.04 17.18 19.78 C 17.16 20.52 17.16 21.35 17.20 22.27 C 17.24 23.20 17.23 24.07 17.18 24.88 C 17.12 26.03 16.86 26.93 16.40 27.61 C 15.93 28.28 15.23 28.61 14.29 28.61"/></svg>
+    Design system · elementi animati
+  </span>
+  <h1>Doodle & grafica, <em>in movimento</em></h1>
+  <p>Ogni personaggio ed elemento grafico del sito, animato dal vivo. Scaricali
+    come <b>SVG animato</b> (vettoriale, pesa nulla), <b>GIF</b>, <b>video WebM</b>,
+    oppure fermi come <b>SVG</b> o <b>PNG</b> trasparente. Tutto avviene nel tuo
+    browser: nessun caricamento, nessuna connessione.</p>
+</header>
+
+<div class="toolbar">
+  <div class="grp">
+    <label>Sfondo</label>
+    <div class="seg" id="bgSeg">
+      <button data-bg="cream" aria-pressed="true">Crema</button>
+      <button data-bg="transparent" aria-pressed="false">Trasparente</button>
+      <button data-bg="ink" aria-pressed="false">Ink</button>
+    </div>
+  </div>
+  <div class="grp">
+    <label>Dimensione export</label>
+    <div class="seg" id="sizeSeg">
+      <button data-size="360" aria-pressed="false">S</button>
+      <button data-size="540" aria-pressed="true">M</button>
+      <button data-size="820" aria-pressed="false">L</button>
+    </div>
+  </div>
+  <div class="grp" style="color:var(--ink-50)">
+    <span>PNG e SVG escono trasparenti · GIF e WebM sullo sfondo scelto</span>
+  </div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  <p><b>Palette esatta</b> — ink #181616 · crema #f9f2e8 · pink #db4082 · azure #0f96d9.
+    Tutti i tratti dei personaggi sono in <b>pink</b>, gli occhi in <b>ink</b>.
+    Le pose e i tempi sono presi 1:1 dal codice del sito
+    (<code>src/components/Doodles.jsx</code>): sway 1.5&nbsp;s <em>sine.inOut</em>,
+    disegno 1.1&nbsp;s con ease <em>cubic-bezier(.16,1,.3,1)</em>.</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================= *
+ *  GIF89a encoder (self-contained, validato)                    *
+ * ============================================================= */
+/* Minimal, dependency-free GIF89a encoder.
+ * Popularity-quantizes each frame to <=256 colors (nearest-fallback),
+ * writes a looping animation. Good for flat vector art. */
+function encodeGIF(frames, width, height, delayCs) {
+  // frames: array of Uint8ClampedArray/Uint8Array RGBA (w*h*4)
+  const out = new ByteBuf()
+  // ---- Header ----
+  out.str('GIF89a')
+  // Logical Screen Descriptor (no global color table; per-frame local tables)
+  out.u16(width); out.u16(height)
+  out.byte(0x70) // no GCT, color resolution bits
+  out.byte(0)    // bg color index
+  out.byte(0)    // pixel aspect ratio
+  // ---- Netscape looping extension ----
+  out.byte(0x21); out.byte(0xff); out.byte(0x0b)
+  out.str('NETSCAPE2.0')
+  out.byte(0x03); out.byte(0x01); out.u16(0) // loop forever
+  out.byte(0x00)
+  // ---- Frames ----
+  for (const rgba of frames) {
+    const { palette, indices } = quantize(rgba, width, height)
+    const gctSize = palette.length // padded to power of two below
+    let bits = 1
+    while ((1 << bits) < gctSize) bits++
+    if (bits < 1) bits = 1
+    const tableCount = 1 << bits
+    // Graphic Control Extension (delay)
+    out.byte(0x21); out.byte(0xf9); out.byte(0x04)
+    out.byte(0x00)          // no transparency, disposal 0
+    out.u16(delayCs)        // delay in 1/100s
+    out.byte(0x00); out.byte(0x00)
+    // Image Descriptor
+    out.byte(0x2c)
+    out.u16(0); out.u16(0); out.u16(width); out.u16(height)
+    out.byte(0x80 | (bits - 1)) // local color table, size
+    // Local Color Table
+    for (let i = 0; i < tableCount; i++) {
+      if (i < palette.length) {
+        out.byte(palette[i][0]); out.byte(palette[i][1]); out.byte(palette[i][2])
+      } else { out.byte(0); out.byte(0); out.byte(0) }
+    }
+    // LZW image data (preceded by the minimum-code-size byte)
+    const minCode = Math.max(2, bits)
+    out.byte(minCode)
+    lzw(indices, minCode, out)
+  }
+  out.byte(0x3b) // trailer
+  return out.bytes()
+}
+
+class ByteBuf {
+  constructor() { this.a = []; }
+  byte(b) { this.a.push(b & 0xff) }
+  u16(n) { this.a.push(n & 0xff, (n >> 8) & 0xff) }
+  str(s) { for (let i = 0; i < s.length; i++) this.a.push(s.charCodeAt(i)) }
+  bytes() { return new Uint8Array(this.a) }
+}
+
+function quantize(rgba, w, h) {
+  const n = w * h
+  const hist = new Map()
+  for (let i = 0; i < n; i++) {
+    const r = rgba[i * 4], g = rgba[i * 4 + 1], b = rgba[i * 4 + 2]
+    const key = (r << 16) | (g << 8) | b
+    hist.set(key, (hist.get(key) || 0) + 1)
+  }
+  let palette
+  if (hist.size <= 256) {
+    palette = [...hist.keys()].map((k) => [(k >> 16) & 255, (k >> 8) & 255, k & 255])
+  } else {
+    const top = [...hist.entries()].sort((x, y) => y[1] - x[1]).slice(0, 256)
+    palette = top.map(([k]) => [(k >> 16) & 255, (k >> 8) & 255, k & 255])
+  }
+  if (palette.length === 0) palette = [[0, 0, 0]]
+  // map every pixel to nearest palette entry (cache by color key)
+  const cache = new Map()
+  const indices = new Uint8Array(n)
+  for (let i = 0; i < n; i++) {
+    const r = rgba[i * 4], g = rgba[i * 4 + 1], b = rgba[i * 4 + 2]
+    const key = (r << 16) | (g << 8) | b
+    let idx = cache.get(key)
+    if (idx === undefined) {
+      let best = 0, bestD = Infinity
+      for (let p = 0; p < palette.length; p++) {
+        const dr = r - palette[p][0], dg = g - palette[p][1], db = b - palette[p][2]
+        const d = dr * dr + dg * dg + db * db
+        if (d < bestD) { bestD = d; best = p; if (d === 0) break }
+      }
+      idx = best; cache.set(key, idx)
+    }
+    indices[i] = idx
+  }
+  return { palette, indices }
+}
+
+/* LZW compression, GIF variant, chunked into 255-byte sub-blocks. */
+function lzw(indices, minCodeSize, out) {
+  const clearCode = 1 << minCodeSize
+  const eoiCode = clearCode + 1
+  let codeSize = minCodeSize + 1
+  let dict = new Map()
+  const resetDict = () => {
+    dict = new Map()
+    for (let i = 0; i < clearCode; i++) dict.set(String(i), i)
+    return clearCode + 2
+  }
+  let next = resetDict()
+
+  // bit writer with sub-block chunking
+  let bitBuf = 0, bitCount = 0
+  const block = []
+  const flushBlock = () => {
+    while (block.length) {
+      const take = Math.min(255, block.length)
+      out.byte(take)
+      for (let i = 0; i < take; i++) out.byte(block[i])
+      block.splice(0, take)
+    }
+  }
+  const emit = (code) => {
+    bitBuf |= code << bitCount
+    bitCount += codeSize
+    while (bitCount >= 8) {
+      block.push(bitBuf & 0xff)
+      bitBuf >>= 8; bitCount -= 8
+      if (block.length >= 255) {
+        out.byte(255)
+        for (let i = 0; i < 255; i++) out.byte(block[i])
+        block.splice(0, 255)
+      }
+    }
+    // jsgif ordering: grow the code width once free_ent passes the current
+    // max, checked AFTER writing bits and BEFORE the next entry is added.
+    if (next > (1 << codeSize) - 1 && codeSize < 12) codeSize++
+  }
+
+  emit(clearCode)
+  let cur = String(indices[0])
+  for (let i = 1; i < indices.length; i++) {
+    const k = indices[i]
+    const combined = cur + ',' + k
+    if (dict.has(combined)) {
+      cur = combined
+    } else {
+      emit(dict.get(cur))
+      if (next < 4096) {
+        dict.set(combined, next++)
+      } else {
+        emit(clearCode)
+        next = resetDict()
+        codeSize = minCodeSize + 1
+      }
+      cur = String(k)
+    }
+  }
+  emit(dict.get(cur))
+  emit(eoiCode)
+  // flush remaining bits
+  if (bitCount > 0) { block.push(bitBuf & 0xff); bitBuf = 0; bitCount = 0 }
+  flushBlock()
+  out.byte(0x00) // block terminator
+}
+
+</script>
+
+<script>
+/* ============================================================= *
+ *  Doodle definitions — pose e tempi 1:1 dal sito               *
+ * ============================================================= */
+const PINK='#db4082', INK='#181616', CREAM='#f9f2e8';
+const STROKE = `fill="none" stroke="${PINK}" stroke-linecap="round" stroke-linejoin="round"`;
+
+// linear interpolation of two path strings that share token structure
+function lerpPath(a,b,t){
+  const na=a.match(/-?\d*\.?\d+/g), nb=b.match(/-?\d*\.?\d+/g);
+  let i=0;
+  return a.replace(/-?\d*\.?\d+/g, ()=>{
+    const va=parseFloat(na[i]), vb=parseFloat(nb[i]); i++;
+    return (va+(vb-va)*t).toFixed(2);
+  });
+}
+const sway = t => 0.5 - 0.5*Math.cos(t*2*Math.PI);          // 0→1→0 loop (yoyo)
+const ease = x => 1 - Math.pow(1-x, 3);                      // ~cubic ease-out
+
+// ---- exact path data from Doodles.jsx ----
+const ASTER='M 14.29 28.61 C 13.38 28.61 12.65 28.28 12.11 27.62 C 11.56 26.96 11.29 25.97 11.29 24.65 C 11.29 23.04 11.28 21.81 11.25 20.95 C 11.22 20.09 11.11 19.52 10.91 19.22 C 10.72 18.92 10.38 18.85 9.90 19.00 C 9.68 19.09 9.34 19.32 8.88 19.68 C 8.41 20.04 7.89 20.46 7.32 20.95 C 6.75 21.43 6.18 21.91 5.60 22.37 C 5.03 22.83 4.52 23.21 4.07 23.49 C 3.20 24 2.45 24.16 1.81 23.96 C 1.18 23.76 0.70 23.35 0.37 22.73 C 0.05 22.12 -0.07 21.45 0.04 20.73 C 0.14 20.02 0.50 19.41 1.13 18.90 C 1.75 18.40 2.41 17.92 3.12 17.48 C 3.83 17.04 4.53 16.61 5.21 16.20 C 5.90 15.75 6.52 15.41 7.07 15.16 C 7.62 14.90 7.91 14.66 7.91 14.41 C 7.91 14.26 7.71 14.08 7.32 13.87 C 6.93 13.66 6.43 13.43 5.81 13.17 C 5.19 12.92 4.54 12.65 3.85 12.36 C 3.17 12.08 2.51 11.79 1.88 11.51 C 1.25 11.18 0.86 10.72 0.69 10.14 C 0.52 9.55 0.49 8.96 0.59 8.37 C 0.70 7.77 0.83 7.32 1.00 7.02 C 1.46 6.18 2.08 5.64 2.86 5.41 C 3.63 5.18 4.42 5.33 5.21 5.86 C 5.66 6.12 6.16 6.45 6.72 6.83 C 7.29 7.22 7.85 7.59 8.40 7.96 C 8.96 8.32 9.45 8.61 9.88 8.81 C 10.30 9.02 10.59 9.09 10.73 9.03 C 10.86 8.96 10.96 8.79 11.04 8.50 C 11.11 8.21 11.18 7.85 11.23 7.39 C 11.29 6.94 11.33 6.41 11.36 5.79 C 11.39 5.18 11.40 4.52 11.40 3.81 C 11.40 2.78 11.66 1.94 12.16 1.30 C 12.67 0.66 13.55 0.34 14.79 0.34 C 15.73 0.34 16.34 0.64 16.62 1.25 C 16.89 1.86 17.02 2.68 16.98 3.71 C 16.98 4.30 16.98 4.88 16.99 5.41 C 17 5.95 17.03 6.45 17.08 6.90 C 17.12 7.35 17.22 7.73 17.37 8.04 C 17.52 8.35 17.71 8.55 17.95 8.66 C 18.29 8.82 18.72 8.74 19.25 8.42 C 19.79 8.10 20.42 7.68 21.13 7.16 C 21.84 6.64 22.62 6.18 23.47 5.76 C 24.27 5.39 25.03 5.23 25.75 5.28 C 26.47 5.34 27.06 5.70 27.52 6.39 C 28.23 7.38 28.47 8.35 28.25 9.31 C 28.02 10.27 27.46 11.03 26.55 11.61 C 26.22 11.80 25.79 12.01 25.25 12.23 C 24.71 12.45 24.18 12.67 23.64 12.88 C 23.11 13.09 22.65 13.29 22.28 13.50 C 21.91 13.71 21.71 13.92 21.70 14.11 C 21.66 14.42 21.88 14.78 22.35 15.19 C 22.82 15.59 23.32 15.99 23.86 16.36 C 24.53 16.87 25.27 17.50 26.10 18.24 C 26.92 18.99 27.52 19.64 27.91 20.19 C 28.34 20.81 28.55 21.46 28.54 22.14 C 28.53 22.82 28.34 23.42 27.98 23.92 C 27.62 24.43 27.12 24.74 26.47 24.85 C 25.82 24.96 25.07 24.77 24.22 24.29 C 23.76 24.02 23.18 23.50 22.49 22.73 C 21.79 21.96 20.98 21.08 20.06 20.09 C 19.52 19.54 19.04 19.03 18.60 18.56 C 18.17 18.08 17.80 18 17.51 18.31 C 17.30 18.55 17.19 19.04 17.18 19.78 C 17.16 20.52 17.16 21.35 17.20 22.27 C 17.24 23.20 17.23 24.07 17.18 24.88 C 17.12 26.03 16.86 26.93 16.40 27.61 C 15.93 28.28 15.23 28.61 14.29 28.61';
+const UNDERLINE='M6 16 C 44 5, 80 22, 116 12 C 150 3, 182 18, 214 10';
+const ARROW='M6 40 C 34 12, 68 46, 104 26 M104 26 L 84 18 M104 26 L 90 43';
+const VIKY_A='M8 58 C 18 22, 46 24, 54 48 C 61 68, 88 66, 97 42 C 100 34, 104 28, 112 26';
+const VIKY_B='M10 62 C 24 34, 42 10, 55 38 C 66 74, 84 58, 95 38 C 98 30, 102 24, 110 22';
+const ELVIS_A='M26 80 C 10 62, 36 50, 24 32 C 18 23, 22 14, 30 10';
+const ELVIS_B='M22 80 C 14 56, 32 46, 27 33 C 20 24, 25 15, 30 10';
+const ELVIS_ARM='M30 10 C 40 8, 46 12, 54 6';
+const RINGO_A='M50 10 A38 38 0 0 0 50 86 A31 31 0 0 0 50 24 A24 24 0 0 0 50 72 A19 19 0 0 0 50 34 A14 14 0 0 0 50 62';
+const RINGO_B='M50 12 A36 36 0 0 0 50 84 A29 29 0 0 0 50 26 A22 22 0 0 0 50 70 A17 17 0 0 0 50 36 A12 12 0 0 0 50 60';
+const LOGO_INK='#181616', LOGO_PINK='#db4082';
+
+const svgTag = (vb, inner, extra='') =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" ${extra}>${inner}</svg>`;
+
+// each doodle: viewBox, frame(t) static markup, live() SMIL markup, still() markup
+const DOODLES = [
+  {
+    id:'asterisk', name:'Asterisco', tag:'Il marchio',
+    desc:'Il segno di brand esatto (dagli EPS). Qui pulsa e ruota leggero.',
+    vb:'-2 -1.7 32.6 32.4', loopMs:2600,
+    frame(t){const s=0.94+0.12*sway(t), r=(sway(t)-0.5)*12;
+      return `<g transform="translate(14.3 14.4) scale(${s.toFixed(3)}) rotate(${r.toFixed(2)}) translate(-14.3 -14.4)"><path fill="${PINK}" d="${ASTER}"/></g>`;},
+    live(){return `<g transform="translate(14.3 14.4)"><g transform="translate(-14.3 -14.4)"><path fill="${PINK}" d="${ASTER}"/></g><animateTransform attributeName="transform" type="scale" additive="sum" values="1;1.06;1;0.94;1" keyTimes="0;0.25;0.5;0.75;1" dur="2.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.37 0 0.63 1;0.37 0 0.63 1;0.37 0 0.63 1;0.37 0 0.63 1"/></g>`;},
+    still(){return `<path fill="${PINK}" d="${ASTER}"/>`;}
+  },
+  {
+    id:'underline', name:'Sottolineatura', tag:'Tratto',
+    desc:'La linea ondulata sotto “ideas”. Si disegna in loop da sinistra.',
+    vb:'0 0 220 26', loopMs:2600,
+    frame(t){const p = t<0.62 ? ease(t/0.62) : 1;
+      return `<path d="${UNDERLINE}" stroke-width="7" ${STROKE} pathLength="100" stroke-dasharray="100" stroke-dashoffset="${(100*(1-p)).toFixed(2)}"/>`;},
+    live(){return `<path d="${UNDERLINE}" stroke-width="7" ${STROKE} pathLength="100" stroke-dasharray="100"><animate attributeName="stroke-dashoffset" values="100;0;0" keyTimes="0;0.62;1" dur="2.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.16 1 0.3 1;0 0 1 1"/></path>`;},
+    still(){return `<path d="${UNDERLINE}" stroke-width="7" ${STROKE}/>`;}
+  },
+  {
+    id:'arrow', name:'Freccia idea→cosa', tag:'Tratto',
+    desc:'La freccia disegnata a mano: da un’idea a una cosa. Loop di disegno.',
+    vb:'0 0 130 56', loopMs:2600,
+    frame(t){const p = t<0.62 ? ease(t/0.62) : 1;
+      return `<path d="${ARROW}" stroke-width="6.5" ${STROKE} pathLength="100" stroke-dasharray="100" stroke-dashoffset="${(100*(1-p)).toFixed(2)}"/>`;},
+    live(){return `<path d="${ARROW}" stroke-width="6.5" ${STROKE} pathLength="100" stroke-dasharray="100"><animate attributeName="stroke-dashoffset" values="100;0;0" keyTimes="0;0.62;1" dur="2.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.16 1 0.3 1;0 0 1 1"/></path>`;},
+    still(){return `<path d="${ARROW}" stroke-width="6.5" ${STROKE}/>`;}
+  },
+  {
+    id:'viky', name:'Viky', tag:'Personaggio · ahoj!',
+    desc:'L’onda con due occhi, nel footer. Ondeggia con calma.',
+    vb:'0 0 130 74', loopMs:1500,
+    body(t){return lerpPath(VIKY_A, VIKY_B, sway(t));},
+    eyes:`<circle cx="100" cy="16" r="5.5" fill="${INK}"/><circle cx="115" cy="12" r="5.5" fill="${INK}"/>`,
+    frame(t){return `<path d="${this.body(t)}" stroke-width="7" ${STROKE}/>${this.eyes}`;},
+    live(){return `<path stroke-width="7" ${STROKE}><animate attributeName="d" values="${VIKY_A};${VIKY_B};${VIKY_A}" dur="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/></path>${this.eyes}`;},
+    still(){return `<path d="${VIKY_A}" stroke-width="7" ${STROKE}/>${this.eyes}`;}
+  },
+  {
+    id:'elvis', name:'Elvis', tag:'Personaggio · hi!',
+    desc:'La squiggle alta con il braccetto che saluta, accanto all’About.',
+    vb:'0 -18 64 102', loopMs:1500,
+    body(t){return lerpPath(ELVIS_A, ELVIS_B, sway(t));},
+    extra:`<path d="${ELVIS_ARM}" stroke-width="7" ${STROKE}/><circle cx="30" cy="22" r="4.5" fill="${INK}"/><circle cx="41" cy="20" r="4.5" fill="${INK}"/>`,
+    frame(t){return `<path d="${this.body(t)}" stroke-width="7" ${STROKE}/>${this.extra}`;},
+    live(){return `<path stroke-width="7" ${STROKE}><animate attributeName="d" values="${ELVIS_A};${ELVIS_B};${ELVIS_A}" dur="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/></path>${this.extra}`;},
+    still(){return `<path d="${ELVIS_A}" stroke-width="7" ${STROKE}/>${this.extra}`;}
+  },
+  {
+    id:'ringo', name:'Ringo', tag:'Personaggio · ciao!',
+    desc:'La spirale che respira, sopra “Selected work”. Si stringe e allarga.',
+    vb:'0 -14 96 104', loopMs:1500,
+    body(t){return lerpPath(RINGO_A, RINGO_B, sway(t));},
+    eyes:`<circle cx="48" cy="-3" r="5.5" fill="${INK}"/><circle cx="61" cy="-6" r="5.5" fill="${INK}"/>`,
+    frame(t){return `<path d="${this.body(t)}" stroke-width="7" ${STROKE}/>${this.eyes}`;},
+    live(){return `<path stroke-width="7" ${STROKE}><animate attributeName="d" values="${RINGO_A};${RINGO_B};${RINGO_A}" dur="1.5s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/></path>${this.eyes}`;},
+    still(){return `<path d="${RINGO_A}" stroke-width="7" ${STROKE}/>${this.eyes}`;}
+  },
+  {
+    id:'logo', name:'Logotipo', tag:'Il nome',
+    desc:'Il logotipo esatto “Tmaš” con l’asterisco pink. Fa un piccolo respiro.',
+    vb:'0 25.1 130.6 35', loopMs:2400,
+    logoInner:`<path fill="${LOGO_INK}" d="M 3.699219 29.40625 L 10.320312 29.40625 L 10.320312 35.339844 L 16.773438 35.339844 L 16.773438 40.71875 L 10.320312 40.71875 L 10.320312 49.277344 C 10.320312 51.941406 12.085938 53.449219 16.773438 52.199219 L 16.773438 57.707031 C 7.398438 59.640625 3.699219 55.597656 3.699219 49.449219 L 3.699219 40.71875 L 0 40.71875 L 0 35.339844 L 3.699219 35.339844 L 3.699219 29.40625"/><path fill="${LOGO_PINK}" d="M 32.609375 60 C 31.683594 60 30.9375 59.660156 30.378906 58.984375 C 29.816406 58.308594 29.539062 57.292969 29.539062 55.9375 C 29.539062 54.289062 29.523438 53.023438 29.496094 52.144531 C 29.46875 51.265625 29.355469 50.671875 29.15625 50.367188 C 28.957031 50.0625 28.609375 49.988281 28.113281 50.148438 C 27.886719 50.238281 27.535156 50.46875 27.0625 50.839844 C 26.589844 51.210938 26.054688 51.648438 25.46875 52.144531 C 24.882812 52.640625 24.292969 53.125 23.707031 53.601562 C 23.117188 54.074219 22.59375 54.457031 22.140625 54.75 C 21.25 55.269531 20.476562 55.429688 19.820312 55.226562 C 19.167969 55.023438 18.671875 54.605469 18.34375 53.972656 C 18.007812 53.339844 17.894531 52.65625 18 51.925781 C 18.105469 51.191406 18.480469 50.5625 19.125 50.042969 C 19.75 49.527344 20.429688 49.039062 21.15625 48.589844 C 21.890625 48.136719 22.605469 47.699219 23.308594 47.269531 C 24.007812 46.816406 24.644531 46.460938 25.214844 46.203125 C 25.78125 45.941406 26.066406 45.6875 26.066406 45.441406 C 26.066406 45.28125 25.867188 45.097656 25.46875 44.882812 C 25.070312 44.667969 24.554688 44.429688 23.917969 44.171875 C 23.28125 43.910156 22.613281 43.636719 21.914062 43.339844 C 21.210938 43.046875 20.535156 42.753906 19.894531 42.460938 C 19.246094 42.121094 18.839844 41.652344 18.667969 41.054688 C 18.5 40.457031 18.464844 39.851562 18.570312 39.242188 C 18.671875 38.632812 18.8125 38.171875 18.980469 37.855469 C 19.457031 36.996094 20.09375 36.449219 20.890625 36.214844 C 21.683594 35.976562 22.492188 36.128906 23.308594 36.671875 C 23.761719 36.941406 24.277344 37.273438 24.855469 37.667969 C 25.4375 38.066406 26.011719 38.449219 26.578125 38.820312 C 27.148438 39.191406 27.648438 39.488281 28.085938 39.699219 C 28.523438 39.914062 28.816406 39.988281 28.96875 39.921875 C 29.101562 39.851562 29.207031 39.671875 29.28125 39.378906 C 29.359375 39.085938 29.425781 38.707031 29.480469 38.246094 C 29.539062 37.78125 29.582031 37.234375 29.609375 36.601562 C 29.636719 35.972656 29.652344 35.292969 29.652344 34.570312 C 29.652344 33.511719 29.910156 32.652344 30.433594 31.996094 C 30.957031 31.34375 31.851562 31.015625 33.121094 31.015625 C 34.089844 31.015625 34.714844 31.328125 35.003906 31.945312 C 35.285156 32.570312 35.410156 33.410156 35.371094 34.46875 C 35.371094 35.078125 35.375 35.660156 35.386719 36.214844 C 35.394531 36.765625 35.421875 37.273438 35.472656 37.738281 C 35.519531 38.199219 35.617188 38.589844 35.769531 38.90625 C 35.921875 39.222656 36.121094 39.433594 36.367188 39.546875 C 36.707031 39.707031 37.152344 39.621094 37.703125 39.292969 C 38.253906 38.96875 38.894531 38.539062 39.625 38.007812 C 40.355469 37.476562 41.15625 36.996094 42.03125 36.570312 C 42.84375 36.183594 43.621094 36.023438 44.363281 36.078125 C 45.101562 36.132812 45.710938 36.511719 46.183594 37.210938 C 46.90625 38.226562 47.152344 39.226562 46.921875 40.207031 C 46.695312 41.191406 46.117188 41.976562 45.1875 42.5625 C 44.847656 42.765625 44.402344 42.980469 43.851562 43.207031 C 43.300781 43.429688 42.75 43.652344 42.199219 43.867188 C 41.652344 44.082031 41.183594 44.292969 40.804688 44.507812 C 40.425781 44.722656 40.226562 44.933594 40.207031 45.136719 C 40.171875 45.453125 40.394531 45.820312 40.875 46.234375 C 41.359375 46.652344 41.878906 47.054688 42.429688 47.4375 C 43.109375 47.957031 43.875 48.601562 44.71875 49.367188 C 45.5625 50.136719 46.183594 50.800781 46.582031 51.363281 C 47.019531 51.996094 47.230469 52.664062 47.222656 53.363281 C 47.210938 54.0625 47.023438 54.671875 46.652344 55.191406 C 46.285156 55.710938 45.765625 56.027344 45.101562 56.140625 C 44.4375 56.253906 43.667969 56.0625 42.796875 55.5625 C 42.324219 55.292969 41.730469 54.761719 41.019531 53.972656 C 40.308594 53.183594 39.476562 52.28125 38.53125 51.265625 C 37.980469 50.699219 37.480469 50.175781 37.035156 49.691406 C 36.589844 49.203125 36.214844 49.121094 35.910156 49.433594 C 35.703125 49.683594 35.589844 50.1875 35.570312 50.941406 C 35.550781 51.699219 35.558594 52.550781 35.597656 53.5 C 35.636719 54.445312 35.628906 55.339844 35.570312 56.175781 C 35.511719 57.347656 35.246094 58.277344 34.773438 58.96875 C 34.300781 59.65625 33.578125 60 32.609375 60"/><path fill="${LOGO_INK}" d="M 49.175781 35.339844 L 55.796875 35.339844 L 55.796875 37.878906 C 57.171875 36.03125 59.324219 34.910156 61.90625 34.910156 C 64.65625 34.910156 66.894531 36.15625 68.269531 38.222656 C 69.734375 36.15625 72.183594 34.910156 75.109375 34.910156 C 80.140625 34.910156 83.667969 38.351562 83.667969 43.253906 L 83.667969 57.792969 L 77.042969 57.792969 L 77.042969 44.113281 C 77.042969 41.964844 75.539062 40.460938 73.347656 40.460938 C 71.28125 40.460938 69.734375 41.964844 69.734375 44.15625 L 69.734375 57.792969 L 63.109375 57.792969 L 63.109375 44.113281 C 63.109375 41.964844 61.605469 40.460938 59.453125 40.460938 C 57.347656 40.460938 55.796875 41.964844 55.796875 44.15625 L 55.796875 57.792969 L 49.175781 57.792969 L 49.175781 35.339844"/><path fill="${LOGO_INK}" d="M 97.085938 25.277344 L 104.609375 25.277344 L 98.976562 32.71875 L 93.34375 32.71875 Z M 95.234375 53.40625 C 98.332031 53.40625 100.308594 51.210938 100.609375 49.277344 C 99.191406 49.019531 97.816406 48.890625 96.65625 48.890625 C 93.6875 48.890625 92.480469 49.792969 92.480469 51.296875 C 92.480469 52.671875 93.472656 53.40625 95.234375 53.40625 Z M 96.007812 44.414062 C 97.171875 44.414062 98.761719 44.546875 100.609375 44.804688 L 100.609375 43.597656 C 100.609375 41.320312 99.105469 40.070312 96.871094 40.070312 C 94.675781 40.070312 93.257812 41.105469 93.171875 42.953125 L 86.546875 42.953125 C 86.761719 38.480469 90.074219 34.910156 96.871094 34.910156 C 103.277344 34.910156 107.234375 38.179688 107.234375 44.113281 L 107.234375 57.792969 L 100.609375 57.792969 L 100.609375 55.167969 C 98.675781 57.320312 96.050781 58.222656 93.257812 58.222656 C 89 58.222656 85.816406 55.898438 85.816406 51.640625 C 85.816406 47.167969 89.167969 44.414062 96.007812 44.414062"/><path fill="${LOGO_INK}" d="M 111.921875 25.277344 L 117.425781 25.277344 L 120.179688 28.804688 L 122.886719 25.277344 L 128.351562 25.277344 L 123.664062 32.71875 L 116.609375 32.71875 Z M 116.4375 50.652344 C 116.652344 52.285156 117.941406 53.363281 120.394531 53.363281 C 122.886719 53.363281 124.050781 52.542969 124.050781 51.382812 C 124.050781 47.167969 110.285156 51.511719 110.285156 42.050781 C 110.285156 38.308594 113.8125 34.910156 120.136719 34.910156 C 126.199219 34.910156 129.425781 37.792969 130.027344 42.480469 L 123.402344 42.480469 C 123.1875 40.804688 121.898438 39.769531 119.921875 39.769531 C 117.941406 39.769531 116.78125 40.589844 116.78125 41.75 C 116.78125 45.921875 130.5 41.40625 130.5 51.039062 C 130.5 54.824219 127.015625 58.222656 120.179688 58.222656 C 113.640625 58.222656 110.414062 55.296875 109.8125 50.652344 L 116.4375 50.652344"/>`,
+    frame(t){const y=(sway(t)-0.5)*1.6; return `<g transform="translate(0 ${y.toFixed(2)})">${this.logoInner}</g>`;},
+    live(){return `<g>${this.logoInner}<animateTransform attributeName="transform" type="translate" values="0 0.8;0 -0.8;0 0.8" dur="2.4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.5;1" keySplines="0.37 0 0.63 1;0.37 0 0.63 1"/></g>`;},
+    still(){return this.logoInner;}
+  }
+];
+
+/* ============================================================= *
+ *  UI state                                                     *
+ * ============================================================= */
+let STAGE_BG='cream';       // cream | transparent | ink
+let EXPORT_MAX=540;         // px, longest side
+
+const toastEl=document.getElementById('toast');
+let toastTimer;
+function toast(msg){toastEl.textContent=msg;toastEl.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>toastEl.classList.remove('show'),2200);}
+
+function download(blob,name){
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function exportSize(vb){
+  const [,,w,h]=vb.split(/\s+/).map(Number);
+  const scale=EXPORT_MAX/Math.max(w,h);
+  return {w:Math.round(w*scale), h:Math.round(h*scale)};
+}
+// render an SVG string onto a canvas ctx (optionally with bg fill)
+function svgToImage(svgStr){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>res(img);
+    img.onerror=rej;
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svgStr);
+  });
+}
+function bgFill(){return STAGE_BG==='ink'?INK:STAGE_BG==='transparent'?null:CREAM;}
+
+/* ---- exports ---- */
+async function exportPNG(d){
+  const {w,h}=exportSize(d.vb);
+  const scale=2; // crisp
+  const cv=document.createElement('canvas');cv.width=w*scale;cv.height=h*scale;
+  const ctx=cv.getContext('2d');
+  const fill=bgFill(); if(fill){ctx.fillStyle=fill;ctx.fillRect(0,0,cv.width,cv.height);}
+  const img=await svgToImage(svgTag(d.vb, d.still(), `width="${w*scale}" height="${h*scale}"`));
+  ctx.drawImage(img,0,0);
+  cv.toBlob(b=>{download(b,`${d.id}.png`);toast('PNG salvato ✓');},'image/png');
+}
+function exportSVGstatic(d){
+  const svg=svgTag(d.vb, d.still());
+  download(new Blob([svg],{type:'image/svg+xml'}),`${d.id}.svg`);
+  toast('SVG statico salvato ✓');
+}
+function exportSVGanim(d){
+  const svg=svgTag(d.vb, d.live());
+  download(new Blob([svg],{type:'image/svg+xml'}),`${d.id}-animato.svg`);
+  toast('SVG animato salvato ✓');
+}
+async function exportGIF(d,btn){
+  btn.classList.add('busy');toast('Genero la GIF…');
+  try{
+    const {w,h}=exportSize(d.vb);
+    const N=Math.max(18,Math.round(d.loopMs/45)); // ~22 fps
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    const ctx=cv.getContext('2d');
+    const fill=bgFill()||CREAM; // GIF has no soft alpha → always a solid bg
+    const frames=[];
+    for(let i=0;i<N;i++){
+      const t=i/N;
+      ctx.clearRect(0,0,w,h);ctx.fillStyle=fill;ctx.fillRect(0,0,w,h);
+      const img=await svgToImage(svgTag(d.vb, d.frame(t), `width="${w}" height="${h}"`));
+      ctx.drawImage(img,0,0);
+      frames.push(ctx.getImageData(0,0,w,h).data);
+    }
+    const delayCs=Math.max(2,Math.round(d.loopMs/N/10));
+    const bytes=encodeGIF(frames,w,h,delayCs);
+    download(new Blob([bytes],{type:'image/gif'}),`${d.id}.gif`);
+    toast('GIF salvata ✓');
+  }catch(e){console.error(e);toast('Errore GIF');}
+  btn.classList.remove('busy');
+}
+async function exportWEBM(d,btn){
+  if(!('MediaRecorder'in window)){toast('WebM non supportato qui');return;}
+  btn.classList.add('busy');toast('Registro il WebM…');
+  try{
+    const {w,h}=exportSize(d.vb);
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    const ctx=cv.getContext('2d');
+    const fill=bgFill()||CREAM;
+    // pre-rasterize one full loop of frames for smoothness
+    const N=Math.max(24,Math.round(d.loopMs/33));
+    const imgs=[];
+    for(let i=0;i<N;i++){
+      imgs.push(await svgToImage(svgTag(d.vb, d.frame(i/N), `width="${w}" height="${h}"`)));
+    }
+    const stream=cv.captureStream(30);
+    const mime=MediaRecorder.isTypeSupported('video/webm;codecs=vp9')?'video/webm;codecs=vp9':'video/webm';
+    const rec=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:6_000_000});
+    const chunks=[];rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
+    const done=new Promise(r=>rec.onstop=r);
+    rec.start();
+    const loops=3, total=d.loopMs*loops, t0=performance.now();
+    await new Promise(res=>{
+      function draw(now){
+        const el=now-t0;
+        const t=((el%d.loopMs)/d.loopMs);
+        ctx.fillStyle=fill;ctx.fillRect(0,0,w,h);
+        ctx.drawImage(imgs[Math.min(N-1,Math.floor(t*N))],0,0);
+        if(el<total)requestAnimationFrame(draw);else res();
+      }
+      requestAnimationFrame(draw);
+    });
+    rec.stop();await done;
+    download(new Blob(chunks,{type:'video/webm'}),`${d.id}.webm`);
+    toast('WebM salvato ✓');
+  }catch(e){console.error(e);toast('Errore WebM');}
+  btn.classList.remove('busy');
+}
+
+/* ============================================================= *
+ *  Build cards                                                  *
+ * ============================================================= */
+const grid=document.getElementById('grid');
+const cards=[];
+for(const d of DOODLES){
+  const card=document.createElement('div');card.className='card';
+  card.innerHTML=`
+    <h2>${d.name} <span class="tag">${d.tag}</span></h2>
+    <p class="desc">${d.desc}</p>
+    <div class="stage" data-bg="${STAGE_BG}"></div>
+    <div class="btns">
+      <button data-a="svga">SVG animato</button>
+      <button data-a="svg">SVG statico</button>
+      <button data-a="png">PNG</button>
+      <button data-a="gif" class="rec">GIF</button>
+      <button data-a="webm" class="rec">WebM</button>
+      <button data-a="copy">Copia SVG</button>
+    </div>`;
+  const stage=card.querySelector('.stage');
+  const renderLive=()=>{stage.innerHTML=svgTag(d.vb,d.live(),`class="live"`);};
+  renderLive();
+  card.querySelector('[data-a="svga"]').onclick=()=>exportSVGanim(d);
+  card.querySelector('[data-a="svg"]').onclick=()=>exportSVGstatic(d);
+  card.querySelector('[data-a="png"]').onclick=()=>exportPNG(d);
+  card.querySelector('[data-a="gif"]').onclick=e=>exportGIF(d,e.currentTarget);
+  card.querySelector('[data-a="webm"]').onclick=e=>exportWEBM(d,e.currentTarget);
+  card.querySelector('[data-a="copy"]').onclick=async()=>{
+    try{await navigator.clipboard.writeText(svgTag(d.vb,d.live()));toast('SVG copiato negli appunti ✓');}
+    catch{toast('Copia non disponibile qui');}
+  };
+  grid.appendChild(card);
+  cards.push({d,stage,renderLive});
+}
+
+/* toolbar */
+document.getElementById('bgSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  STAGE_BG=b.dataset.bg;
+  [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed',x===b));
+  document.querySelectorAll('.stage').forEach(s=>s.dataset.bg=STAGE_BG);
+});
+document.getElementById('sizeSeg').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  EXPORT_MAX=Number(b.dataset.size);
+  [...e.currentTarget.children].forEach(x=>x.setAttribute('aria-pressed',x===b));
+});
+</script>
+</body>
+</html>
