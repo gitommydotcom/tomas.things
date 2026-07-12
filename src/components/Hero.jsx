@@ -286,11 +286,6 @@ export default function Hero() {
             >
               {ui.hero.sub}
             </motion.p>
-            {/* phones only: a small pink scroll cue under the subline */}
-            <span className="hero-scroll-cue" aria-hidden="true">
-              <span className="hero-scroll-cue-word">{ui.hero.scroll}</span>
-              <SqArrow className="hero-scroll-cue-arrow" draw={false} />
-            </span>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useLang, useUI } from '../i18n/LangContext.jsx'
-import { BrandAsterisk } from './Doodles.jsx'
+import { BrandAsterisk, SqArrow } from './Doodles.jsx'
 import '@fontsource-variable/fraunces/full.css'
 import '@fontsource-variable/fraunces/full-italic.css'
 import '@fontsource-variable/playfair-display/index.css'
@@ -764,20 +764,44 @@ export default function HeroStage() {
     document.fonts?.ready?.then(place)
     window.addEventListener('resize', place)
     return () => window.removeEventListener('resize', place)
-    // re-run on language change too: the tab labels change width
-  }, [mode, lang])
+    // re-run on language change (labels resize) and when the tabs first
+    // mount after "Let's play!" (playing flips false -> true)
+  }, [mode, lang, playing])
 
   return (
     <div className={`hero-stage ${playing ? '' : 'hero-stage--dormant'}`} ref={rootRef}>
-      <div className="stage-canvas">
-        <span className="stage-mark stage-mark--tl" aria-hidden="true" />
-        <span className="stage-mark stage-mark--tr" aria-hidden="true" />
-        <span className="stage-mark stage-mark--bl" aria-hidden="true" />
-        <span className="stage-mark stage-mark--br" aria-hidden="true" />
-        {mode === 'design' && <PenTool />}
-        {mode === 'print' && <PrintLetter />}
-        {mode === 'code' && <CodeLine />}
-        {!playing && (
+      {playing ? (
+        <>
+          <div className="stage-canvas">
+            <span className="stage-mark stage-mark--tl" aria-hidden="true" />
+            <span className="stage-mark stage-mark--tr" aria-hidden="true" />
+            <span className="stage-mark stage-mark--bl" aria-hidden="true" />
+            <span className="stage-mark stage-mark--br" aria-hidden="true" />
+            {mode === 'design' && <PenTool />}
+            {mode === 'print' && <PrintLetter />}
+            {mode === 'code' && <CodeLine />}
+          </div>
+          <div className="stage-tabs" role="tablist" aria-label={ui.stage.pick} ref={tabsRef}>
+            <span className="stage-tab-ind" ref={indRef} aria-hidden="true" />
+            {MODES.map((id) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={mode === id}
+                className={`stage-tab ${mode === id ? 'stage-tab--active' : ''}`}
+                onClick={() => setMode(id)}
+              >
+                {ui.stage.modes[id]}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        /* touch: a compact launcher stands in for the workbench so the
+           page scrolls freely; tapping it reveals the live tools. The
+           scroll cue sits below the button. */
+        <div className="stage-launch">
           <button
             type="button"
             className="stage-play"
@@ -787,23 +811,12 @@ export default function HeroStage() {
             <BrandAsterisk className="stage-play-ast" />
             {ui.stage.play}
           </button>
-        )}
-      </div>
-      <div className="stage-tabs" role="tablist" aria-label={ui.stage.pick} ref={tabsRef}>
-        <span className="stage-tab-ind" ref={indRef} aria-hidden="true" />
-        {MODES.map((id) => (
-          <button
-            key={id}
-            type="button"
-            role="tab"
-            aria-selected={mode === id}
-            className={`stage-tab ${mode === id ? 'stage-tab--active' : ''}`}
-            onClick={() => setMode(id)}
-          >
-            {ui.stage.modes[id]}
-          </button>
-        ))}
-      </div>
+          <span className="hero-scroll-cue" aria-hidden="true">
+            <span className="hero-scroll-cue-word">{ui.hero.scroll}</span>
+            <SqArrow className="hero-scroll-cue-arrow" draw={false} />
+          </span>
+        </div>
+      )}
     </div>
   )
 }
