@@ -14,7 +14,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <Cursor />
       <Nav />
-      <main>
+      <main id="main">
         <Hero />
         <Work />
         <About />

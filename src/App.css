@@ -1077,6 +1077,28 @@
   color: var(--ink-70);
 }
 
+/* the two asks above the fold */
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* names from the portfolio, shown where a prospect decides to scroll on */
+.hero-clients {
+  font-size: 13.5px;
+  color: var(--ink-70);
+}
+.hero-clients-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+
 .hero-scroll {
   position: absolute;
   left: var(--gutter);
@@ -1286,6 +1308,20 @@
 }
 /* Selected work: macro-category sections, each an image-forward card
    grid. The cover leads; the type, title and skills follow. No numbers. */
+/* the promoted sales line: it opens the proof section now */
+.work-quote {
+  display: flex;
+  flex-direction: column;
+  border-left: 3px solid var(--pink);
+  padding-left: clamp(18px, 2vw, 28px);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(24px, 2.8vw, 40px);
+  line-height: 1.2;
+  color: var(--ink);
+}
+
 .work-groups {
   display: flex;
   flex-direction: column;
@@ -1399,6 +1435,11 @@
   font-size: 15px;
   color: var(--ink-70);
 }
+.work-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 .work-tag {
   flex: none;
   font-size: 11px;
@@ -1410,6 +1451,12 @@
   border: 1px solid var(--azure);
   border-radius: 100px;
   background: var(--bg);
+}
+/* self-initiated work says so - transparency reads as honesty, not weakness */
+.work-tag--personal {
+  color: var(--pink-deep);
+  border-color: var(--pink);
+  background: var(--pink-soft);
 }
 /* the skills used - small pills under the blurb */
 .work-card-skills {
@@ -1626,11 +1673,49 @@
   text-transform: uppercase;
   color: var(--pink-deep);
 }
+.modal-client {
+  font-size: 13.5px;
+  font-weight: 550;
+  color: var(--ink-70);
+  margin-top: -4px;
+}
 .modal-tools {
   font-size: 12.5px;
   letter-spacing: 0.02em;
   color: var(--ink-50);
   margin-top: -6px;
+}
+/* the case study ends on the outcome, set apart from the prose */
+.modal-outcome {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: var(--pink-soft);
+}
+.modal-outcome-text {
+  font-size: 15.5px;
+  color: var(--ink);
+  max-width: 58ch;
+}
+.modal-testimonial {
+  border-left: 3px solid var(--azure);
+  padding-left: 16px;
+  font-style: italic;
+  color: var(--ink-70);
+}
+.modal-testimonial cite {
+  display: block;
+  margin-top: 6px;
+  font-style: normal;
+  font-size: 13px;
+  color: var(--ink-50);
+}
+/* the modal's eyebrow can carry the personal badge next to the category */
+.modal-eyebrow .work-tag--personal {
+  letter-spacing: 0.09em;
 }
 .modal-para {
   color: var(--ink-70);
@@ -1753,6 +1838,42 @@
   }
 }
 
+/* the closing ask: proof first, door right after */
+.modal-cta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px 22px;
+  margin: 0 clamp(24px, 3.4vw, 48px) clamp(24px, 3.4vw, 48px);
+  padding: clamp(22px, 3vw, 38px);
+  border-radius: 18px;
+  background: var(--ink);
+  color: var(--bg);
+}
+.modal-cta-ast {
+  width: 32px;
+  height: 32px;
+  color: var(--pink);
+  flex: none;
+}
+.modal-cta-title {
+  flex: 1;
+  min-width: 200px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.15;
+}
+/* on the ink band the primary button flips to paper */
+.modal-cta .btn--primary {
+  background: var(--bg);
+  color: var(--ink);
+}
+.modal-cta .btn--primary:hover {
+  background: var(--pink-deep);
+  color: #fff;
+}
+
 /* lightbox: full-size image over everything */
 .modal-lightbox {
   position: fixed;
@@ -1854,18 +1975,12 @@
   color: var(--ink);
   font-style: italic;
 }
-.about-quote {
-  margin-top: 12px;
-  border-left: 3px solid var(--pink);
-  padding-left: clamp(18px, 2vw, 28px);
-}
-.pull-quote {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-style: italic;
-  font-size: clamp(24px, 2.6vw, 34px);
-  line-height: 1.22;
-  color: var(--ink);
+/* who and where - quiet trust facts under the story */
+.about-location {
+  font-size: 14.5px;
+  color: var(--ink-70);
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
 }
 .idea-thing {
   display: flex;
@@ -1889,6 +2004,19 @@
    azure for the act of getting there */
 .idea-thing-arrow path {
   stroke: var(--azure);
+}
+
+/* portrait slot: renders once PORTRAIT is set in About.jsx */
+.about-portrait {
+  margin-bottom: 24px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+}
+.about-portrait img {
+  width: 100%;
+  height: auto;
 }
 
 .about-stack-label {
@@ -2002,6 +2130,153 @@
   height: 0.5em;
   color: var(--pink);
 }
+.contact-reassure {
+  font-size: 15px;
+  color: var(--ink-70);
+}
+
+/* ---- the lead form ---- */
+.contact-form-wrap {
+  width: min(640px, 100%);
+  margin-top: 6px;
+}
+.contact-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: clamp(22px, 3vw, 34px);
+  text-align: left;
+}
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.form-label {
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-70);
+}
+.form-field input,
+.form-field select,
+.form-field textarea {
+  font: inherit;
+  font-size: 15.5px;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  width: 100%;
+  transition: border-color 0.3s var(--ease-out);
+}
+.form-field input:hover,
+.form-field select:hover,
+.form-field textarea:hover {
+  border-color: var(--ink-50);
+}
+.form-field textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+.form-submit {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+.form-submit:disabled {
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+  cursor: default;
+}
+.form-error {
+  font-size: 14px;
+  color: var(--pink-deep);
+}
+.form-error a {
+  font-weight: 600;
+  text-decoration: underline;
+}
+/* success state replaces the form - same card, calmer content */
+.contact-card--ok {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: clamp(34px, 5vw, 54px);
+}
+.contact-ok-ast {
+  width: 34px;
+  height: 34px;
+  color: var(--pink);
+}
+.contact-ok-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+}
+.contact-ok-body {
+  color: var(--ink-70);
+  font-size: 15.5px;
+}
+@media (max-width: 560px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.contact-direct {
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-50);
+}
+.contact-alts {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+/* ---- external profiles ---- */
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.social-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 550;
+  padding: 7px 16px;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  color: var(--ink-70);
+  transition:
+    color 0.3s var(--ease-out),
+    border-color 0.3s var(--ease-out);
+}
+.social-link:hover {
+  color: var(--ink);
+  border-color: var(--azure);
+}
+
 .contact-actions {
   position: relative;
   display: flex;
@@ -2140,10 +2415,10 @@
     gap: 10px;
   }
   .nav-link {
-    font-size: 10px;
-    letter-spacing: 0.02em;
+    font-size: 11px;
+    letter-spacing: 0.03em;
     white-space: nowrap;
-    padding: 10px 1px;
+    padding: 10px 2px;
   }
   .lang-switch {
     border: none;
@@ -2151,9 +2426,9 @@
     gap: 2px;
   }
   .lang-btn {
-    font-size: 10px;
+    font-size: 11px;
     padding: 9px 3px;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.03em;
     border-radius: 6px;
   }
   .lang-btn--on,

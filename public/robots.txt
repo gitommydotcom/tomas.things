@@ -1,0 +1,5 @@
+# One-page site: everything is crawlable.
+# TODO(Tomáš): when the final domain is set, add:
+# Sitemap: https://your-domain/sitemap.xml
+User-agent: *
+Allow: /

@@ -29,7 +29,7 @@ export default function Nav() {
       animate={{ y: 0 }}
       transition={{ duration: 0.9, ease: EASE, delay: 1.1 }}
     >
-      <a className="skip-link" href="#work">
+      <a className="skip-link" href="#main">
         {ui.nav.skip}
       </a>
       <nav className="nav-inner container" aria-label={ui.nav.menu}>

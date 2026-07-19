@@ -1,11 +1,14 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { EASE } from './Reveal.jsx'
 import { useUI } from '../i18n/LangContext.jsx'
 import { SqUnderline, SqArrow, BrandAsterisk } from './Doodles.jsx'
-import HeroStage from './HeroStage.jsx'
+
+// the stage (and the pile of specimen fonts it imports) loads as its own
+// chunk, off the critical path - the slogan and the CTAs paint first
+const HeroStage = lazy(() => import('./HeroStage.jsx'))
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -45,6 +48,10 @@ const LINES = [
 ]
 
 const WORDS = LINES.flat().map((w) => w.en)
+
+// names already in the portfolio below - real work, shown early, where
+// a prospect actually decides whether to keep scrolling
+const CLIENTS = ['studio Berkana', 'Corti Edil-Fer', 'Zero75', 'Donci Kong']
 
 const shuffle = (arr) => {
   const a = [...arr]
@@ -191,12 +198,19 @@ export default function Hero() {
     if (sloganRef.current) io.observe(sloganRef.current)
 
     let order = []
+    let rounds = 0
     let flipBack = null
     let next = null
     const tick = () => {
       if (userTouched.current) return
       if (inView && !document.hidden) {
-        if (order.length === 0) order = shuffle(WORDS)
+        if (order.length === 0) {
+          // two full rounds are a demo; more is a distraction while
+          // the visitor is trying to read
+          if (rounds >= 2) return
+          order = shuffle(WORDS)
+          rounds += 1
+        }
         const word = order.shift()
         setTappedId(word)
         flipBack = setTimeout(() => {
@@ -286,11 +300,37 @@ export default function Hero() {
             >
               {ui.hero.sub}
             </motion.p>
+            {/* what a visitor with a budget needs above the fold: a way
+                to act now, and proof that others already trusted me */}
+            <motion.div
+              className="hero-ctas"
+              initial={{ y: 24 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 1.4 }}
+            >
+              <a className="btn btn--primary" href="#contact">
+                {ui.hero.ctaPrimary}
+              </a>
+              <a className="btn btn--ghost" href="#work">
+                {ui.hero.ctaSecondary}
+              </a>
+            </motion.div>
+            <motion.p
+              className="hero-clients"
+              initial={{ y: 18 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.9, ease: EASE, delay: 1.55 }}
+            >
+              <span className="hero-clients-label">{ui.hero.clientsLabel}</span>
+              {CLIENTS.join(' · ')}
+            </motion.p>
           </div>
         </div>
 
         {/* the second protagonist: design / print / code, playable live */}
-        <HeroStage />
+        <Suspense fallback={<div className="hero-stage" aria-hidden="true" />}>
+          <HeroStage />
+        </Suspense>
       </div>
 
       <motion.div

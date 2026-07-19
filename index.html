@@ -6,12 +6,60 @@
     <meta name="description" content="Tomáš Matějček - graphic designer. I translate ideas into things: visual identity, print, digital, motion. From the idea to the finished thing." />
     <meta name="theme-color" content="#F9F2E8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preload" href="/fonts/PepiLight-Regular.otf" as="font" type="font/otf" crossorigin />
-    <link rel="preload" href="/fonts/PepiBlack-Regular.otf" as="font" type="font/otf" crossorigin />
-    <link rel="preload" href="/fonts/PepiLight-Italic.otf" as="font" type="font/otf" crossorigin />
+
+    <!-- The shared-link preview is a designer's business card.
+         TODO(Tomáš): once the final domain is known, make og:image/og:url
+         absolute (e.g. https://your-domain/og.png) - most scrapers resolve
+         relative URLs against the page, but absolute is bulletproof. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Tomáš Matějček" />
+    <meta property="og:title" content="Tomáš Matějček - graphic designer · ideas into things" />
+    <meta property="og:description" content="Identity, print and web - designed and built end to end by one person. From the idea to the finished thing." />
+    <meta property="og:image" content="/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="I translate ideas into things - Tomáš Matějček, graphic designer" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="it_IT" />
+    <meta property="og:locale:alternate" content="cs_CZ" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Tomáš Matějček - graphic designer · ideas into things" />
+    <meta name="twitter:description" content="Identity, print and web - designed and built end to end by one person." />
+    <meta name="twitter:image" content="/og.png" />
+
+    <!-- TODO(Tomáš): add your profile URLs to sameAs once they exist -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Tomáš Matějček",
+        "jobTitle": "Graphic designer",
+        "email": "mailto:tomas.mtj@gmail.com",
+        "telephone": "+39 349 356 9260",
+        "knowsLanguage": ["en", "it", "cs"],
+        "sameAs": []
+      }
+    </script>
+
+    <link rel="preload" href="/fonts/PepiLight-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/PepiBlack-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/PepiLight-Italic.woff2" as="font" type="font/woff2" crossorigin />
     <title>Tomáš Matějček - graphic designer · ideas into things</title>
+    <!-- Analytics slot: if you add a privacy-friendly tracker (Plausible,
+         GoatCounter, Umami), its script goes here - without one, form
+         submissions in the Netlify panel are your only conversion metric. -->
   </head>
   <body>
+    <!-- Static mirror of the React contact form: Netlify's build bots
+         only register forms they can see in the built HTML. Keep the
+         fields in sync with src/components/Contact.jsx. -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <select name="type"></select>
+      <textarea name="message"></textarea>
+      <input name="bot-field" />
+    </form>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

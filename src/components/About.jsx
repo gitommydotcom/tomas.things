@@ -8,6 +8,10 @@ import { SqArrow, BrandAsterisk, SpiralCreature } from './Doodles.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// TODO(Tomáš): path to your portrait once one exists, e.g. '/portrait.jpg'.
+// A face sells "you talk to one human" better than any paragraph.
+const PORTRAIT = ''
+
 export default function About() {
   const { lang } = useLang()
   const ui = useUI()
@@ -82,14 +86,11 @@ export default function About() {
             <em>{a.copy2em}</em>
           </motion.p>
 
-          <div className="about-quote">
-            <Reveal as="blockquote" className="pull-quote" delay={0.1}>
-              {a.quote1}
-            </Reveal>
-            <Reveal as="blockquote" className="pull-quote" delay={0.22}>
-              {a.quote2}
-            </Reveal>
-          </div>
+          {/* who and where - the trust facts a client checks before writing.
+              TODO(Tomáš): confirm the city in ui.js (about.location) */}
+          <Reveal as="p" className="about-location" delay={0.1}>
+            {a.location}
+          </Reveal>
 
           <motion.div
             className="idea-thing"
@@ -108,6 +109,14 @@ export default function About() {
         </div>
 
         <div className="about-services">
+          {/* the human behind "you talk to one human". Renders once a
+              real photo exists - TODO(Tomáš): drop a portrait into
+              public/ (e.g. /portrait.jpg) and set PORTRAIT below */}
+          {PORTRAIT && (
+            <figure className="about-portrait">
+              <img src={PORTRAIT} alt="Tomáš Matějček" loading="lazy" decoding="async" />
+            </figure>
+          )}
           <Reveal as="p" className="eyebrow about-stack-label">
             {a.craftLabel}
           </Reveal>

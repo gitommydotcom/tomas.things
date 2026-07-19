@@ -1,28 +1,38 @@
-/* ---------- Fonts ---------- */
+/* ---------- Fonts ----------
+   WOFF2 first (about half the bytes of the OTF originals, which stay
+   as a fallback for anything ancient) */
 @font-face {
   font-family: 'Pepi';
-  src: url('/fonts/PepiLight-Regular.otf') format('opentype');
+  src:
+    url('/fonts/PepiLight-Regular.woff2') format('woff2'),
+    url('/fonts/PepiLight-Regular.otf') format('opentype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Pepi';
-  src: url('/fonts/PepiLight-Italic.otf') format('opentype');
+  src:
+    url('/fonts/PepiLight-Italic.woff2') format('woff2'),
+    url('/fonts/PepiLight-Italic.otf') format('opentype');
   font-weight: 300;
   font-style: italic;
   font-display: swap;
 }
 @font-face {
   font-family: 'Pepi';
-  src: url('/fonts/PepiMedium-Regular.otf') format('opentype');
+  src:
+    url('/fonts/PepiMedium-Regular.woff2') format('woff2'),
+    url('/fonts/PepiMedium-Regular.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'Pepi';
-  src: url('/fonts/PepiBlack-Regular.otf') format('opentype');
+  src:
+    url('/fonts/PepiBlack-Regular.woff2') format('woff2'),
+    url('/fonts/PepiBlack-Regular.otf') format('opentype');
   font-weight: 900;
   font-style: normal;
   font-display: swap;
@@ -107,7 +117,8 @@ button {
 }
 
 img,
-svg {
+svg,
+picture {
   display: block;
 }
 
@@ -190,6 +201,45 @@ section {
 .eyebrow-asterisk--lead {
   width: 1.15em;
   height: 1.15em;
+}
+
+/* Buttons - the two voices of every call to action on the site:
+   solid ink for the primary ask, outlined for the quieter one */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(16px, 1.4vw, 19px);
+  padding: 14px 30px;
+  border-radius: 100px;
+  transition:
+    background 0.45s var(--ease-out),
+    color 0.45s var(--ease-out),
+    border-color 0.45s var(--ease-out),
+    transform 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out);
+}
+.btn--primary {
+  background: var(--ink);
+  color: var(--bg);
+}
+.btn--primary:hover {
+  background: var(--pink-deep);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lift);
+}
+.btn--ghost {
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+}
+.btn--ghost:hover {
+  background: var(--ink);
+  color: var(--bg);
+  transform: translateY(-3px);
 }
 
 /* custom cursor active: hide the native one on fine pointers */

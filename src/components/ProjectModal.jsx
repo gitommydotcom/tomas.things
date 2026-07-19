@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { EASE } from './Reveal.jsx'
 import { useUI } from '../i18n/LangContext.jsx'
 import { BrandAsterisk } from './Doodles.jsx'
+import Pic from './Pic.jsx'
 
 /*
  * Project detail overlay. Editorial layout: header row with the title
@@ -13,7 +14,7 @@ import { BrandAsterisk } from './Doodles.jsx'
  * trapped while open, and returns to the opening card on close.
  * ESC and backdrop click both close.
  */
-export default function ProjectModal({ project, onClose }) {
+export default function ProjectModal({ project, onClose, onCta }) {
   const ui = useUI()
   const panelRef = useRef(null)
   const [zoom, setZoom] = useState(null)
@@ -60,7 +61,10 @@ export default function ProjectModal({ project, onClose }) {
     return () => {
       document.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
-      opener?.focus?.()
+      // preventScroll: the page is already where the card is on a normal
+      // close, and on the CTA path a scroll to #contact is in flight -
+      // a default focus() would yank the viewport back to the card
+      opener?.focus?.({ preventScroll: true })
     }
   }, [onClose])
 
@@ -113,7 +117,7 @@ export default function ProjectModal({ project, onClose }) {
             onClick={() => setZoom(lead)}
             aria-label={`${ui.work.enlarge}: ${lead.alt}`}
           >
-            <img src={lead.src} alt={lead.alt} loading="eager" decoding="async" />
+            <Pic src={lead.src} alt={lead.alt} loading="eager" sizes="(max-width: 1100px) 100vw, 1012px" />
             <span className="modal-shot-zoom" aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path
@@ -135,11 +139,20 @@ export default function ProjectModal({ project, onClose }) {
             <p className="eyebrow modal-eyebrow">
               <BrandAsterisk className="eyebrow-asterisk" />
               {project.category}
+              {project.personal && (
+                <span className="work-tag work-tag--personal">{ui.work.personal}</span>
+              )}
             </p>
             <h3 className="modal-title" id={`modal-title-${project.id}`}>
               {project.title}
             </h3>
             <p className="modal-role">{project.role}</p>
+            {/* who it was for and when - the two facts a prospect scans for */}
+            {(project.client || project.year) && (
+              <p className="modal-client">
+                {[project.client, project.year].filter(Boolean).join(' · ')}
+              </p>
+            )}
             {project.tools && (
               <p className="modal-tools">{project.tools.join(' · ')}</p>
             )}
@@ -151,6 +164,22 @@ export default function ProjectModal({ project, onClose }) {
                 {para}
               </p>
             ))}
+            {/* the case study ends on what came out of it, not on prose */}
+            {project.outcome && (
+              <div className="modal-outcome">
+                <p className="eyebrow modal-outcome-label">
+                  <BrandAsterisk className="eyebrow-asterisk" />
+                  {ui.work.result}
+                </p>
+                <p className="modal-outcome-text">{project.outcome}</p>
+              </div>
+            )}
+            {project.testimonial && (
+              <blockquote className="modal-testimonial">
+                <p>{project.testimonial.quote}</p>
+                <cite>{project.testimonial.author}</cite>
+              </blockquote>
+            )}
             {project.links && (
               <ul className="modal-links">
                 {project.links.map(({ label, cta, href }) => (
@@ -178,11 +207,11 @@ export default function ProjectModal({ project, onClose }) {
                 onClick={() => setZoom(img)}
                 aria-label={`${ui.work.enlarge}: ${img.alt}`}
               >
-                <img
+                <Pic
                   src={img.src}
                   alt={img.alt}
                   loading={i < 2 ? 'eager' : 'lazy'}
-                  decoding="async"
+                  sizes="(max-width: 560px) 100vw, 506px"
                 />
                 <span className="modal-shot-zoom" aria-hidden="true">
                   <svg viewBox="0 0 24 24">
@@ -200,6 +229,16 @@ export default function ProjectModal({ project, onClose }) {
             ))}
           </div>
         )}
+
+        {/* every story ends with a door, not a wall: the reader has just
+            seen the proof - this is the moment to ask */}
+        <div className="modal-cta">
+          <BrandAsterisk className="modal-cta-ast" />
+          <p className="modal-cta-title">{ui.work.modalCtaTitle}</p>
+          <button type="button" className="btn btn--primary modal-cta-btn" onClick={onCta}>
+            {ui.work.modalCtaBtn}
+          </button>
+        </div>
       </motion.div>
 
       {/* lightbox: any gallery image opens full-size, click anywhere or ESC to close */}

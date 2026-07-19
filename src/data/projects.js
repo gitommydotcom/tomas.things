@@ -14,12 +14,26 @@ const L = (en, it, cz) => ({ en, it, cz })
 const isL = (v) => v && typeof v === 'object' && !Array.isArray(v) && 'en' in v
 const pick = (v, lang) => (isL(v) ? v[lang] ?? v.en : v)
 
-// macro families; labels live in the i18n UI dictionary (work.groups)
+// macro families; labels live in the i18n UI dictionary (work.groups).
+// Client work leads: a prospect must meet paid, real-world projects
+// before the self-initiated ones (those carry a "personal" badge).
 export const GROUPS = [
-  { id: 'digital' },
   { id: 'identity' },
   { id: 'editorial' },
+  { id: 'digital' },
 ]
+
+/*
+ * Case-study fields (all optional, rendered only when present):
+ *   client      - who it was for (plain string, proper nouns)
+ *   year        - TODO(Tomáš): fill in the real years
+ *   personal    - true = self-initiated; shows the "personal project" badge
+ *   outcome     - one factual sentence on what came out of it (L object)
+ *   testimonial - { quote: L(...), author: '...' }
+ *                 TODO(Tomáš): ask Berkana / Corti Edil-Fer / the artists
+ *                 for one line each - a real quote converts better than
+ *                 any layout trick on this site
+ */
 
 export const PROJECTS = [
   {
@@ -34,6 +48,12 @@ export const PROJECTS = [
       'Interaktivní cestovní dossier: program den po dni, mapy a sdílený seznam na balení.',
     ),
     role: L('Product design · UI · Build', 'Product design · UI · Sviluppo', 'Produktový design · UI · Vývoj'),
+    personal: true,
+    outcome: L(
+      'Shared live by two people through the cloud for the whole trip - and reusable as a template: change the variables and it plans the next one.',
+      'Usato in tempo reale da due persone per tutto il viaggio - e riutilizzabile come template: cambi le variabili e organizza il prossimo.',
+      'Používaný naživo dvěma lidmi po celou cestu - a znovupoužitelný jako šablona: změníš proměnné a naplánuje další.',
+    ),
     cover: '/work/belgrado-browser.jpg',
     coverAlt: L(
       'The Belgrado & Gargano trip dossier open in a browser window',
@@ -87,6 +107,12 @@ export const PROJECTS = [
       'Aplikace ve stylu Tesly pro Fiat Panda z roku 2007.',
     ),
     role: L('Product design · 3D · Build', 'Product design · 3D · Sviluppo', 'Produktový design · 3D · Vývoj'),
+    personal: true,
+    outcome: L(
+      'Every deadline of a 17-year-old car in one calm dashboard - fully offline, on the device.',
+      'Tutte le scadenze di un\u2019auto di 17 anni in un\u2019unica schermata chiara - completamente offline, sul dispositivo.',
+      'Všechny lhůty sedmnáct let starého auta v jedné klidné obrazovce - úplně offline, v zařízení.',
+    ),
     cover: '/work/pandino-browser.jpg',
     coverAlt: L(
       'Pandino in a browser window: a yellow 3D Fiat Panda beside its status dashboard',
@@ -135,6 +161,12 @@ export const PROJECTS = [
       'Plánovač sociálních sítí, který z tvého portfolia klientů udělá měsíc příspěvků.',
     ),
     role: L('Product design · UI · Build', 'Product design · UI · Sviluppo', 'Produktový design · UI · Vývoj'),
+    personal: true,
+    outcome: L(
+      'In production for real client work: a month of posts per client, generated in one pass instead of an afternoon each.',
+      'In produzione su clienti veri: un mese di post per cliente generato in un colpo solo, invece di un pomeriggio ciascuno.',
+      'V produkci na skutečných klientech: měsíc příspěvků na klienta na jeden zátah místo jednoho odpoledne na každého.',
+    ),
     cover: '/work/move-browser.jpg',
     coverAlt: L(
       'The Move dashboard in a browser window: client cards, stats and sparklines',
@@ -191,6 +223,9 @@ export const PROJECTS = [
       'Identita a komunikace pro špičkové architektonické studio.',
     ),
     role: L('Brand identity · Art direction · Print', 'Brand identity · Art direction · Stampa', 'Vizuální identita · Art direction · Tisk'),
+    client: 'studio Berkana',
+    // year: TODO(Tomáš)
+    // outcome / testimonial: TODO(Tomáš) - ask the studio for one line
     cover: '/work/berkana-stationery-thumb.jpg',
     coverAlt: L(
       'studio Berkana stationery: navy and cream letterhead and cards',
@@ -244,6 +279,13 @@ export const PROJECTS = [
       'Kompletní rebrand pro stavební firmu - i se šnekem.',
     ),
     role: L('Brand identity · Mascot · Web design · Build', 'Brand identity · Mascotte · Web design · Sviluppo', 'Vizuální identita · Maskot · Webdesign · Vývoj'),
+    client: 'Corti Edil-Fer',
+    // year: TODO(Tomáš)
+    outcome: L(
+      'The identity and the website are in daily use: cortiedilfer.it runs on the system, designed and built end to end by one person.',
+      'Identità e sito sono in uso ogni giorno: cortiedilfer.it gira sul sistema, progettato e sviluppato da cima a fondo da una persona sola.',
+      'Identita i web jsou v denním provozu: cortiedilfer.it běží na tomto systému, navrženém a postaveném od začátku do konce jedním člověkem.',
+    ),
     cover: '/work/edilfer-cards.jpg',
     coverAlt: L(
       'Corti Edil-Fer business cards, green and white with the snail mark',
@@ -300,6 +342,7 @@ export const PROJECTS = [
       'Teaser identita pro hudební klub, který ještě neotevřel.',
     ),
     role: L('Identity · Poster system · Type', 'Identità · Sistema di manifesti · Lettering', 'Identita · Plakátový systém · Písmo'),
+    // year: TODO(Tomáš); if this was commissioned, add the client here
     cover: '/work/fregno-wall.jpg',
     coverAlt: L(
       'Three Fregno posters wheatpasted on a concrete wall',
@@ -353,6 +396,7 @@ export const PROJECTS = [
       'Obálka deníku, který jsem vytvořil, aby lidem pomohl přestat si okusovat nehty.',
     ),
     role: L('Concept · Illustration · Type', 'Concept · Illustrazione · Lettering', 'Koncept · Ilustrace · Písmo'),
+    personal: true,
     cover: '/work/manuale-poster.jpg',
     coverAlt: L(
       'The Il manuale maniacale cover: the orange m drawn as two bitten fingernails on pink',
@@ -401,6 +445,9 @@ export const PROJECTS = [
       'Obaly, které znějí jako deska ještě předtím, než pustíš play.',
     ),
     role: L('Art direction · Artwork · Type', 'Art direction · Artwork · Lettering', 'Art direction · Artwork · Písmo'),
+    client: 'Zero75 · Donci Kong · Kid Kontrasto',
+    // year: TODO(Tomáš)
+    // testimonial: TODO(Tomáš) - one line from one of the artists
     cover: '/work/album-vinyl-chiedi.jpg',
     coverAlt: L(
       'Chiedi Di Me sleeve with the record pulled out, the cover art on the label',
@@ -452,6 +499,10 @@ export function localizeProject(project, lang) {
     title: pick(project.title, lang),
     blurb: pick(project.blurb, lang),
     role: pick(project.role, lang),
+    outcome: pick(project.outcome, lang),
+    testimonial: project.testimonial
+      ? { quote: pick(project.testimonial.quote, lang), author: project.testimonial.author }
+      : undefined,
     coverAlt: pick(project.coverAlt, lang),
     description: project.description.map((p) => pick(p, lang)),
     gallery: project.gallery.map((g) => ({ ...g, alt: pick(g.alt, lang) })),
